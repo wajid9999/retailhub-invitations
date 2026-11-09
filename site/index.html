@@ -29,7 +29,16 @@ fieldset{border:1px solid var(--line);border-radius:12px;margin:14px 0;padding:6
 <div id="stu" class="h"><button class="o" id="back">← All designs</button><h1 id="tt"></h1>
 <div class="tabs"><button id="t1" class="on">1. Details</button><button id="t2">2. Preview</button></div>
 <div id="pd"><div id="f"></div><div class="act"><button id="add" class="o">+ Add event</button><button id="show">Show my card</button></div></div>
-<div id="pp" class="h"><div class="fr"><iframe id="ifr" title="Card preview" allow="autoplay; fullscreen"></iframe></div><div class="act"><button id="ord">Order on WhatsApp</button><button class="o" id="edit">Edit details</button><button class="o h" id="own">Copy final link</button></div><p class="s" id="preview-note" style="text-align:center">The SAMPLE mark is removed from your final card after payment.</p></div></div>
+<div id="pp" class="h"><div class="fr"><iframe id="ifr" title="Card preview" allow="autoplay; fullscreen"></iframe></div><div class="act"><button id="ord">Order on WhatsApp</button><button class="o" id="edit">Edit details</button><button class="o h" id="own">Copy final link</button></div><p class="s" id="preview-note" style="text-align:center">The SAMPLE mark is removed from your final card after payment.</p>
+<div id="order-panel" style="max-width:520px;margin:18px auto;padding:16px;border:1px solid var(--line);border-radius:14px">
+<h2 style="margin-top:0">Place your order</h2>
+<label>Your full name<input id="customer-name" autocomplete="name" maxlength="100" required></label>
+<label>WhatsApp number<input id="customer-phone" type="tel" autocomplete="tel" placeholder="03XXXXXXXXX" maxlength="20" required></label>
+<label>Package<select id="package-tier"><option value="simple">Simple</option><option value="premium">Premium</option><option value="high">High Premium</option></select></label>
+<p id="package-price" class="s"></p><div id="payment-instructions" class="s"></div>
+<button id="place-order" style="width:100%">Create order &amp; continue to WhatsApp</button>
+<p id="order-status" class="s" role="status" style="margin-top:10px"></p>
+</div></div></div>
 </div>
 <script>
 const WA='923392112657';
@@ -42,7 +51,7 @@ const SW={groom:'Mahad',bride:'Laiba',gf:'Mr. & Mrs. Qasim',bf:'Mr. & Mrs. Nasee
 {k:'Mehndi',hosts:'Hosted by the bride’s family',d:'2027-03-06',t:'19:30',v:'Rana Farm House',a:'Canal Road, Lahore'},
 {k:'Nikah',hosts:'Laiba & Mahad',d:'2027-03-07',t:'16:00',v:'Jamia Masjid',a:'Gulberg III, Lahore'},
 {k:'Walima',hosts:'Hosted by the groom’s family',d:'2027-03-09',t:'19:30',v:'Pearl Continental',a:'Mall Road, Lahore'}]};
-let cur=null,S=SW;
+let cur=null,S=SW,previewInvitation=null,publicSettings=null;
 const tn=id=>(TR.find(x=>x.id===id)||{}).name||'';
 const f12=t=>{if(!t)return'';let[h,m]=t.split(':').map(Number);return(h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM')};
 const fd=d=>d?new Date(d+'T00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'';
@@ -71,15 +80,46 @@ async function route(){
  if(previewToken){
   $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#tt').textContent='Invitation preview';$('#ifr').src='about:blank';
   try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-preview',token:previewToken})});const out=await res.json();if(!res.ok||!out.valid)throw new Error('Preview link expired. Please create a new preview.');
-   const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Trial Preview';$('#ifr').src=templateUrl(t.file)+'#'+b64(out.invitation);$('#ord').disabled=true;$('#edit').classList.add('h');$('#own').classList.add('h');
+   const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Trial Preview';$('#ifr').src=templateUrl(t.file)+'#'+b64(out.invitation);$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
+   previewInvitation=out.invitation;
+   $('#order-panel').classList.remove('h');
+   await loadOrderSettings();
    const left=Math.max(0,Math.ceil((new Date(out.expires_at).getTime()-Date.now())/1000));$('#preview-note').textContent='Trial preview · '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0')+' remaining';window.clearTimeout(window.previewExpiryTimer);window.previewExpiryTimer=window.setTimeout(()=>{$('#ifr').src='about:blank';$('#tt').textContent='Preview expired';$('#preview-note').textContent='This five-minute preview has expired. Please create a new preview.';},left*1000);
-  }catch(err){$('#tt').textContent='Preview expired';$('#preview-note').textContent=err.message;$('#ifr').src='about:blank';$('#ord').disabled=true;}
+  }catch(err){$('#tt').textContent='Preview expired';$('#preview-note').textContent=err.message;$('#ifr').src='about:blank';$('#ord').disabled=true;$('#order-panel').classList.add('h');}
   return;
  }
  const m=/studio=([\w-]+)/.exec(location.hash);cur=m&&T.find(t=>t.id===m[1]);$('#gal').classList.toggle('h',!!cur);$('#stu').classList.toggle('h',!cur);
  if(cur){S=cur.form==='event'?SE:SW;$('#tt').textContent=cur.name;tab(1);form();$('#ord').disabled=false;$('#edit').classList.remove('h');$('#own').classList.toggle('h',!/owner/.test(location.search))}else $('#ifr').src='about:blank'
 }
 addEventListener('hashchange',route);$('#back').onclick=()=>location.hash='';
+async function loadOrderSettings(){
+ try{
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'public-settings'})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||'Could not load payment details');
+  publicSettings=j.settings;updatePackagePrice();
+ }catch(e){$('#payment-instructions').textContent='Payment details could not be loaded. You can still submit your order; contact support for payment instructions.'}
+}
+function updatePackagePrice(){
+ if(!publicSettings)return;
+ const tier=$('#package-tier').value,price=tier==='simple'?publicSettings.simple_price:tier==='premium'?publicSettings.premium_price:publicSettings.high_price;
+ $('#package-price').textContent='Package price: Rs. '+Number(price).toLocaleString('en-PK');
+ $('#payment-instructions').textContent=publicSettings.jazzcash_details||'Payment details will be shared after order creation.';
+}
+$('#package-tier').onchange=updatePackagePrice;
+$('#place-order').onclick=async()=>{
+ const name=$('#customer-name').value.trim(),phone=$('#customer-phone').value.trim(),tier=$('#package-tier').value;
+ if(!name||phone.replace(/\\D/g,'').length<10){$('#order-status').textContent='Please enter your name and a valid WhatsApp number.';return}
+ if(!previewInvitation||!cur){$('#order-status').textContent='Preview details are missing. Please create a new preview.';return}
+ const btn=$('#place-order');btn.disabled=true;$('#order-status').textContent='Creating your order…';
+ try{
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'submit-order',customer_name:name,customer_phone:phone,template_id:cur.id,template_name:cur.name,package_tier:tier,preview_payload:previewInvitation})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||'Order could not be created');
+  const o=j.order,amount=Number(o.amount_pkr).toLocaleString('en-PK');
+  const message='Assalamualaikum! I have placed a digital invitation order.\\nOrder No: '+o.order_number+'\\nName: '+name+'\\nWhatsApp: '+phone+'\\nDesign: '+cur.name+'\\nPackage: '+tier.toUpperCase()+'\\nAmount: Rs. '+amount+'\\nJazzCash: '+(publicSettings?.jazzcash_details||'Please share payment details')+'\\nI will send the payment screenshot here.\\nTrial Preview: '+location.href;
+  $('#order-status').textContent='Order #'+o.order_number+' created. Opening WhatsApp…';
+  location.href='https://wa.me/'+WA+'?text='+encodeURIComponent(message);
+ }catch(e){$('#order-status').textContent=e.message||'Order failed. Please try again.';btn.disabled=false}
+};
 function tab(n){$('#pd').classList.toggle('h',n!==1);$('#pp').classList.toggle('h',n!==2);$('#t1').classList.toggle('on',n===1);$('#t2').classList.toggle('on',n===2)}
 async function show(){
  for(const e of S.ev)if(!e.d||!e.k){alert('Please fill the name and date of every event.');return}
