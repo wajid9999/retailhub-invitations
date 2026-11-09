@@ -51,7 +51,15 @@ jobs:
           s = s.replace("const C={", "let C={", 1)
           # Preserve the original embedded video: it contains the curtain animation,
           # lantern reveal, and AAC soundtrack. Start only after the visitor taps.
-          s = s.replace('function start(){if(started)return;started=true;app.classList.add("started","go","t1","t2","ended");}', 'function start(){if(started)return;started=true;app.classList.add("started");vid.muted=false;vid.volume=1;const play=vid.play();if(play&&play.catch)play.catch(e=>{console.warn("Video playback was blocked; tap the invitation again",e);started=false;app.classList.remove("started");});}')
+          # Replace the original playback handler regardless of its previous version.
+          playback = r'''function start(){if(started)return;started=true;app.classList.add("started");vid.muted=false;vid.volume=1;const play=vid.play();if(play&&play.catch)play.catch(e=>{console.warn("Video playback was blocked; tap the invitation again",e);started=false;app.classList.remove("started");});}
+          $("#intro").onclick=start;
+          // Capture the first real tap anywhere on the invitation preview. This
+          // keeps the video start inside the user's gesture on mobile browsers.
+          app.addEventListener("pointerup",start,{capture:true});'''
+          s, count = re.subn(r'function start\\(\\)\\{.*?\\}\\s*\\$\\("#intro"\\)\\.onclick=start;', lambda _: playback, s, count=1, flags=re.S)
+          if count != 1:
+              raise SystemExit("Could not replace the Velvet Curtain playback handler")
 
           pat = re.compile(r"let C=(\{.*?\n\});", re.S)
           m = pat.search(s)
