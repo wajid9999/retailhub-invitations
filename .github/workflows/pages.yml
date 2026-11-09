@@ -57,7 +57,7 @@ jobs:
           // Capture the first real tap anywhere on the invitation preview. This
           // keeps the video start inside the user's gesture on mobile browsers.
           app.addEventListener("pointerup",start,{capture:true});'''
-          s, count = re.subn(r'function start\\(\\)\\{.*?\\}\\s*\\$\\("#intro"\\)\\.onclick=start;', lambda _: playback, s, count=1, flags=re.S)
+          s, count = re.subn(r'function start\(\)\{.*?\}\s*\$\("#intro"\)\.onclick=start;', lambda _: playback, s, count=1, flags=re.S)
           if count != 1:
               raise SystemExit("Could not replace the Velvet Curtain playback handler")
 
