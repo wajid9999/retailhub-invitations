@@ -5,7 +5,7 @@ on:
     paths:
       - 'retailhub-invitations.zip'
       - 'site.zip'
-      - '.github/workflows/pages.yml'
+      - 'site/**'\n      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -32,7 +32,7 @@ jobs:
           mkdir -p public
           unzip -q "$ZIP_PATH" -d extracted
           test -f extracted/site/index.html
-          cp -R extracted/site/. public/
+          cp -R extracted/site/. public/\n          if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
