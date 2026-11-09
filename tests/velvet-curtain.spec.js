@@ -145,7 +145,7 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
 
   const templateResponse = await page.request.get('https://wajid9999.github.io/retailhub-invitations/templates/velvet-curtain/index.html');
   const templateHtml = await templateResponse.text();
-  console.log('Template .map source lines:', templateHtml.split('\\n').filter(line => line.includes('.map(')).join('\\n'));
+  console.log('Template lines 98-106:', templateHtml.split(String.fromCharCode(10)).slice(97,106).join(String.fromCharCode(10)));
   const gallery = page.frameLocator('iframe[title="Retail Hub Digital Invitation Gallery"]');
   const templateButton = gallery.locator('[data-t="velvet-curtain"]');
   await expect(templateButton).toBeVisible({ timeout: 45000 });
