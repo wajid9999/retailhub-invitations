@@ -35,6 +35,58 @@ jobs:
           test -f extracted/site/index.html
           cp -R extracted/site/. public/
           if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
+      - name: Add Velvet Curtain template
+        run: |
+          test -f site/velvet-curtain-website-package.zip
+          mkdir -p velvet-package public/templates/velvet-curtain public/thumbs
+          unzip -q site/velvet-curtain-website-package.zip -d velvet-package
+          test -f velvet-package/velvet-curtain/index.html
+          cp velvet-package/velvet-curtain/index.html public/templates/velvet-curtain/index.html
+          cp velvet-package/velvet-curtain/thumb.jpg public/thumbs/velvet-curtain.jpg
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path("public/templates/velvet-curtain/index.html")
+          s = p.read_text(encoding="utf-8")
+          s = s.replace("const C={", "let C={", 1)
+          pat = re.compile(r"let C=(\{.*?\n\});", re.S)
+          m = pat.search(s)
+          if not m:
+              raise SystemExit("Could not find Velvet Curtain data block")
+          boot = r"""
+          const rawPayload = location.hash.length > 1 ? location.hash.slice(1) : "";
+          if (rawPayload) {
+            try {
+              const decoded = decodeURIComponent(escape(atob(rawPayload)));
+              const payload = JSON.parse(decoded);
+              if (payload && payload.C) C = payload.C;
+            } catch (e) { console.error("Invitation data could not be read", e); }
+          }
+          const introNames = document.querySelector("#intro .script");
+          if (introNames) introNames.innerHTML = String(C.groom || "Groom") + "<br><small style='font-size:.5em'>&amp;</small><br>" + String(C.bride || "Bride");
+          """
+          s = s[:m.end()] + boot + s[m.end():]
+          p.write_text(s, encoding="utf-8")
+          PY
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("public/templates.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "velvet-curtain"]
+          data["templates"].append({
+            "id": "velvet-curtain",
+            "name": "Velvet Curtain",
+            "tag": "Green velvet curtains, glowing lanterns and sparkling lights",
+            "file": "templates/velvet-curtain/index.html",
+            "thumb": "thumbs/velvet-curtain.jpg",
+            "tier": "premium",
+            "occasion": "wedding",
+            "ad": "velvet",
+            "fam": False
+          })
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
