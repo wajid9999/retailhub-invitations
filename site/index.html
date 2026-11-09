@@ -64,7 +64,7 @@ mahad:(s,fin)=>({final:fin,C:{a:s.groom,b:s.bride,fam:[[s.gf,'parents of the gro
 ivory:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||'19:00',timeText:f12(e.t),venue:e.v,address:e.a,dress:'Festive formal',map:e.v+' '+e.a,bg:/nikah|milad/i.test(e.k)?'b-night':'b-plum'}))}}),
 royal:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
 floral:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both",...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
-floral-burgundy:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both",...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
+"floral-burgundy":(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both",...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
 velvet:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}})
 };
 const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
