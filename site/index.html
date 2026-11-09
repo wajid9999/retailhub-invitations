@@ -55,7 +55,9 @@ ivory:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,events:s.ev.map(e=>({n
 velvet:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}})
 };
 const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
-const link=fin=>new URL(cur.file,location.href).href+'#'+b64(ad(cur)(S,fin));
+const SITE_BASE='https://wajid9999.github.io/retailhub-invitations/';
+const templateUrl=file=>new URL(file,SITE_BASE).href;
+const link=fin=>templateUrl(cur.file)+'#'+b64(ad(cur)(S,fin));
 function grid(){const bt=(l,k,v)=>`<button data-${k}="${v}" class="${(k==='o'?fo:ft)===v?'on':''}">${l}</button>`;
 $('#occ').innerHTML=bt('All occasions','o','all')+OC.map(o=>bt(o.name,'o',o.id)).join('');
 $('#tier').innerHTML=bt('Any style','r','all')+TR.map(o=>bt(o.name+(o.price?' · '+o.price:''),'r',o.id)).join('');
@@ -69,7 +71,7 @@ async function route(){
  if(previewToken){
   $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#tt').textContent='Invitation preview';$('#ifr').src='about:blank';
   try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-preview',token:previewToken})});const out=await res.json();if(!res.ok||!out.valid)throw new Error('Preview link expired. Please create a new preview.');
-   const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Trial Preview';$('#ifr').src=t.file+'#'+b64(out.invitation);$('#ord').disabled=true;$('#edit').classList.add('h');$('#own').classList.add('h');
+   const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Trial Preview';$('#ifr').src=templateUrl(t.file)+'#'+b64(out.invitation);$('#ord').disabled=true;$('#edit').classList.add('h');$('#own').classList.add('h');
    const left=Math.max(0,Math.ceil((new Date(out.expires_at).getTime()-Date.now())/1000));$('#preview-note').textContent='Trial preview · '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0')+' remaining';window.clearTimeout(window.previewExpiryTimer);window.previewExpiryTimer=window.setTimeout(()=>{$('#ifr').src='about:blank';$('#tt').textContent='Preview expired';$('#preview-note').textContent='This five-minute preview has expired. Please create a new preview.';},left*1000);
   }catch(err){$('#tt').textContent='Preview expired';$('#preview-note').textContent=err.message;$('#ifr').src='about:blank';$('#ord').disabled=true;}
   return;
