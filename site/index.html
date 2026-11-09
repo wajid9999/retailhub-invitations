@@ -90,6 +90,7 @@ async function route(){
   try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-preview',token:previewToken})});const out=await res.json();if(!res.ok||!out.valid)throw new Error('Preview link expired. Please create a new preview.');
    const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Trial Preview';$('#ifr').src=templateUrl(t.file)+'#'+b64(out.invitation);$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
    previewInvitation=out.invitation;
+   if(['simple','premium','high'].includes(t.tier))$('#package-tier').value=t.tier;
    $('#order-panel').classList.remove('h');
    await loadOrderSettings();
    const left=Math.max(0,Math.ceil((new Date(out.expires_at).getTime()-Date.now())/1000));$('#preview-note').textContent='Trial preview · '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0')+' remaining';window.clearTimeout(window.previewExpiryTimer);window.previewExpiryTimer=window.setTimeout(()=>{$('#ifr').src='about:blank';$('#tt').textContent='Preview expired';$('#preview-note').textContent='This five-minute preview has expired. Please create a new preview.';},left*1000);
