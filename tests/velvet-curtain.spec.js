@@ -95,8 +95,8 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
   });
   const page = await context.newPage();
   const errors = [];
-  page.on('pageerror', error => errors.push(error.message));
-  page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') errors.push(message.type() + ': ' + message.text()); });
+  page.on('pageerror', error => errors.push(error.stack || error.message));
+  page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') errors.push(message.type() + ': ' + message.text() + ' @ ' + JSON.stringify(message.location())); });
 
   // Stub only the preview API so this regression test creates no real order
   // or preview record in the merchant database.
@@ -143,6 +143,9 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
     timeout: 60000
   });
 
+  const templateResponse = await page.request.get('https://wajid9999.github.io/retailhub-invitations/templates/velvet-curtain/index.html');
+  const templateHtml = await templateResponse.text();
+  console.log('Template .map source lines:', templateHtml.split('\\n').filter(line => line.includes('.map(')).join('\\n'));
   const gallery = page.frameLocator('iframe[title="Retail Hub Digital Invitation Gallery"]');
   const templateButton = gallery.locator('[data-t="velvet-curtain"]');
   await expect(templateButton).toBeVisible({ timeout: 45000 });
