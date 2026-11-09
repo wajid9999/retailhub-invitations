@@ -74,7 +74,7 @@ async function route(){
   }catch(err){$('#tt').textContent='Preview expired';$('#preview-note').textContent=err.message;$('#ifr').src='about:blank';$('#ord').disabled=true;}
   return;
  }
- const m=/studio=(\w+)/.exec(location.hash);cur=m&&T.find(t=>t.id===m[1]);$('#gal').classList.toggle('h',!!cur);$('#stu').classList.toggle('h',!cur);
+ const m=/studio=([\w-]+)/.exec(location.hash);cur=m&&T.find(t=>t.id===m[1]);$('#gal').classList.toggle('h',!!cur);$('#stu').classList.toggle('h',!cur);
  if(cur){S=cur.form==='event'?SE:SW;$('#tt').textContent=cur.name;tab(1);form();$('#ord').disabled=false;$('#edit').classList.remove('h');$('#own').classList.toggle('h',!/owner/.test(location.search))}else $('#ifr').src='about:blank'
 }
 addEventListener('hashchange',route);$('#back').onclick=()=>location.hash='';
