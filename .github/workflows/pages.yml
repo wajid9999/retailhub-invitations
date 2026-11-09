@@ -49,6 +49,22 @@ jobs:
           p = Path("public/templates/velvet-curtain/index.html")
           s = p.read_text(encoding="utf-8")
           s = s.replace("const C={", "let C={", 1)
+          # The source package has only a poster/no playable video source. Replace
+          # that broken playback dependency with a real CSS curtain reveal.
+          s = s.replace('<video id="vid"', '<video id="vid" style="display:none"')
+          s = s.replace('<canvas id="fx"></canvas>', '<div id="curtain-left" aria-hidden="true"></div><div id="curtain-right" aria-hidden="true"></div>\\n  <canvas id="fx"></canvas>', 1)
+          curtain_css = """
+          #curtain-left,#curtain-right{position:absolute;top:0;bottom:0;width:50.5%;z-index:8;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.45),transparent 22%,rgba(7,65,39,.65) 48%,#06351f 100%),repeating-linear-gradient(90deg,#031c12 0%,#0b5132 9%,#06351f 17%,#0b432a 25%,#02190f 34%);box-shadow:inset 0 0 48px rgba(0,0,0,.7);transition:transform 2s cubic-bezier(.77,0,.175,1)}
+          #curtain-left{left:0;border-right:2px solid rgba(212,175,55,.25);transform-origin:left center}
+          #curtain-right{right:0;border-left:2px solid rgba(212,175,55,.25);transform-origin:right center}
+          .started #curtain-left{transform:translateX(-101%)}
+          .started #curtain-right{transform:translateX(101%)}
+          #intro{z-index:10}
+          @media(prefers-reduced-motion:reduce){#curtain-left,#curtain-right{transition-duration:.01ms}}
+          """
+          s = s.replace("</style>", curtain_css + "\\n</style>", 1)
+          s = s.replace('function start(){if(started)return;started=true;app.classList.add("started");vid.play().catch(()=>{});}', 'function start(){if(started)return;started=true;app.classList.add("started","go","t1","t2","ended");}')
+
           pat = re.compile(r"let C=(\{.*?\n\});", re.S)
           m = pat.search(s)
           if not m:
