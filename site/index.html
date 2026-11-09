@@ -51,7 +51,9 @@ const ad=t=>AD[t.ad]||AD.std;
 const AD={
 std:(s,fin)=>({final:fin,d:{...s,kind:cur.form==='event'?'event':'wedding'}}),
 mahad:(s,fin)=>({final:fin,C:{a:s.groom,b:s.bride,fam:[[s.gf,'parents of the groom'],[s.bf,'parents of the bride']],close:s.close},EV:s.ev.map(e=>{const q=kind(e.k);return{k:e.k,who:e.hosts,d:e.d,t:f12(e.t),v:e.v,a:e.a,bg:q[0],c:q[1],box:q[2],nar:q[3],bgc:q[4]}})}),
-ivory:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||'19:00',timeText:f12(e.t),venue:e.v,address:e.a,dress:'Festive formal',map:e.v+' '+e.a,bg:/nikah|milad/i.test(e.k)?'b-night':'b-plum'}))}})};
+ivory:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||'19:00',timeText:f12(e.t),venue:e.v,address:e.a,dress:'Festive formal',map:e.v+' '+e.a,bg:/nikah|milad/i.test(e.k)?'b-night':'b-plum'}))}}),
+velvet:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}})
+};
 const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
 const link=fin=>new URL(cur.file,location.href).href+'#'+b64(ad(cur)(S,fin));
 function grid(){const bt=(l,k,v)=>`<button data-${k}="${v}" class="${(k==='o'?fo:ft)===v?'on':''}">${l}</button>`;
