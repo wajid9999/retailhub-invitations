@@ -65,7 +65,7 @@ ivory:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,...cleanHosts(),events
 royal:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
 floral:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both",...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
 "floral-burgundy":(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both",...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
-velvet:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}})
+velvet:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}})
 };
 const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
 const SITE_BASE='https://wajid9999.github.io/retailhub-invitations/';
