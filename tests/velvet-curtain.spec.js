@@ -99,11 +99,14 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
   page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') errors.push(message.type() + ': ' + message.text() + ' @ ' + JSON.stringify(message.location())); });
 
   // Stub only the preview API so this regression test creates no real order
-  // or preview record in the merchant database.
+  // or preview record in the merchant database. Reuse the actual payload
+  // produced by the gallery form so the template-data mapping is tested too.
+  let createdPayload = null;
   await page.route('**/functions/v1/invitations-api', async route => {
     const request = route.request();
     const body = request.postDataJSON() || {};
     if (body.action === 'create-preview') {
+      createdPayload = body.preview_payload;
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -118,18 +121,7 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
         body: JSON.stringify({
           valid: true,
           template_id: 'velvet-curtain',
-          invitation: {
-            final: false,
-            C: {
-              groom: 'Test Groom',
-              bride: 'Test Bride',
-              sample: true,
-              events: [{
-                name: 'Mehndi', date: '2027-03-06', time: '19:30',
-                timeText: '7:30 PM', venue: 'Test Venue', address: 'Test Address'
-              }]
-            }
-          },
+          invitation: createdPayload,
           expires_at: new Date(Date.now() + 300000).toISOString()
         })
       });
