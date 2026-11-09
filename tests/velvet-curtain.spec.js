@@ -95,6 +95,7 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') errors.push(message.type() + ': ' + message.text()); });
 
   // Stub only the preview API so this regression test creates no real order
   // or preview record in the merchant database.
@@ -152,9 +153,11 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
   const previewFrame = gallery.frameLocator('#ifr');
   const intro = previewFrame.locator('#intro');
   await expect(intro).toBeVisible({ timeout: 45000 });
+  console.log('Shopify preview frame URL:', await gallery.locator('#ifr').getAttribute('src'));
   await intro.tap();
 
   const app = previewFrame.locator('#app');
+  console.log('Nested iframe state after tap:', await previewFrame.locator('body').evaluate(() => ({ started: document.querySelector('#app')?.classList.contains('started'), introDisplay: getComputedStyle(document.querySelector('#intro')).display, introPointerEvents: getComputedStyle(document.querySelector('#intro')).pointerEvents, videoPaused: document.querySelector('video')?.paused, videoTime: document.querySelector('video')?.currentTime })));
   await expect.poll(async () => app.evaluate(el => el.classList.contains('started')), {
     timeout: 10000,
     message: 'The invitation did not start from the Shopify nested iframe'
