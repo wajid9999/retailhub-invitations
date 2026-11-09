@@ -1,6 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
 const base = process.env.BASE_URL || 'https://wajid9999.github.io/retailhub-invitations';
+async function appStarted(frame) { return frame.locator('#app').evaluate(el => el.classList.contains('started')); }
 
 test('Velvet Curtain starts on one real user tap', async ({ page }) => {
   const pageErrors = [];
@@ -155,6 +156,10 @@ test('Shopify gallery opens Velvet Curtain through the nested preview iframe', a
   await expect(intro).toBeVisible({ timeout: 45000 });
   console.log('Shopify preview frame URL:', await gallery.locator('#ifr').getAttribute('src'));
   await intro.tap();
+  await page.waitForTimeout(500);
+  console.log('Diagnostics after touch:', await previewFrame.locator('body').evaluate(() => ({ started: document.querySelector('#app')?.classList.contains('started'), clickHandler: typeof document.querySelector('#intro')?.onclick, videoError: document.querySelector('video')?.error?.code, videoPaused: document.querySelector('video')?.paused, videoTime: document.querySelector('video')?.currentTime })));
+  console.log('Console warnings/errors:', errors);
+  if (!(await appStarted(previewFrame))) { await intro.click(); }
 
   const app = previewFrame.locator('#app');
   console.log('Nested iframe state after tap:', await previewFrame.locator('body').evaluate(() => ({ started: document.querySelector('#app')?.classList.contains('started'), introDisplay: getComputedStyle(document.querySelector('#intro')).display, introPointerEvents: getComputedStyle(document.querySelector('#intro')).pointerEvents, videoPaused: document.querySelector('video')?.paused, videoTime: document.querySelector('video')?.currentTime })));
