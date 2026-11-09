@@ -76,6 +76,14 @@ $('#occ').onclick=e=>{const b=e.target.closest('[data-o]');if(b){fo=b.dataset.o;
 $('#tier').onclick=e=>{const b=e.target.closest('[data-r]');if(b){ft=b.dataset.r;grid()}};
 $('#grid').onclick=e=>{const b=e.target.closest('[data-t]');if(b)location.hash='studio='+b.dataset.t;if(e.target.id==='ask'){const o=OC.find(x=>x.id===fo),r=TR.find(x=>x.id===ft);open('https://wa.me/'+WA+'?text='+encodeURIComponent('Assalamualaikum! I am looking for an invitation card.\nOccasion: '+(o?o.name:'any')+'\nStyle: '+(r?r.name:'any')),'_blank')}};
 async function route(){
+ const originalToken=new URLSearchParams(location.search).get('original');
+ if(originalToken){
+  $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#order-panel').classList.add('h');$('#tt').textContent='Your original invitation';$('#ifr').src='about:blank';
+  try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-original',token:originalToken})});const j=await r.json();if(!r.ok||!j.valid)throw new Error('This original invitation link is invalid or has expired.');
+   const t=T.find(x=>x.id===j.template_id);if(!t)throw new Error('Invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Original invitation';$('#ifr').src=templateUrl(t.file)+'#'+b64(j.invitation);$('#preview-note').textContent='Original invitation · valid through the event date.';
+  }catch(e){$('#tt').textContent='Invitation unavailable';$('#preview-note').textContent=e.message;$('#ifr').src='about:blank'}
+  return;
+ }
  const previewToken=new URLSearchParams(location.search).get('preview');
  if(previewToken){
   $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#tt').textContent='Invitation preview';$('#ifr').src='about:blank';
