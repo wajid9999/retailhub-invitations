@@ -141,7 +141,7 @@ jobs:
           # Velvet Curtain: move the already-supported hosts section after the end page.
           p = Path("public/templates/velvet-curtain/index.html")
           s = p.read_text(encoding="utf-8")
-          old = "scr.innerHTML=hero+hostsS+'<div class=\"roll\"></div>'+evS+faq+end;"
+          old = "scr.innerHTML=hero+'<div class=\"roll\"></div>'+evS+faq+end;"
           new = "scr.innerHTML=hero+'<div class=\"roll\"></div>'+evS+faq+end+hostsS;"
           if old not in s:
               raise SystemExit("Velvet Curtain: expected hosts section placement not found")
