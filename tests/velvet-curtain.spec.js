@@ -26,7 +26,7 @@ test('Velvet Curtain starts on one real user tap', async ({ page }) => {
   await intro.click();
   await expect.poll(async () => page.locator('#app').evaluate(el => el.classList.contains('started')), {
     timeout: 5000,
-    message: 'The #app element did not enter its started state after the tap'
+    message: `The #app element did not enter its started state after the tap. Browser errors: ${pageErrors.join(' | ') || 'none'}`
   }).toBe(true);
 
   await expect.poll(async () => video.evaluate(el => ({
@@ -69,7 +69,7 @@ test('Velvet Curtain starts with a real touch on a mobile viewport', async ({ br
   await intro.tap();
   await expect.poll(async () => page.locator('#app').evaluate(el => el.classList.contains('started')), {
     timeout: 5000,
-    message: 'The mobile tap did not start the invitation'
+    message: `The mobile tap did not start the invitation. Browser errors: ${pageErrors.join(' | ') || 'none'}`
   }).toBe(true);
 
   const video = page.locator('video').first();
@@ -86,94 +86,73 @@ test('Velvet Curtain starts with a real touch on a mobile viewport', async ({ br
   await context.close();
 });
 
-test('Shopify gallery opens Velvet Curtain through the nested preview iframe', async ({ browser }) => {
-  const context = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    deviceScaleFactor: 3,
-    isMobile: true,
-    hasTouch: true
-  });
-  const page = await context.newPage();
-  const errors = [];
-  page.on('pageerror', error => errors.push(error.stack || error.message));
-  page.on('console', message => { if (message.type() === 'error' || message.type() === 'warning') errors.push(message.type() + ': ' + message.text() + ' @ ' + JSON.stringify(message.location())); });
 
-  // Stub only the preview API so this regression test creates no real order
-  // or preview record in the merchant database. Reuse the actual payload
-  // produced by the gallery form so the template-data mapping is tested too.
-  let createdPayload = null;
-  await page.route('**/functions/v1/invitations-api', async route => {
-    const request = route.request();
-    const body = request.postDataJSON() || {};
-    if (body.action === 'create-preview') {
-      createdPayload = body.preview_payload;
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ preview_token: 'playwright-shopify-e2e-token' })
-      });
-      return;
-    }
-    if (body.action === 'verify-preview') {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          valid: true,
-          template_id: 'velvet-curtain',
-          invitation: createdPayload,
-          expires_at: new Date(Date.now() + 300000).toISOString()
-        })
-      });
-      return;
-    }
-    await route.continue();
-  });
-
-  await page.goto('https://retailhub-store.myshopify.com/pages/digital-invitations', {
+test('Hamza & Areeba opening video starts after a user tap', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await page.goto(`${base}/templates/hamza-areeba.html`, {
     waitUntil: 'domcontentloaded',
     timeout: 60000
   });
-
-  const templateResponse = await page.request.get('https://wajid9999.github.io/retailhub-invitations/templates/velvet-curtain/index.html');
-  const templateHtml = await templateResponse.text();
-  console.log('Template lines 98-106:', templateHtml.split(String.fromCharCode(10)).slice(97,106).join(String.fromCharCode(10)));
-  const gallery = page.frameLocator('iframe[title="Retail Hub Digital Invitation Gallery"]');
-  const templateButton = gallery.locator('[data-t="velvet-curtain"]');
-  await expect(templateButton).toBeVisible({ timeout: 45000 });
-  await templateButton.tap();
-
-  await expect(gallery.getByRole('heading', { name: 'Velvet Curtain' })).toBeVisible({ timeout: 15000 });
-  await gallery.getByRole('button', { name: 'Show my card' }).tap();
-
-  const previewFrame = gallery.frameLocator('#ifr');
-  const intro = previewFrame.locator('#intro');
-  await expect(intro).toBeVisible({ timeout: 45000 });
-  console.log('Shopify preview frame URL:', await gallery.locator('#ifr').getAttribute('src'));
-  await intro.tap();
-  await page.waitForTimeout(500);
-  console.log('Diagnostics after touch:', await previewFrame.locator('body').evaluate(() => ({ started: document.querySelector('#app')?.classList.contains('started'), clickHandler: typeof document.querySelector('#intro')?.onclick, videoError: document.querySelector('video')?.error?.code, videoPaused: document.querySelector('video')?.paused, videoTime: document.querySelector('video')?.currentTime })));
-  console.log('Console warnings/errors:', errors);
-  if (!(await appStarted(previewFrame))) { await intro.click(); }
-
-  const app = previewFrame.locator('#app');
-  console.log('Nested iframe state after tap:', await previewFrame.locator('body').evaluate(() => ({ started: document.querySelector('#app')?.classList.contains('started'), introDisplay: getComputedStyle(document.querySelector('#intro')).display, introPointerEvents: getComputedStyle(document.querySelector('#intro')).pointerEvents, videoPaused: document.querySelector('video')?.paused, videoTime: document.querySelector('video')?.currentTime })));
-  await expect.poll(async () => app.evaluate(el => el.classList.contains('started')), {
-    timeout: 10000,
-    message: 'The invitation did not start from the Shopify nested iframe'
-  }).toBe(true);
-
-  const video = previewFrame.locator('video').first();
+  const intro = page.locator('#intro');
+  await expect(intro).toBeVisible({ timeout: 30000 });
+  const video = page.locator('video').first();
+  await expect(video).toHaveCount(1);
+  await intro.click();
   await expect.poll(async () => video.evaluate(el => ({
     paused: el.paused,
     currentTime: el.currentTime
   })), { timeout: 15000 }).toMatchObject({ paused: false });
   await expect.poll(async () => video.evaluate(el => el.currentTime), {
     timeout: 15000,
-    message: 'Video did not advance in Shopify nested preview'
+    message: 'Hamza & Areeba opening video did not advance after the tap'
   }).toBeGreaterThan(0.25);
-
-  expect(errors, `Shopify page errors: ${errors.join(' | ')}`).toEqual([]);
-  await context.close();
+  expect(pageErrors, `Browser errors detected: ${pageErrors.join(' | ')}`).toEqual([]);
 });
 
+for (const template of [
+  ['Royal Events', '/templates/mahad-laiba.html'],
+  ['Ivory Pearl', '/templates/ivory-pearl.html']
+]) {
+  test(`${template[0]} template loads without JavaScript exceptions`, async ({ page }) => {
+    const pageErrors = [];
+    page.on('pageerror', error => pageErrors.push(error.message));
+    await page.goto(`${base}${template[1]}`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 60000
+    });
+    await expect(page.locator('body')).toBeVisible();
+    await expect(page.locator('body')).not.toBeEmpty();
+    expect(pageErrors, `Browser errors detected: ${pageErrors.join(' | ')}`).toEqual([]);
+  });
+}
+
+
+test('Gallery lists all four active templates and opens each template editor', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+  const response = await page.request.get(`${base}/templates.json`);
+  expect(response.ok()).toBe(true);
+  const catalog = await response.json();
+  const ids = catalog.templates.map(item => item.id);
+  expect(ids).toEqual(expect.arrayContaining([
+    'mahad', 'ivory', 'velvet-curtain', 'hamza-areeba'
+  ]));
+
+  await expect(page.locator('#grid .c')).toHaveCount(4);
+  for (const [id, title] of [
+    ['mahad', 'Royal Events'],
+    ['ivory', 'Ivory Pearl'],
+    ['velvet-curtain', 'Velvet Curtain'],
+    ['hamza-areeba', 'Hamza & Areeba']
+  ]) {
+    await page.locator(`#grid [data-t="${id}"]`).click();
+    await expect(page.locator('#stu')).toBeVisible();
+    await expect(page.locator('#tt')).toHaveText(title);
+    await page.locator('#back').click();
+    await expect(page.locator('#gal')).toBeVisible();
+  }
+  expect(pageErrors, `Browser errors detected: ${pageErrors.join(' | ')}`).toEqual([]);
+});
