@@ -87,28 +87,6 @@ test('Velvet Curtain starts with a real touch on a mobile viewport', async ({ br
 });
 
 
-test('Hamza & Areeba opening video starts after a user tap', async ({ page }) => {
-  const pageErrors = [];
-  page.on('pageerror', error => pageErrors.push(error.message));
-  await page.goto(`${base}/templates/hamza-areeba.html`, {
-    waitUntil: 'domcontentloaded',
-    timeout: 60000
-  });
-  const intro = page.locator('#intro');
-  await expect(intro).toBeVisible({ timeout: 30000 });
-  const video = page.locator('video').first();
-  await expect(video).toHaveCount(1);
-  await intro.click();
-  await expect.poll(async () => video.evaluate(el => ({
-    paused: el.paused,
-    currentTime: el.currentTime
-  })), { timeout: 15000 }).toMatchObject({ paused: false });
-  await expect.poll(async () => video.evaluate(el => el.currentTime), {
-    timeout: 15000,
-    message: 'Hamza & Areeba opening video did not advance after the tap'
-  }).toBeGreaterThan(0.25);
-  expect(pageErrors, `Browser errors detected: ${pageErrors.join(' | ')}`).toEqual([]);
-});
 
 for (const template of [
   ['Royal Events', '/templates/mahad-laiba.html'],
@@ -137,16 +115,14 @@ test('Gallery lists the four active templates and opens each template editor', a
   expect(response.ok()).toBe(true);
   const catalog = await response.json();
   const ids = catalog.templates.map(item => item.id);
-  expect(ids).toEqual(expect.arrayContaining([
-    'royal-navy-blue-gold', 'mahad', 'ivory', 'hamza-areeba'
-  ]));
+  expect(ids).toEqual(['velvet-curtain', 'royal-navy-blue-gold', 'mahad', 'ivory']);
 
   await expect(page.locator('#grid .c')).toHaveCount(4);
   for (const [id, title] of [
+    ['velvet-curtain', 'Velvet Curtain'],
     ['royal-navy-blue-gold', 'Royal Navy Blue & Gold'],
     ['mahad', 'Royal Events'],
-    ['ivory', 'Ivory Pearl'],
-    ['hamza-areeba', 'Hamza & Areeba']
+    ['ivory', 'Ivory Pearl']
   ]) {
     await page.locator(`#grid [data-t="${id}"]`).click();
     await expect(page.locator('#stu')).toBeVisible();
