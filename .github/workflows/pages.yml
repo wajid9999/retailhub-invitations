@@ -124,7 +124,7 @@ jobs:
           })
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           PY
-      - name: Add Royal Navy Blue & Gold static template; keep Green Velvet
+      - name: Add Royal Navy Blue & Gold original video template; keep Green Velvet
         run: |
           mkdir -p public/templates public/thumbs
           test -s site/royal-navy-blue-gold.html
