@@ -117,46 +117,14 @@ jobs:
             "tag": "Green velvet curtains, glowing lanterns and sparkling lights",
             "file": "templates/velvet-curtain/index.html",
             "thumb": "thumbs/velvet-curtain.jpg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "velvet",
             "fam": False
           })
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           PY
-      - name: Add Hamza & Areeba wedding invitation template
-        run: |
-          mkdir -p public/templates public/thumbs
-          test -s site/hamza-areeba.html
-          test -s site/hamza-areeba-thumb.svg
-          cp site/hamza-areeba.html public/templates/hamza-areeba.html
-          cp site/hamza-areeba-thumb.svg public/thumbs/hamza-areeba.svg
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          html = Path("public/templates/hamza-areeba.html").read_text(encoding="utf-8")
-          if '<video id="vid"' not in html or 'data:video/mp4;base64,' not in html:
-              raise SystemExit("Hamza & Areeba: opening video or embedded video source is missing")
-          if 'intro.addEventListener("click",start)' not in html:
-              raise SystemExit("Hamza & Areeba: intro playback tap handler is missing")
-          p = Path("public/templates.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "hamza-areeba"]
-          data["templates"].append({
-            "id": "hamza-areeba",
-            "name": "Hamza & Areeba",
-            "tag": "Wedding invitation with an opening video reveal",
-            "file": "templates/hamza-areeba.html",
-            "thumb": "thumbs/hamza-areeba.svg",
-            "tier": "high",
-            "occasion": "wedding",
-            "ad": "std",
-            "fam": False
-          })
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-          print("Hamza & Areeba template and opening-video checks passed.")
-          PY
-      - name: Add Royal Navy Blue & Gold and remove duplicate Velvet Curtain
+      - name: Add Royal Navy Blue & Gold video template; keep Green Velvet
         run: |
           mkdir -p public/templates public/thumbs
           test -s site/royal-navy-blue-gold.html
@@ -168,6 +136,9 @@ jobs:
           from pathlib import Path
           p = Path("public/templates.json")
           data = json.loads(p.read_text(encoding="utf-8"))
+          velvet = next((t for t in data.get("templates", []) if t.get("id") == "velvet-curtain"), None)
+          if velvet is None:
+            raise SystemExit("Green Velvet video template missing from registry")
           data["templates"] = [t for t in data.get("templates", []) if t.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
           navy = {
             "id": "royal-navy-blue-gold",
@@ -175,12 +146,12 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "std",
             "fam": False
           }
-          data["templates"].insert(0, navy)
+          data["templates"] = [velvet, navy] + data["templates"]
           # Preserve source category labels for owner review; do not infer tiers from names.\n          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           assert data["templates"][0]["id"] == "royal-navy-blue-gold"
           assert not any(t.get("id") == "velvet-curtain" for t in data["templates"])
@@ -263,21 +234,24 @@ jobs:
           registry = root / "templates.json"
           data = json.loads(registry.read_text(encoding="utf-8"))
           items = data.setdefault("templates", [])
-          # The Royal Navy template is the lead gallery item; Velvet Curtain
-          # remains archived in source files but is not part of the active gallery.
-          items = [t for t in items if t.get("id") not in {"royal-navy-blue-gold", "velvet-curtain"}]
+          # Keep one Green Velvet entry; do not add a separate Hamza & Areeba duplicate.
+          velvet = next((t for t in items if t.get("id") == "velvet-curtain"), None)
+          if velvet is None:
+            raise SystemExit("Green Velvet must remain active")
+          items = [t for t in items if t.get("id") not in {"royal-navy-blue-gold", "velvet-curtain", "hamza-areeba"}]
           royal = {
             "id": "royal-navy-blue-gold",
             "name": "Royal Navy Blue & Gold",
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "std",
             "fam": False
           }
-          items.insert(0, royal)
+          velvet["tier"] = "high"
+          items = [velvet, royal]
           # Future additions: place one folder in site/new-templates/<id>/ with
           # template.json, template.html and thumbnail.(svg|png|jpg|webp).
           package_root = Path("site/new-templates")
