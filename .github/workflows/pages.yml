@@ -139,7 +139,7 @@ jobs:
             "ad": "std",
             "fam": False
           })
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           print("Hamza & Areeba template and opening-video checks passed.")
           PY
       - name: Render Hosts together on the final page of every active template
