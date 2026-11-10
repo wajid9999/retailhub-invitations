@@ -146,7 +146,7 @@ jobs:
             "tag": "Wedding invitation with an opening video reveal",
             "file": "templates/hamza-areeba.html",
             "thumb": "thumbs/hamza-areeba.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "std",
             "fam": False
@@ -179,6 +179,15 @@ jobs:
             "fam": False
           }
           data["templates"].insert(0, navy)
+          # Apply format-based product tiers: video invitations are High Premium;
+          # image-based invitation designs are Premium; simple cards remain Simple.
+          for template in data["templates"]:
+            if template.get("id") == "mahad":
+              template["tier"] = "premium"
+            elif template.get("id") == "hamza-areeba":
+              template["tier"] = "high"
+            elif template.get("id") in {"royal-navy-blue-gold", "ivory"}:
+              template["tier"] = "premium"
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           assert data["templates"][0]["id"] == "royal-navy-blue-gold"
           assert not any(t.get("id") == "velvet-curtain" for t in data["templates"])
