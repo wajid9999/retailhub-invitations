@@ -113,7 +113,7 @@ jobs:
           data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "velvet-curtain"]
           data["templates"].append({
             "id": "velvet-curtain",
-            "name": "Velvet Curtain",
+            "name": "Green Velvet",
             "tag": "Green velvet curtains, glowing lanterns and sparkling lights",
             "file": "templates/velvet-curtain/index.html",
             "thumb": "thumbs/velvet-curtain.jpg",
