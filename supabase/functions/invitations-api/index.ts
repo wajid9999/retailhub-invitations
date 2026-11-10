@@ -26,8 +26,14 @@ if(action==="submit-order"){
  if(!customer_name||customer_phone.length<10||!template_id||!template_name||!payload||typeof payload!=="object")return json({error:"Required order details are missing"},400);
  if(!eventEndDate(payload))return json({error:"Add a valid event date before ordering"},400);
  const {data:settings,error:se}=await db.from("invitation_settings").select("*").eq("id",true).single();if(se)throw se;
- const price=tier==="simple"?settings.simple_price:tier==="premium"?settings.premium_price:tier==="high"?settings.high_price:null;if(price===null)return json({error:"Invalid package"},400);
- const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,preview_payload:payload,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
+ if(!["simple","premium","high"].includes(tier))return json({error:"Invalid package"},400);
+ const eventList=Array.isArray((payload as Record<string,unknown>).C)&&false?[]:
+   (payload as Record<string,any>).C&&Array.isArray((payload as Record<string,any>).C.events)?(payload as Record<string,any>).C.events:
+   (payload as Record<string,any>).d&&Array.isArray((payload as Record<string,any>).d.ev)?(payload as Record<string,any>).d.ev:
+   Array.isArray((payload as Record<string,any>).ev)?(payload as Record<string,any>).ev:[];
+ const eventCount=Math.max(1,Math.min(30,eventList.length));
+ const price=tier==="high"?2000+1000*eventCount:tier==="premium"?1000*eventCount:500*eventCount;
+ const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
  return json({order:data,message:"Order created. Send payment proof to WhatsApp for manual approval."},201);
 }
 if(action==="submit-payment-proof"){
