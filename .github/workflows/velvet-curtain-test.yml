@@ -2,6 +2,11 @@ name: Velvet Curtain browser regression test
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/velvet-curtain-test.yml'
+      - 'tests/velvet-curtain.spec.js'
   push:
     branches: [main]
     paths:
