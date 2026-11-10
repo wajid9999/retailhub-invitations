@@ -27,7 +27,7 @@ if(action==="submit-order"){
  if(!eventEndDate(payload))return json({error:"Add a valid event date before ordering"},400);
  const {data:settings,error:se}=await db.from("invitation_settings").select("*").eq("id",true).single();if(se)throw se;
  if(!["simple","premium","high"].includes(tier))return json({error:"Invalid package"},400);
- const eventList=Array.isArray((payload as Record<string,unknown>).C)&&false?[]:
+ const eventList=
    (payload as Record<string,any>).C&&Array.isArray((payload as Record<string,any>).C.events)?(payload as Record<string,any>).C.events:
    (payload as Record<string,any>).d&&Array.isArray((payload as Record<string,any>).d.ev)?(payload as Record<string,any>).d.ev:
    Array.isArray((payload as Record<string,any>).ev)?(payload as Record<string,any>).ev:[];
