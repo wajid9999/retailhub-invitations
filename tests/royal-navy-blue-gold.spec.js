@@ -1,0 +1,20 @@
+import { test, expect } from '@playwright/test';
+test('Royal Navy Blue & Gold is first and duplicate Velvet Curtain is absent', async ({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(process.env.BASE_URL+'/');
+ const response=await page.request.get(process.env.BASE_URL+'/templates.json');
+ expect(response.ok()).toBeTruthy();
+ const data=await response.json();const list=data.templates;
+ expect(list[0].id).toBe('royal-navy-blue-gold');
+ expect(list.some(t=>t.id==='velvet-curtain')).toBeFalsy();
+ expect(list.some(t=>t.id==='hamza-areeba')).toBeTruthy();
+ await page.goto(process.env.BASE_URL+'/templates/royal-navy-blue-gold.html');
+ await expect(page.locator('#customise')).toBeVisible();
+ await page.locator('#customise').click();
+ await page.locator('#groom').fill('Ali');
+ await page.locator('#bride').fill('Sara');
+ await page.locator('#apply').click();
+ await expect(page.locator('#names')).toContainText('Ali');
+ await expect(page.locator('#names')).toContainText('Sara');
+ expect(errors).toEqual([]);
+});
