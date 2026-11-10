@@ -1,16 +1,16 @@
 import { test, expect } from '@playwright/test';
-test('Royal Navy Blue & Gold is first and duplicate Velvet Curtain is absent', async ({page})=>{
+test('Green Velvet and Royal Navy are the two High Premium video-category templates', async ({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(process.env.BASE_URL+'/');
  const response=await page.request.get(process.env.BASE_URL+'/templates.json');
  expect(response.ok()).toBeTruthy();
  const data=await response.json();const list=data.templates;
- expect(list[0].id).toBe('royal-navy-blue-gold');
- expect(list.some(t=>t.id==='velvet-curtain')).toBeFalsy();
- expect(list.some(t=>t.id==='hamza-areeba')).toBeTruthy();
- expect(list.find(t=>t.id==='hamza-areeba').tier).toBe('high');
- expect(list.find(t=>t.id==='royal-navy-blue-gold').tier).toBe('premium');
+ expect(list.map(t=>t.id)).toEqual(['velvet-curtain','royal-navy-blue-gold','mahad','ivory']);
+ expect(list.find(t=>t.id==='velvet-curtain').tier).toBe('high');
+ expect(list.find(t=>t.id==='royal-navy-blue-gold').tier).toBe('high');
+ expect(list.find(t=>t.id==='mahad').tier).toBe('premium');
  expect(list.find(t=>t.id==='ivory').tier).toBe('premium');
+ expect(list.some(t=>t.id==='hamza-areeba')).toBeFalsy();
 
  const home=await page.request.get(process.env.BASE_URL+'/');
  const html=await home.text();
