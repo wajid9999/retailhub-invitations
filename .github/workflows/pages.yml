@@ -124,39 +124,7 @@ jobs:
           })
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           PY
-      - name: Add Hamza & Areeba wedding invitation template
-        run: |
-          mkdir -p public/templates public/thumbs
-          test -s site/hamza-areeba.html
-          test -s site/hamza-areeba-thumb.svg
-          cp site/hamza-areeba.html public/templates/hamza-areeba.html
-          cp site/hamza-areeba-thumb.svg public/thumbs/hamza-areeba.svg
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          html = Path("public/templates/hamza-areeba.html").read_text(encoding="utf-8")
-          if '<video id="vid"' not in html or 'data:video/mp4;base64,' not in html:
-              raise SystemExit("Hamza & Areeba: opening video or embedded video source is missing")
-          if 'intro.addEventListener("click",start)' not in html:
-              raise SystemExit("Hamza & Areeba: intro playback tap handler is missing")
-          p = Path("public/templates.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "hamza-areeba"]
-          data["templates"].append({
-            "id": "hamza-areeba",
-            "name": "Hamza & Areeba",
-            "tag": "Wedding invitation with an opening video reveal",
-            "file": "templates/hamza-areeba.html",
-            "thumb": "thumbs/hamza-areeba.svg",
-            "tier": "high",
-            "occasion": "wedding",
-            "ad": "std",
-            "fam": False
-          })
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-          print("Hamza & Areeba template and opening-video checks passed.")
-          PY
-      - name: Add Royal Navy Blue & Gold and remove duplicate Velvet Curtain
+      - name: Add Royal Navy Blue & Gold template
         run: |
           mkdir -p public/templates public/thumbs
           test -s site/royal-navy-blue-gold.html
@@ -178,7 +146,7 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "royal",
             "fam": False
@@ -197,7 +165,7 @@ jobs:
           missing = [f for f in files if not f or not (Path("public") / f).is_file()]
           if missing:
               raise SystemExit("Missing template HTML file(s): " + ", ".join(map(str, missing)))
-          print("Royal Navy Blue & Gold is first; duplicate Velvet Curtain removed; all active template IDs and HTML filenames are unique.")
+          print("Green Velvet and Royal Navy video templates are High Premium; active IDs and HTML filenames are unique.")
           PY
       - name: Render Hosts together on the final page of every active template
         run: |
@@ -266,7 +234,8 @@ jobs:
           registry = root / "templates.json"
           data = json.loads(registry.read_text(encoding="utf-8"))
           items = data.setdefault("templates", [])
-          # Keep the approved Green Velvet Curtain active. Refresh only the broken Royal Navy entry.
+          # Keep Green Velvet as the sole name for this video design; never add a Hamza & Areeba duplicate.
+          # Both active video designs are High Premium.
           velvet = next((t for t in items if t.get("id") == "velvet-curtain"), None)
           if velvet is None:
             raise SystemExit("Approved Green Velvet Curtain template must remain active")
@@ -316,8 +285,19 @@ jobs:
             raise SystemExit("Missing active template files: " + ", ".join(missing))
           if not items or items[0].get("id") != "velvet-curtain":
             raise SystemExit("Approved Green Velvet Curtain must remain first in the active gallery")
-          if len(items) < 2 or items[1].get("id") != "royal-navy-blue-gold":
-            raise SystemExit("Royal Navy Blue & Gold must appear second in the active gallery")
+          if len(items) != 4:
+            raise SystemExit(f"Expected exactly 4 active templates, found {len(items)}")
+          expected = {
+            "velvet-curtain": "high",
+            "royal-navy-blue-gold": "high",
+            "ivory-pearl": "premium",
+            "mahad-laiba": "premium"
+          }
+          actual = {x.get("id"): x.get("tier") for x in items}
+          if actual != expected:
+            raise SystemExit(f"Template names/tiers do not match the approved four-template set: {actual}")
+          if any("hamza" in str(x.get("name", "")).lower() or "hamza" in str(x.get("id", "")).lower() for x in items):
+            raise SystemExit("Hamza & Areeba duplicate label must not appear; keep Green Velvet only")
           registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           print(f"Final gallery registry validated: {len(items)} active templates.")
           PY
