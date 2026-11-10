@@ -7,6 +7,13 @@ on:
       - 'site.zip'
       - 'site/**'
       - '.github/workflows/pages.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'retailhub-invitations.zip'
+      - 'site.zip'
+      - 'site/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -198,5 +205,6 @@ jobs:
         with:
           path: public
       - name: Deploy to GitHub Pages
+        if: github.event_name != 'pull_request'
         id: deployment
         uses: actions/deploy-pages@v4
