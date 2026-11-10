@@ -144,7 +144,8 @@ function updatePackagePrice(){
  if(!publicSettings)return;
  const tier=$('#package-tier').value,count=invitationEventCount(previewInvitation),price=calculateInvitationPrice(tier,count);
  $('#package-price').textContent=count+' event'+(count===1?'':'s')+' · Package price: Rs. '+price.toLocaleString('en-PK')+' (pages do not change the price)';
- $('#payment-instructions').textContent=publicSettings.jazzcash_details||'Payment details will be shared after order creation.';
+ const methods=[['JazzCash',publicSettings.jazzcash_details],['Easypaisa',publicSettings.easypaisa_details],['Bank transfer',publicSettings.bank_details],['Raast',publicSettings.raast_details]].filter(x=>x[1]&&String(x[1]).trim());
+ $('#payment-instructions').textContent=methods.length?methods.map(x=>x[0]+':\\n'+x[1]).join('\\n\\n'):'Payment details will be shared after order creation.';
 }
 $('#package-tier').onchange=updatePackagePrice;
 let currentOrder=null;
