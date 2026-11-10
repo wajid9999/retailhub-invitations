@@ -124,7 +124,7 @@ jobs:
           })
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           PY
-      - name: Add Royal Navy Blue & Gold video template; keep Green Velvet
+      - name: Add Royal Navy Blue & Gold static template; keep Green Velvet
         run: |
           mkdir -p public/templates public/thumbs
           test -s site/royal-navy-blue-gold.html
@@ -146,7 +146,7 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "high",
+            "tier": "premium",
             "occasion": "wedding",
             "ad": "std",
             "fam": False
@@ -166,7 +166,7 @@ jobs:
           missing = [f for f in files if not f or not (Path("public") / f).is_file()]
           if missing:
               raise SystemExit("Missing template HTML file(s): " + ", ".join(map(str, missing)))
-          print("Green Velvet and Royal Navy are retained once each; both are High Premium.")
+          print("Green Velvet is High Premium; Royal Navy Blue & Gold is Premium.")
           PY
       - name: Render Hosts together on the final page of every active template
         run: |
@@ -246,7 +246,7 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "high",
+            "tier": "premium",
             "occasion": "wedding",
             "ad": "std",
             "fam": False
@@ -267,12 +267,12 @@ jobs:
             raise SystemExit("Expected exactly four active templates; found " + str(len(items)))
           by_file = {str(x.get("file", "")).split("/")[-1]: x for x in items}
           if "index.html" not in by_file or "royal-navy-blue-gold.html" not in by_file:
-            raise SystemExit("Both approved video template files must be active: " + str(sorted(by_file)))
+            raise SystemExit("Both approved featured template files must be active: " + str(sorted(by_file)))
           static_items = [x for x in items if x.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
           if len(static_items) != 2:
             raise SystemExit("Expected two static templates; found " + str([(x.get("id"), x.get("file")) for x in static_items]))
           by_file["index.html"]["tier"] = "high"
-          by_file["royal-navy-blue-gold.html"]["tier"] = "high"
+          by_file["royal-navy-blue-gold.html"]["tier"] = "premium"
           for item in static_items:
             item["tier"] = "premium"
           if any("hamza" in str(x.get("id", "")).lower() or "hamza" in str(x.get("name", "")).lower() for x in items):
