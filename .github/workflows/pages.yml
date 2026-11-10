@@ -107,7 +107,7 @@ jobs:
           # Royal Events (Mahad & Laiba): place the hosts block inside its existing final page.
           p = Path("public/templates/mahad-laiba.html")
           s = p.read_text(encoding="utf-8")
-          needle = "function renderPages(){\\n P=[];"
+          needle = "function renderPages(){\n P=[];"
           replacement = """function renderPages(){
            P=[];
            const hostsBlock=(Array.isArray(C.hosts)?C.hosts:[]).map(n=>{const[a,b]=String(n||"").split("|");const name=a.trim();return name?\x60<div style="font-size:5.1cqw;line-height:1.15;margin:1.8cqw 0">\x24{esc(name)}\x24{b&&b.trim()?\x60<div class="sm" style="font-size:3.8cqw;margin-top:.5cqw">\x24{esc(b.trim())}</div>\x60:""}</div>\x60:""}).join("");
