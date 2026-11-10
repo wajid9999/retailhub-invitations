@@ -8,6 +8,10 @@ test('Royal Navy Blue & Gold is first and duplicate Velvet Curtain is absent', a
  expect(list[0].id).toBe('royal-navy-blue-gold');
  expect(list.some(t=>t.id==='velvet-curtain')).toBeFalsy();
  expect(list.some(t=>t.id==='hamza-areeba')).toBeTruthy();
+ expect(list.find(t=>t.id==='hamza-areeba').tier).toBe('high');
+ expect(list.find(t=>t.id==='royal-navy-blue-gold').tier).toBe('premium');
+ expect(list.find(t=>t.id==='ivory').tier).toBe('premium');
+ expect(list.find(t=>t.id==='mahad').tier).toBe('premium');
  await page.goto(process.env.BASE_URL+'/templates/royal-navy-blue-gold.html');
  await expect(page.locator('#customise')).toBeVisible();
  await page.locator('#customise').click();
