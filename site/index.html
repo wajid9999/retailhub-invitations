@@ -127,7 +127,7 @@ $('#package-tier').onchange=updatePackagePrice;
 let currentOrder=null;
 $('#place-order').onclick=async()=>{
  const name=$('#customer-name').value.trim(),phone=$('#customer-phone').value.trim(),tier=$('#package-tier').value;
- if(!name||phone.replace(/\\D/g,'').length<10){$('#order-status').textContent='Please enter your name and a valid WhatsApp number.';return}
+ if(!name||phone.replace(/\D/g,'').length<10){$('#order-status').textContent='Please enter your name and a valid WhatsApp number.';return}
  if(!previewInvitation||!cur){$('#order-status').textContent='Preview details are missing. Please create a new preview.';return}
  const btn=$('#place-order');btn.disabled=true;$('#order-status').textContent='Creating your order…';
  try{
