@@ -126,3 +126,33 @@ for (const template of [
     expect(pageErrors, `Browser errors detected: ${pageErrors.join(' | ')}`).toEqual([]);
   });
 }
+
+
+test('Gallery lists all four active templates and opens each template editor', async ({ page }) => {
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(error.message));
+  await page.goto(base, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+  const response = await page.request.get(`${base}/templates.json`);
+  expect(response.ok()).toBe(true);
+  const catalog = await response.json();
+  const ids = catalog.templates.map(item => item.id);
+  expect(ids).toEqual(expect.arrayContaining([
+    'mahad', 'ivory', 'velvet-curtain', 'hamza-areeba'
+  ]));
+
+  await expect(page.locator('#grid .c')).toHaveCount(4);
+  for (const [id, title] of [
+    ['mahad', 'Royal Events'],
+    ['ivory', 'Ivory Pearl'],
+    ['velvet-curtain', 'Velvet Curtain'],
+    ['hamza-areeba', 'Hamza & Areeba']
+  ]) {
+    await page.locator(`#grid [data-t="${id}"]`).click();
+    await expect(page.locator('#stu')).toBeVisible();
+    await expect(page.locator('#tt')).toHaveText(title);
+    await page.locator('#back').click();
+    await expect(page.locator('#gal')).toBeVisible();
+  }
+  expect(pageErrors, `Browser errors detected: ${pageErrors.join(' | ')}`).toEqual([]);
+});
