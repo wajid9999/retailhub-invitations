@@ -132,10 +132,10 @@ jobs:
           if needle not in s:
               raise SystemExit("Ivory Pearl: insertion point not found")
           s = s.replace(needle, replacement, 1)
-          needle = "\x24{C.groom} &amp; \x24{C.bride}</div><button class="btn x" id="duab">"
+          needle = '\x24{C.groom} &amp; \x24{C.bride}</div><button class="btn x" id="duab">'
           if needle not in s:
               raise SystemExit("Ivory Pearl: final-page hosts insertion point not found")
-          s = s.replace(needle, "\x24{C.groom} &amp; \x24{C.bride}</div>\x24{hostsPage}<button class="btn x" id="duab">", 1)
+          s = s.replace(needle, '\x24{C.groom} &amp; \x24{C.bride}</div>\x24{hostsPage}<button class="btn x" id="duab">', 1)
           p.write_text(s, encoding="utf-8")
 
           # Velvet Curtain: move the already-supported hosts section after the end page.
