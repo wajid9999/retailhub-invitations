@@ -246,7 +246,7 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "std",
             "fam": False
