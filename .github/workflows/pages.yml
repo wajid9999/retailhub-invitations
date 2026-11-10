@@ -110,30 +110,6 @@ jobs:
           })
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
-      - name: Add Hamza & Areeba template
-        run: |
-          mkdir -p public/templates/hamza-areeba public/thumbs
-          cp site/hamza-areeba.html public/templates/hamza-areeba/index.html
-          cp site/hamza-areeba-thumb.jpg public/thumbs/hamza-areeba.jpg
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p = Path("public/templates.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "hamza-areeba"]
-          data["templates"].append({
-            "id": "hamza-areeba",
-            "name": "Hamza & Areeba",
-            "tag": "Video-reveal wedding invitation with elegant gold details",
-            "file": "templates/hamza-areeba/index.html",
-            "thumb": "thumbs/hamza-areeba.jpg",
-            "tier": "premium",
-            "occasion": "wedding",
-            "ad": "velvet",
-            "fam": False
-          })
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-          PY
       - name: Render Hosts together on the final page of every active template
         run: |
           python3 - <<'PY'
