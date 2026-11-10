@@ -29,7 +29,7 @@ test('Green Velvet and Royal Navy Blue & Gold are High Premium', async ({page})=
  expect(videoSource).toContain('data:video/mp4;base64,');
  await expect(page.locator('#intro')).toBeVisible();
  await page.locator('#intro').click();
- await expect.poll(()=>video.evaluate(v=>v.paused)).toBeFalsy({timeout:10000});
+ await expect.poll(()=>video.evaluate(v=>v.paused),{timeout:10000}).toBeFalsy();
  expect(errors).toEqual([]);
 });
 test('event-based package pricing is correct and page count is not used', async ({page})=>{
