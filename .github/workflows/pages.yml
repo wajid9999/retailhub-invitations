@@ -35,6 +35,7 @@ jobs:
           test -f extracted/site/index.html
           cp -R extracted/site/. public/
           if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
+          if [ -f site/admin.html ]; then cp site/admin.html public/admin.html; fi
       - name: Add Velvet Curtain template
         run: |
           test -f site/velvet-curtain-website-package.zip
