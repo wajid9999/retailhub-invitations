@@ -253,29 +253,8 @@ jobs:
           }
           velvet["tier"] = "high"
           items = [velvet, royal]
-          # Future additions: place one folder in site/new-templates/<id>/ with
-          # template.json, template.html and thumbnail.(svg|png|jpg|webp).
-          package_root = Path("site/new-templates")
-          if package_root.exists():
-            for folder in sorted(p for p in package_root.iterdir() if p.is_dir()):
-              meta_file = folder / "template.json"
-              html_file = folder / "template.html"
-              if not (meta_file.is_file() and html_file.is_file()):
-                raise SystemExit(f"Incomplete template package: {folder}")
-              meta = json.loads(meta_file.read_text(encoding="utf-8"))
-              tid = str(meta.get("id", "")).strip()
-              name = str(meta.get("name", "")).strip()
-              thumb = next((folder / f"thumbnail.{ext}" for ext in ("svg","png","jpg","webp") if (folder / f"thumbnail.{ext}").is_file()), None)
-              if not tid or not name or not thumb:
-                raise SystemExit(f"Template package needs id, name and thumbnail: {folder}")
-              if any(x.get("id") == tid for x in items):
-                raise SystemExit(f"Duplicate template ID: {tid}")
-              html_dest = f"templates/{tid}.html"
-              thumb_dest = f"thumbs/{tid}{thumb.suffix.lower()}"
-              shutil.copy2(html_file, root / html_dest)
-              shutil.copy2(thumb, root / thumb_dest)
-              item = {**meta, "file": html_dest, "thumb": thumb_dest}
-              items.append(item)
+          # The approved gallery is intentionally limited to the four reviewed templates.
+          # New packages are added only after separate review and approval.
           data["templates"] = items
           ids = [x.get("id") for x in items]
           files = [x.get("file") for x in items]
@@ -288,14 +267,14 @@ jobs:
             raise SystemExit("Expected exactly four active templates; found " + str(len(items)))
           by_file = {str(x.get("file", "")).split("/")[-1]: x for x in items}
           if "index.html" not in by_file or "royal-navy-blue-gold.html" not in by_file:
-            raise SystemExit("Both approved video template files must be active")
-          static_files = {"ivory-pearl.html", "mahad-laiba.html"}
-          if not static_files.issubset(set(by_file)):
-            raise SystemExit("Both approved static templates must be active; found files: " + str(sorted(by_file)))
+            raise SystemExit("Both approved video template files must be active: " + str(sorted(by_file)))
+          static_items = [x for x in items if x.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
+          if len(static_items) != 2:
+            raise SystemExit("Expected two static templates; found " + str([(x.get("id"), x.get("file")) for x in static_items]))
           by_file["index.html"]["tier"] = "high"
           by_file["royal-navy-blue-gold.html"]["tier"] = "high"
-          by_file["ivory-pearl.html"]["tier"] = "premium"
-          by_file["mahad-laiba.html"]["tier"] = "premium"
+          for item in static_items:
+            item["tier"] = "premium"
           if any("hamza" in str(x.get("id", "")).lower() or "hamza" in str(x.get("name", "")).lower() for x in items):
             raise SystemExit("Hamza & Areeba duplicate label must not appear; use Green Velvet only")
           registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
