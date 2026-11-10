@@ -119,7 +119,7 @@ test('Gallery lists the four active templates and opens each template editor', a
 
   await expect(page.locator('#grid .c')).toHaveCount(4);
   for (const [id, title] of [
-    ['velvet-curtain', 'Velvet Curtain'],
+    ['velvet-curtain', 'Green Velvet'],
     ['royal-navy-blue-gold', 'Royal Navy Blue & Gold'],
     ['mahad', 'Royal Events'],
     ['ivory', 'Ivory Pearl']
