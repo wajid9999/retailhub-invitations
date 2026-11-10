@@ -17,6 +17,11 @@ test('Royal Navy Blue & Gold is first and duplicate Velvet Curtain is absent', a
  expect(html).toContain('id="payment-proof"');
  expect(html).toContain('submit-payment-proof');
  expect(html).toContain('verify-original');
+ const admin=await page.request.get(process.env.BASE_URL+'/admin.html');
+ expect(admin.ok()).toBeTruthy();
+ const adminHtml=await admin.text();
+ expect(adminHtml).toContain('payment_proof_url');
+ expect(adminHtml).toContain('Payment OK');
  await page.goto(process.env.BASE_URL+'/templates/royal-navy-blue-gold.html');
  await expect(page.locator('#customise')).toBeVisible();
  await page.locator('#customise').click();
