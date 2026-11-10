@@ -99,6 +99,57 @@ jobs:
           })
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
+      - name: Render Hosts together on the final page of every active template
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          # Royal Events (Mahad & Laiba): place the hosts block inside its existing final page.
+          p = Path("public/templates/mahad-laiba.html")
+          s = p.read_text(encoding="utf-8")
+          needle = "function renderPages(){\\n P=[];"
+          replacement = """function renderPages(){
+           P=[];
+           const hostsBlock=(Array.isArray(C.hosts)?C.hosts:[]).map(n=>{const[a,b]=String(n||"").split("|");const name=a.trim();return name?\x60<div style="font-size:5.1cqw;line-height:1.15;margin:1.8cqw 0">\x24{esc(name)}\x24{b&&b.trim()?\x60<div class="sm" style="font-size:3.8cqw;margin-top:.5cqw">\x24{esc(b.trim())}</div>\x60:""}</div>\x60:""}).join("");
+           const hostsMarkup=hostsBlock?\x60<div style="margin-top:3cqw"><div class="cap">\x24{esc(C.hostsTitle||"With best compliments")}</div>\x24{hostsBlock}</div>\x60:"";"""
+          if needle not in s:
+              raise SystemExit("Royal Events: renderPages insertion point not found")
+          s = s.replace(needle, replacement, 1)
+          needle = "\x24{esc(C.a)} &amp; \x24{esc(C.b)}</div>\x24{C.whatsapp?"
+          if needle not in s:
+              raise SystemExit("Royal Events: final-page hosts insertion point not found")
+          s = s.replace(needle, "\x24{esc(C.a)} &amp; \x24{esc(C.b)}</div>\x24{hostsMarkup}\x24{C.whatsapp?", 1)
+          p.write_text(s, encoding="utf-8")
+
+          # Ivory Pearl: append hosts to its existing final page.
+          p = Path("public/templates/ivory-pearl.html")
+          s = p.read_text(encoding="utf-8")
+          needle = "const S=[];"
+          replacement = """const escHost=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+          const hostsMarkup=(Array.isArray(C.hosts)?C.hosts:[]).map(n=>{const[a,b]=String(n||"").split("|");const name=a.trim();return name?\x60<div style="font-size:clamp(17px,4.5vw,24px);line-height:1.2;margin:10px 0">\x24{escHost(name)}\x24{b&&b.trim()?\x60<div class="s it" style="font-size:clamp(12px,3vw,16px);margin-top:3px">\x24{escHost(b.trim())}</div>\x60:""}</div>\x60:""}).join("");
+          const hostsPage=hostsMarkup?\x60<div style="margin:22px auto 12px;max-width:90%"><div class="s it" style="font-size:clamp(15px,3.8vw,21px)">\x24{escHost(C.hostsTitle||"With best compliments")}</div><div class="s" style="color:#c99a46;margin:7px 0">✦ ✦ ✦</div>\x24{hostsMarkup}</div>\x60:"";
+          const S=[];"""
+          if needle not in s:
+              raise SystemExit("Ivory Pearl: insertion point not found")
+          s = s.replace(needle, replacement, 1)
+          needle = "\x24{C.groom} &amp; \x24{C.bride}</div><button class="btn x" id="duab">"
+          if needle not in s:
+              raise SystemExit("Ivory Pearl: final-page hosts insertion point not found")
+          s = s.replace(needle, "\x24{C.groom} &amp; \x24{C.bride}</div>\x24{hostsPage}<button class="btn x" id="duab">", 1)
+          p.write_text(s, encoding="utf-8")
+
+          # Velvet Curtain: move the already-supported hosts section after the end page.
+          p = Path("public/templates/velvet-curtain/index.html")
+          s = p.read_text(encoding="utf-8")
+          old = "scr.innerHTML=hero+hostsS+'<div class=\"roll\"></div>'+evS+faq+end;"
+          new = "scr.innerHTML=hero+'<div class=\"roll\"></div>'+evS+faq+end+hostsS;"
+          if old not in s:
+              raise SystemExit("Velvet Curtain: expected hosts section placement not found")
+          s = s.replace(old, new, 1)
+          p.write_text(s, encoding="utf-8")
+
+          print("Hosts final-page rendering patched for Royal Events, Ivory Pearl, and Velvet Curtain.")
+          PY
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
