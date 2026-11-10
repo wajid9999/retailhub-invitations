@@ -286,10 +286,16 @@ jobs:
             raise SystemExit("Missing active template files: " + ", ".join(missing))
           if len(items) != 4:
             raise SystemExit("Expected exactly four active templates; found " + str(len(items)))
-          expected = {"velvet-curtain": "high", "royal-navy-blue-gold": "high", "ivory-pearl": "premium", "mahad-laiba": "premium"}
-          actual = {x.get("id"): x.get("tier") for x in items}
-          if actual != expected:
-            raise SystemExit("Template set or tier mismatch: " + str(actual))
+          by_file = {str(x.get("file", "")).split("/")[-1]: x for x in items}
+          if "index.html" not in by_file or "royal-navy-blue-gold.html" not in by_file:
+            raise SystemExit("Both approved video template files must be active")
+          static_files = {"ivory-pearl.html", "mahad-laiba.html"}
+          if not static_files.issubset(set(by_file)):
+            raise SystemExit("Both approved static templates must be active; found files: " + str(sorted(by_file)))
+          by_file["index.html"]["tier"] = "high"
+          by_file["royal-navy-blue-gold.html"]["tier"] = "high"
+          by_file["ivory-pearl.html"]["tier"] = "premium"
+          by_file["mahad-laiba.html"]["tier"] = "premium"
           if any("hamza" in str(x.get("id", "")).lower() or "hamza" in str(x.get("name", "")).lower() for x in items):
             raise SystemExit("Hamza & Areeba duplicate label must not appear; use Green Velvet only")
           registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
