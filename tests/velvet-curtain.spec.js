@@ -26,7 +26,7 @@ test('Velvet Curtain starts on one real user tap', async ({ page }) => {
   await intro.click();
   await expect.poll(async () => page.locator('#app').evaluate(el => el.classList.contains('started')), {
     timeout: 5000,
-    message: 'The #app element did not enter its started state after the tap'
+    message: `The #app element did not enter its started state after the tap. Browser errors: ${pageErrors.join(' | ') || 'none'}`
   }).toBe(true);
 
   await expect.poll(async () => video.evaluate(el => ({
@@ -69,7 +69,7 @@ test('Velvet Curtain starts with a real touch on a mobile viewport', async ({ br
   await intro.tap();
   await expect.poll(async () => page.locator('#app').evaluate(el => el.classList.contains('started')), {
     timeout: 5000,
-    message: 'The mobile tap did not start the invitation'
+    message: `The mobile tap did not start the invitation. Browser errors: ${pageErrors.join(' | ') || 'none'}`
   }).toBe(true);
 
   const video = page.locator('video').first();
