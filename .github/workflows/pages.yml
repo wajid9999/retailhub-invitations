@@ -254,6 +254,68 @@ jobs:
 
           print("Hosts final-page rendering patched for Royal Events, Ivory Pearl, and Velvet Curtain.")
           PY
+      - name: Finalize template registry and add future template packages
+        run: |
+          python3 - <<'PY'
+          import json, shutil
+          from pathlib import Path
+          root = Path("public")
+          registry = root / "templates.json"
+          data = json.loads(registry.read_text(encoding="utf-8"))
+          items = data.setdefault("templates", [])
+          # The Royal Navy template is the lead gallery item; Velvet Curtain
+          # remains archived in source files but is not part of the active gallery.
+          items = [t for t in items if t.get("id") not in {"royal-navy-blue-gold", "velvet-curtain"}]
+          royal = {
+            "id": "royal-navy-blue-gold",
+            "name": "Royal Navy Blue & Gold",
+            "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
+            "file": "templates/royal-navy-blue-gold.html",
+            "thumb": "thumbs/royal-navy-blue-gold.svg",
+            "tier": "premium",
+            "occasion": "wedding",
+            "ad": "std",
+            "fam": False
+          }
+          items.insert(0, royal)
+          # Future additions: place one folder in site/new-templates/<id>/ with
+          # template.json, template.html and thumbnail.(svg|png|jpg|webp).
+          package_root = Path("site/new-templates")
+          if package_root.exists():
+            for folder in sorted(p for p in package_root.iterdir() if p.is_dir()):
+              meta_file = folder / "template.json"
+              html_file = folder / "template.html"
+              if not (meta_file.is_file() and html_file.is_file()):
+                raise SystemExit(f"Incomplete template package: {folder}")
+              meta = json.loads(meta_file.read_text(encoding="utf-8"))
+              tid = str(meta.get("id", "")).strip()
+              name = str(meta.get("name", "")).strip()
+              thumb = next((folder / f"thumbnail.{ext}" for ext in ("svg","png","jpg","webp") if (folder / f"thumbnail.{ext}").is_file()), None)
+              if not tid or not name or not thumb:
+                raise SystemExit(f"Template package needs id, name and thumbnail: {folder}")
+              if any(x.get("id") == tid for x in items):
+                raise SystemExit(f"Duplicate template ID: {tid}")
+              html_dest = f"templates/{tid}.html"
+              thumb_dest = f"thumbs/{tid}{thumb.suffix.lower()}"
+              shutil.copy2(html_file, root / html_dest)
+              shutil.copy2(thumb, root / thumb_dest)
+              item = {**meta, "file": html_dest, "thumb": thumb_dest}
+              items.append(item)
+          data["templates"] = items
+          ids = [x.get("id") for x in items]
+          files = [x.get("file") for x in items]
+          if len(ids) != len(set(ids)) or len(files) != len(set(files)):
+            raise SystemExit("Duplicate template IDs or HTML paths detected")
+          missing = [f for f in files if not f or not (root / f).is_file()]
+          if missing:
+            raise SystemExit("Missing active template files: " + ", ".join(missing))
+          if items[0].get("id") != "royal-navy-blue-gold":
+            raise SystemExit("Royal Navy Blue & Gold must be first")
+          if any(x.get("id") == "velvet-curtain" for x in items):
+            raise SystemExit("Archived Velvet Curtain must not appear in active gallery")
+          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          print(f"Final gallery registry validated: {len(items)} active templates.")
+          PY
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
