@@ -146,7 +146,7 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "std",
             "fam": False
@@ -166,7 +166,7 @@ jobs:
           missing = [f for f in files if not f or not (Path("public") / f).is_file()]
           if missing:
               raise SystemExit("Missing template HTML file(s): " + ", ".join(map(str, missing)))
-          print("Green Velvet is High Premium; Royal Navy Blue & Gold is Premium.")
+          print("Green Velvet and Royal Navy Blue & Gold are High Premium.")
           PY
       - name: Render Hosts together on the final page of every active template
         run: |
@@ -272,7 +272,7 @@ jobs:
           if len(static_items) != 2:
             raise SystemExit("Expected two static templates; found " + str([(x.get("id"), x.get("file")) for x in static_items]))
           by_file["index.html"]["tier"] = "high"
-          by_file["royal-navy-blue-gold.html"]["tier"] = "premium"
+          by_file["royal-navy-blue-gold.html"]["tier"] = "high"
           for item in static_items:
             item["tier"] = "premium"
           if any("hamza" in str(x.get("id", "")).lower() or "hamza" in str(x.get("name", "")).lower() for x in items):
