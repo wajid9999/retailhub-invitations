@@ -168,7 +168,10 @@ jobs:
           from pathlib import Path
           p = Path("public/templates.json")
           data = json.loads(p.read_text(encoding="utf-8"))
-          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "royal-navy-blue-gold"]
+          velvet = next((t for t in data.get("templates", []) if t.get("id") == "velvet-curtain"), None)
+          if velvet is None:
+            raise SystemExit("Approved Green Velvet Curtain template is missing from the active registry")
+          remaining = [t for t in data.get("templates", []) if t.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
           navy = {
             "id": "royal-navy-blue-gold",
             "name": "Royal Navy Blue & Gold",
@@ -180,7 +183,7 @@ jobs:
             "ad": "royal",
             "fam": False
           }
-          data["templates"].insert(1, navy)
+          data["templates"] = [velvet, navy] + remaining
           # Preserve source category labels for owner review; do not infer tiers from names.\n          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           assert data["templates"][1]["id"] == "royal-navy-blue-gold", "Royal Navy must follow the approved Green Velvet template"
           assert any(t.get("id") == "velvet-curtain" for t in data["templates"]), "Green Velvet Curtain must remain active"
@@ -264,7 +267,10 @@ jobs:
           data = json.loads(registry.read_text(encoding="utf-8"))
           items = data.setdefault("templates", [])
           # Keep the approved Green Velvet Curtain active. Refresh only the broken Royal Navy entry.
-          items = [t for t in items if t.get("id") != "royal-navy-blue-gold"]
+          velvet = next((t for t in items if t.get("id") == "velvet-curtain"), None)
+          if velvet is None:
+            raise SystemExit("Approved Green Velvet Curtain template must remain active")
+          items = [t for t in items if t.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
           royal = {
             "id": "royal-navy-blue-gold",
             "name": "Royal Navy Blue & Gold",
@@ -276,7 +282,7 @@ jobs:
             "ad": "royal",
             "fam": False
           }
-          items.insert(1, royal)
+          items = [velvet, royal] + items
           # Future additions: place one folder in site/new-templates/<id>/ with
           # template.json, template.html and thumbnail.(svg|png|jpg|webp).
           package_root = Path("site/new-templates")
