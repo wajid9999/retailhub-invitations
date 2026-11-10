@@ -168,7 +168,7 @@ jobs:
           from pathlib import Path
           p = Path("public/templates.json")
           data = json.loads(p.read_text(encoding="utf-8"))
-          data["templates"] = [t for t in data.get("templates", []) if t.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
+          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "royal-navy-blue-gold"]
           navy = {
             "id": "royal-navy-blue-gold",
             "name": "Royal Navy Blue & Gold",
@@ -177,13 +177,13 @@ jobs:
             "thumb": "thumbs/royal-navy-blue-gold.svg",
             "tier": "premium",
             "occasion": "wedding",
-            "ad": "std",
+            "ad": "royal",
             "fam": False
           }
           data["templates"].insert(0, navy)
           # Preserve source category labels for owner review; do not infer tiers from names.\n          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           assert data["templates"][0]["id"] == "royal-navy-blue-gold"
-          assert not any(t.get("id") == "velvet-curtain" for t in data["templates"])
+          assert any(t.get("id") == "velvet-curtain" for t in data["templates"]), "Green Velvet Curtain must remain active"
           ids = [t.get("id") for t in data["templates"]]
           files = [t.get("file") for t in data["templates"]]
           names = [Path(f).name for f in files if f]
@@ -263,9 +263,8 @@ jobs:
           registry = root / "templates.json"
           data = json.loads(registry.read_text(encoding="utf-8"))
           items = data.setdefault("templates", [])
-          # The Royal Navy template is the lead gallery item; Velvet Curtain
-          # remains archived in source files but is not part of the active gallery.
-          items = [t for t in items if t.get("id") not in {"royal-navy-blue-gold", "velvet-curtain"}]
+          # Keep the approved Green Velvet Curtain active. Refresh only the broken Royal Navy entry.
+          items = [t for t in items if t.get("id") != "royal-navy-blue-gold"]
           royal = {
             "id": "royal-navy-blue-gold",
             "name": "Royal Navy Blue & Gold",
@@ -274,7 +273,7 @@ jobs:
             "thumb": "thumbs/royal-navy-blue-gold.svg",
             "tier": "premium",
             "occasion": "wedding",
-            "ad": "std",
+            "ad": "royal",
             "fam": False
           }
           items.insert(0, royal)
