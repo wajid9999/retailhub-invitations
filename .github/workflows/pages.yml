@@ -201,7 +201,7 @@ jobs:
           anchor = "scr.innerHTML=hero+"
           if anchor not in s:
               raise SystemExit("Velvet Curtain: render insertion point not found")
-          s = s.replace(anchor, hosts_code + "\\n" + anchor, 1)
+          s = s.replace(anchor, hosts_code + "\n" + anchor, 1)
           old = "scr.innerHTML=hero+'<div class=\"roll\"></div>'+evS+faq+end;"
           new = "scr.innerHTML=hero+'<div class=\"roll\"></div>'+evS+faq+end+hostsS;"
           if old not in s:
