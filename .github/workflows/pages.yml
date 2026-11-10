@@ -179,7 +179,7 @@ jobs:
             "fam": False
           }
           data["templates"].insert(0, navy)
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
           assert data["templates"][0]["id"] == "royal-navy-blue-gold"
           assert not any(t.get("id") == "velvet-curtain" for t in data["templates"])
           print("Royal Navy Blue & Gold is first; duplicate Velvet Curtain removed.")
