@@ -80,7 +80,7 @@ jobs:
               raise SystemExit("Could not replace the Velvet Curtain playback handler")
           # The source already declares started once immediately before the
           # original handler; the replacement declares it with startPending.
-          s = s.replace("/* playback */\\nlet started=false;\\n", "/* playback */\\n", 1)
+          s = s.replace("/* playback */\nlet started=false;\n", "/* playback */\n", 1)
 
           pat = re.compile(r"let C=(\{.*?\n\});", re.S)
           m = pat.search(s)
