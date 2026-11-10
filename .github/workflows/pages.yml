@@ -194,6 +194,13 @@ jobs:
           # Velvet Curtain: move the already-supported hosts section after the end page.
           p = Path("public/templates/velvet-curtain/index.html")
           s = p.read_text(encoding="utf-8")
+          # Define the hosts section before it is appended; the original package
+          # referenced hostsS without declaring it, which stopped the page script.
+          hosts_code = '''const hostsS=(Array.isArray(C.hosts)?C.hosts:[]).map(n=>{const raw=typeof n==="string"?n:String(n&&n.name||"");const[a,b]=raw.split("|");const name=a.trim();return name?\x60<div class="pp" style="text-align:center;padding:18px 12px"><div class="s it">\x24{String(C.hostsTitle||"With best compliments")}</div><div class="script gold" style="font-size:clamp(20px,5vw,30px);margin:8px 0">\x24{ name.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])) }</div>\x24{b&&b.trim()?\x60<div class="s it">\x24{b.trim()}</div>\x60:""}</div>\x60:""}).join("");'''
+          anchor = "scr.innerHTML=hero+"
+          if anchor not in s:
+              raise SystemExit("Velvet Curtain: render insertion point not found")
+          s = s.replace(anchor, hosts_code + "\\n" + anchor, 1)
           old = "scr.innerHTML=hero+'<div class=\"roll\"></div>'+evS+faq+end;"
           new = "scr.innerHTML=hero+'<div class=\"roll\"></div>'+evS+faq+end+hostsS;"
           if old not in s:
