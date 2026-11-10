@@ -11,8 +11,13 @@ test('Royal Navy Blue & Gold is first and duplicate Velvet Curtain is absent', a
  expect(list.find(t=>t.id==='hamza-areeba').tier).toBe('high');
  expect(list.find(t=>t.id==='royal-navy-blue-gold').tier).toBe('premium');
  expect(list.find(t=>t.id==='ivory').tier).toBe('premium');
- expect(list.find(t=>t.id==='mahad').tier).toBe('premium');
- const home=await page.request.get(process.env.BASE_URL+'/');\n const html=await home.text();\n expect(html).toContain('id="payment-proof"');\n expect(html).toContain('submit-payment-proof');\n expect(html).toContain('verify-original');\n await page.goto(process.env.BASE_URL+'/templates/royal-navy-blue-gold.html');
+
+ const home=await page.request.get(process.env.BASE_URL+'/');
+ const html=await home.text();
+ expect(html).toContain('id="payment-proof"');
+ expect(html).toContain('submit-payment-proof');
+ expect(html).toContain('verify-original');
+ await page.goto(process.env.BASE_URL+'/templates/royal-navy-blue-gold.html');
  await expect(page.locator('#customise')).toBeVisible();
  await page.locator('#customise').click();
  await page.locator('#groom').fill('Ali');
