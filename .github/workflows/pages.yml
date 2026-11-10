@@ -117,7 +117,7 @@ jobs:
             "tag": "Green velvet curtains, glowing lanterns and sparkling lights",
             "file": "templates/velvet-curtain/index.html",
             "thumb": "thumbs/velvet-curtain.jpg",
-            "tier": "high",
+            "tier": "premium",
             "occasion": "wedding",
             "ad": "velvet",
             "fam": False
@@ -178,7 +178,7 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "royal",
             "fam": False
@@ -277,7 +277,7 @@ jobs:
             "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
             "file": "templates/royal-navy-blue-gold.html",
             "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "premium",
+            "tier": "high",
             "occasion": "wedding",
             "ad": "royal",
             "fam": False
