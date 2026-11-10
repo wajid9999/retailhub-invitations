@@ -14,6 +14,7 @@ on:
       - 'retailhub-invitations.zip'
       - 'site.zip'
       - 'site/**'
+      - 'tests/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
