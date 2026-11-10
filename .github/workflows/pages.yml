@@ -110,6 +110,38 @@ jobs:
           })
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
+      - name: Add Hamza & Areeba wedding invitation template
+        run: |
+          mkdir -p public/templates public/thumbs
+          test -s site/hamza-areeba.html
+          test -s site/hamza-areeba-thumb.svg
+          cp site/hamza-areeba.html public/templates/hamza-areeba.html
+          cp site/hamza-areeba-thumb.svg public/thumbs/hamza-areeba.svg
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          html = Path("public/templates/hamza-areeba.html").read_text(encoding="utf-8")
+          if '<video id="vid"' not in html or 'data:video/mp4;base64,' not in html:
+              raise SystemExit("Hamza & Areeba: opening video or embedded video source is missing")
+          if 'intro.addEventListener("click",start)' not in html:
+              raise SystemExit("Hamza & Areeba: intro playback tap handler is missing")
+          p = Path("public/templates.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "hamza-areeba"]
+          data["templates"].append({
+            "id": "hamza-areeba",
+            "name": "Hamza & Areeba",
+            "tag": "Wedding invitation with an opening video reveal",
+            "file": "templates/hamza-areeba.html",
+            "thumb": "thumbs/hamza-areeba.svg",
+            "tier": "premium",
+            "occasion": "wedding",
+            "ad": "std",
+            "fam": False
+          })
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          print("Hamza & Areeba template and opening-video checks passed.")
+          PY
       - name: Render Hosts together on the final page of every active template
         run: |
           python3 - <<'PY'
