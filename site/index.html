@@ -129,10 +129,20 @@ async function loadOrderSettings(){
   publicSettings=j.settings;updatePackagePrice();
  }catch(e){$('#payment-instructions').textContent='Payment details could not be loaded. You can still submit your order; contact support for payment instructions.'}
 }
+function invitationEventCount(payload){
+ const c=payload&&payload.C&&Array.isArray(payload.C.events)?payload.C.events:
+   payload&&payload.d&&Array.isArray(payload.d.ev)?payload.d.ev:
+   payload&&Array.isArray(payload.ev)?payload.ev:[];
+ return c.length;
+}
+function calculateInvitationPrice(tier,count){
+ const n=Math.max(1,Math.min(30,Number(count)||1));
+ return tier==='high'?2000+1000*n:tier==='premium'?1000*n:500*n;
+}
 function updatePackagePrice(){
  if(!publicSettings)return;
- const tier=$('#package-tier').value,price=tier==='simple'?publicSettings.simple_price:tier==='premium'?publicSettings.premium_price:publicSettings.high_price;
- $('#package-price').textContent='Package price: Rs. '+Number(price).toLocaleString('en-PK');
+ const tier=$('#package-tier').value,count=invitationEventCount(previewInvitation),price=calculateInvitationPrice(tier,count);
+ $('#package-price').textContent=count+' event'+(count===1?'':'s')+' · Package price: Rs. '+price.toLocaleString('en-PK')+' (pages do not change the price)';
  $('#payment-instructions').textContent=publicSettings.jazzcash_details||'Payment details will be shared after order creation.';
 }
 $('#package-tier').onchange=updatePackagePrice;
