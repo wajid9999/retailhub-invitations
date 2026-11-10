@@ -30,6 +30,7 @@ if(action==="submit-order"){
  const eventList=
    (payload as Record<string,any>).C&&Array.isArray((payload as Record<string,any>).C.events)?(payload as Record<string,any>).C.events:
    (payload as Record<string,any>).d&&Array.isArray((payload as Record<string,any>).d.ev)?(payload as Record<string,any>).d.ev:
+   Array.isArray((payload as Record<string,any>).EV)?(payload as Record<string,any>).EV:
    Array.isArray((payload as Record<string,any>).ev)?(payload as Record<string,any>).ev:[];
  const eventCount=Math.max(1,Math.min(30,eventList.length));
  const price=tier==="high"?2000+1000*eventCount:tier==="premium"?1000*eventCount:500*eventCount;
