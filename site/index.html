@@ -132,6 +132,7 @@ async function loadOrderSettings(){
 function invitationEventCount(payload){
  const c=payload&&payload.C&&Array.isArray(payload.C.events)?payload.C.events:
    payload&&payload.d&&Array.isArray(payload.d.ev)?payload.d.ev:
+   payload&&Array.isArray(payload.EV)?payload.EV:
    payload&&Array.isArray(payload.ev)?payload.ev:[];
  return c.length;
 }
