@@ -32,3 +32,23 @@ test('Royal Navy Blue & Gold is first and duplicate Velvet Curtain is absent', a
  await expect(page.locator('#names')).toContainText('Sara');
  expect(errors).toEqual([]);
 });
+test('event-based package pricing is correct and page count is not used', async ({page})=>{
+ await page.goto(process.env.BASE_URL+'/');
+ const result=await page.evaluate(()=>{
+  const payloads=[
+   {C:{events:[{name:'Mehndi'},{name:'Nikah'},{name:'Walima'}]}},
+   {d:{ev:[{k:'Birthday'}]}},
+   {EV:[{k:'Mehndi'},{k:'Baraat'}]}
+  ];
+  return {
+   high:[1,2,3].map(n=>calculateInvitationPrice('high',n)),
+   premium:[1,2,3].map(n=>calculateInvitationPrice('premium',n)),
+   simple:[1,2,3].map(n=>calculateInvitationPrice('simple',n)),
+   counts:payloads.map(invitationEventCount)
+  };
+ });
+ expect(result.high).toEqual([3000,4000,5000]);
+ expect(result.premium).toEqual([1000,2000,3000]);
+ expect(result.simple).toEqual([500,1000,1500]);
+ expect(result.counts).toEqual([3,1,2]);
+});
