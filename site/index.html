@@ -93,7 +93,7 @@ async function route(){
   }catch(e){$('#tt').textContent='Invitation unavailable';$('#preview-note').textContent=e.message;$('#ifr').src='about:blank'}
   return;
  }
- const originalToken=new URLSearchParams(location.search).get('original');
+
  if(originalToken){
   $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#tt').textContent='Your original invitation';$('#ifr').src='about:blank';$('#order-panel').classList.add('h');$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
   try{
