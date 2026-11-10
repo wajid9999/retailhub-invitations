@@ -23,13 +23,13 @@ test('Green Velvet and Royal Navy Blue & Gold are High Premium', async ({page})=
  expect(adminHtml).toContain('payment_proof_url');
  expect(adminHtml).toContain('Payment OK');
  await page.goto(process.env.BASE_URL+'/templates/royal-navy-blue-gold.html');
- await expect(page.locator('#customise')).toBeVisible();
- await page.locator('#customise').click();
- await page.locator('#groom').fill('Ali');
- await page.locator('#bride').fill('Sara');
- await page.locator('#apply').click();
- await expect(page.locator('#names')).toContainText('Ali');
- await expect(page.locator('#names')).toContainText('Sara');
+ const video=page.locator('#vid');
+ await expect(video).toHaveCount(1);
+ const videoSource=await video.locator('source').getAttribute('src');
+ expect(videoSource).toContain('data:video/mp4;base64,');
+ await expect(page.locator('#intro')).toBeVisible();
+ await page.locator('#intro').click();
+ await expect.poll(()=>video.evaluate(v=>v.paused)).toBeFalsy({timeout:10000});
  expect(errors).toEqual([]);
 });
 test('event-based package pricing is correct and page count is not used', async ({page})=>{
