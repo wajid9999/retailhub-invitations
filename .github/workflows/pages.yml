@@ -153,8 +153,9 @@ jobs:
           }
           data["templates"] = [velvet, navy] + data["templates"]
           # Preserve source category labels for owner review; do not infer tiers from names.\n          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-          assert data["templates"][0]["id"] == "royal-navy-blue-gold"
-          assert not any(t.get("id") == "velvet-curtain" for t in data["templates"])
+          assert data["templates"][0]["id"] == "velvet-curtain"
+          assert data["templates"][1]["id"] == "royal-navy-blue-gold"
+          assert sum(t.get("id") == "velvet-curtain" for t in data["templates"]) == 1
           ids = [t.get("id") for t in data["templates"]]
           files = [t.get("file") for t in data["templates"]]
           names = [Path(f).name for f in files if f]
@@ -165,7 +166,7 @@ jobs:
           missing = [f for f in files if not f or not (Path("public") / f).is_file()]
           if missing:
               raise SystemExit("Missing template HTML file(s): " + ", ".join(map(str, missing)))
-          print("Royal Navy Blue & Gold is first; duplicate Velvet Curtain removed; all active template IDs and HTML filenames are unique.")
+          print("Green Velvet and Royal Navy are retained once each; both are High Premium.")
           PY
       - name: Render Hosts together on the final page of every active template
         run: |
