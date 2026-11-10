@@ -36,7 +36,12 @@ fieldset{border:1px solid var(--line);border-radius:12px;margin:14px 0;padding:6
 <label>WhatsApp number<input id="customer-phone" type="tel" autocomplete="tel" placeholder="03XXXXXXXXX" maxlength="20" required></label>
 <label>Package<select id="package-tier"><option value="simple">Simple</option><option value="premium">Premium</option><option value="high">High Premium</option></select></label>
 <p id="package-price" class="s"></p><div id="payment-instructions" class="s"></div>
-<button id="place-order" style="width:100%">Create order &amp; continue to WhatsApp</button>
+<button id="place-order" style="width:100%">Create order</button>
+<div id="proof-panel" class="h" style="margin-top:14px">
+ <p class="s">After payment, upload your receipt or screenshot here. JPG, PNG or WEBP only (maximum 5MB).</p>
+ <label>Payment screenshot<input id="payment-proof" type="file" accept="image/jpeg,image/png,image/webp"></label>
+ <button id="upload-proof" style="width:100%">Upload payment screenshot</button>
+</div>
 <p id="order-status" class="s" role="status" style="margin-top:10px"></p>
 </div></div></div>
 </div>
@@ -119,6 +124,7 @@ function updatePackagePrice(){
  $('#payment-instructions').textContent=publicSettings.jazzcash_details||'Payment details will be shared after order creation.';
 }
 $('#package-tier').onchange=updatePackagePrice;
+let currentOrder=null;
 $('#place-order').onclick=async()=>{
  const name=$('#customer-name').value.trim(),phone=$('#customer-phone').value.trim(),tier=$('#package-tier').value;
  if(!name||phone.replace(/\\D/g,'').length<10){$('#order-status').textContent='Please enter your name and a valid WhatsApp number.';return}
@@ -127,11 +133,25 @@ $('#place-order').onclick=async()=>{
  try{
   const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'submit-order',customer_name:name,customer_phone:phone,template_id:cur.id,template_name:cur.name,package_tier:tier,preview_payload:previewInvitation})});
   const j=await r.json();if(!r.ok)throw new Error(j.error||'Order could not be created');
-  const o=j.order,amount=Number(o.amount_pkr).toLocaleString('en-PK');
-  const message='Assalamualaikum! I have placed a digital invitation order.\\nOrder No: '+o.order_number+'\\nName: '+name+'\\nWhatsApp: '+phone+'\\nDesign: '+cur.name+'\\nPackage: '+tier.toUpperCase()+'\\nAmount: Rs. '+amount+'\\nJazzCash: '+(publicSettings?.jazzcash_details||'Please share payment details')+'\\nI will send the payment screenshot here.\\nTrial Preview: '+location.href;
-  $('#order-status').textContent='Order #'+o.order_number+' created. Opening WhatsApp…';
-  location.href='https://wa.me/'+WA+'?text='+encodeURIComponent(message);
+  currentOrder={id:j.order.id,number:j.order.order_number,phone};
+  $('#proof-panel').classList.remove('h');
+  $('#place-order').classList.add('h');
+  $('#order-status').textContent='Order #'+j.order.order_number+' created. Please pay using the details above, then upload your payment screenshot here.';
  }catch(e){$('#order-status').textContent=e.message||'Order failed. Please try again.';btn.disabled=false}
+};
+$('#upload-proof').onclick=async()=>{
+ const file=$('#payment-proof').files[0],btn=$('#upload-proof');
+ if(!currentOrder){$('#order-status').textContent='Create your order first.';return}
+ if(!file){$('#order-status').textContent='Please choose your payment screenshot.';return}
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024){$('#order-status').textContent='Choose a JPG, PNG or WEBP image up to 5MB.';return}
+ btn.disabled=true;$('#order-status').textContent='Uploading payment screenshot…';
+ try{
+  const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]||'');reader.onerror=()=>reject(new Error('Could not read the selected image.'));reader.readAsDataURL(file)});
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'submit-payment-proof',order_id:currentOrder.id,customer_phone:currentOrder.phone,mime_type:file.type,file_base64:data})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error||'Screenshot upload failed');
+  $('#order-status').textContent='Payment screenshot received for order #'+currentOrder.number+'. We will verify it and send your original invitation link on WhatsApp.';
+  $('#proof-panel').classList.add('h');
+ }catch(e){$('#order-status').textContent=e.message||'Upload failed. Please try again.';btn.disabled=false}
 };
 function tab(n){$('#pd').classList.toggle('h',n!==1);$('#pp').classList.toggle('h',n!==2);$('#t1').classList.toggle('on',n===1);$('#t2').classList.toggle('on',n===2)}
 async function show(){
