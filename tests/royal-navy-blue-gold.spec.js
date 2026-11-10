@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-test('Green Velvet is High Premium video; Royal Navy Blue & Gold is static Premium', async ({page})=>{
+test('Green Velvet and Royal Navy Blue & Gold are High Premium', async ({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(process.env.BASE_URL+'/');
  const response=await page.request.get(process.env.BASE_URL+'/templates.json');
@@ -7,7 +7,7 @@ test('Green Velvet is High Premium video; Royal Navy Blue & Gold is static Premi
  const data=await response.json();const list=data.templates;
  expect(list.map(t=>t.id)).toEqual(['velvet-curtain','royal-navy-blue-gold','mahad','ivory']);
  expect(list.find(t=>t.id==='velvet-curtain').tier).toBe('high');
- expect(list.find(t=>t.id==='royal-navy-blue-gold').tier).toBe('premium');
+ expect(list.find(t=>t.id==='royal-navy-blue-gold').tier).toBe('high');
  expect(list.find(t=>t.id==='mahad').tier).toBe('premium');
  expect(list.find(t=>t.id==='ivory').tier).toBe('premium');
  expect(list.some(t=>t.id==='hamza-areeba')).toBeFalsy();
