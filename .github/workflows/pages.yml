@@ -78,6 +78,9 @@ jobs:
           s, count = re.subn(r'function start\(\)\{.*?\}\s*\$\("#intro"\)\.onclick=start;', lambda _: playback, s, count=1, flags=re.S)
           if count != 1:
               raise SystemExit("Could not replace the Velvet Curtain playback handler")
+          # The source already declares started once immediately before the
+          # original handler; the replacement declares it with startPending.
+          s = s.replace("/* playback */\\nlet started=false;\\n", "/* playback */\\n", 1)
 
           pat = re.compile(r"let C=(\{.*?\n\});", re.S)
           m = pat.search(s)
