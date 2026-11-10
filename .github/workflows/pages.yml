@@ -25,7 +25,7 @@ concurrency:
 jobs:
   deploy:
     environment:
-      name: github-pages
+      name: ${{ github.event_name == 'pull_request' && 'pages-validation' || 'github-pages' }}
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
