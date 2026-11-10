@@ -239,7 +239,7 @@ jobs:
           velvet = next((t for t in items if t.get("id") == "velvet-curtain"), None)
           if velvet is None:
             raise SystemExit("Green Velvet must remain active")
-          items = [t for t in items if t.get("id") not in {"royal-navy-blue-gold", "velvet-curtain", "hamza-areeba"}]
+          static_items = [t for t in items if t.get("id") not in {"royal-navy-blue-gold", "velvet-curtain", "hamza-areeba"}]
           royal = {
             "id": "royal-navy-blue-gold",
             "name": "Royal Navy Blue & Gold",
@@ -252,7 +252,7 @@ jobs:
             "fam": False
           }
           velvet["tier"] = "high"
-          items = [velvet, royal]
+          items = [velvet, royal] + static_items
           # The approved gallery is intentionally limited to the four reviewed templates.
           # New packages are added only after separate review and approval.
           data["templates"] = items
