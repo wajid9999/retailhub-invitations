@@ -214,7 +214,49 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
+      - name: Upload browser-test site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: invitation-public-site
+          path: public/
+          if-no-files-found: error
+          retention-days: 1
       - name: Deploy to GitHub Pages
         if: github.event_name != 'pull_request'
         id: deployment
         uses: actions/deploy-pages@v4
+
+  browser-test:
+    needs: deploy
+    if: always() && needs.deploy.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download the exact site artifact built above
+        uses: actions/download-artifact@v4
+        with:
+          name: invitation-public-site
+          path: public
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --save-dev @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Serve the built artifact locally
+        run: |
+          python3 -m http.server 4173 --directory public > /tmp/invitation-server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:4173/templates.json >/dev/null
+      - name: Test the exact built artifact
+        run: npx playwright test tests/velvet-curtain.spec.js --reporter=list
+        env:
+          BASE_URL: http://127.0.0.1:4173
