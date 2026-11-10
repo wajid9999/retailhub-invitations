@@ -53,10 +53,20 @@ jobs:
           # Preserve the original embedded video: it contains the curtain animation,
           # lantern reveal, and AAC soundtrack. Start only after the visitor taps.
           # Replace the original playback handler regardless of its previous version.
-          playback = r'''function start(){if(started)return;started=true;app.classList.add("started");vid.muted=false;vid.volume=1;const play=vid.play();if(play&&play.catch)play.catch(e=>{console.warn("Video playback was blocked; tap the invitation again",e);started=false;app.classList.remove("started");});}
-          $("#intro").onclick=start;
-          // Capture the first real tap anywhere on the invitation preview. This
-          // keeps the video start inside the user's gesture on mobile browsers.
+          playback = r'''let started=false,startPending=false;
+          const intro=$("#intro");
+          function start(){
+            if(started||startPending)return;
+            startPending=true;
+            const play=vid.play();
+            if(play&&typeof play.then==="function"){
+              play.then(()=>{started=true;startPending=false;app.classList.add("started");})
+                  .catch(e=>{startPending=false;console.warn("Video playback was blocked; tap again to retry",e);});
+            }else{started=true;startPending=false;app.classList.add("started");}
+          }
+          intro.addEventListener("click",start);
+          intro.addEventListener("pointerup",start);
+          intro.addEventListener("touchend",start,{passive:true});
           app.addEventListener("pointerup",start,{capture:true});'''
           s, count = re.subn(r'function start\(\)\{.*?\}\s*\$\("#intro"\)\.onclick=start;', lambda _: playback, s, count=1, flags=re.S)
           if count != 1:
@@ -93,6 +103,30 @@ jobs:
             "tag": "Green velvet curtains, glowing lanterns and sparkling lights",
             "file": "templates/velvet-curtain/index.html",
             "thumb": "thumbs/velvet-curtain.jpg",
+            "tier": "premium",
+            "occasion": "wedding",
+            "ad": "velvet",
+            "fam": False
+          })
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+      - name: Add Hamza & Areeba template
+        run: |
+          mkdir -p public/templates/hamza-areeba public/thumbs
+          cp site/hamza-areeba.html public/templates/hamza-areeba/index.html
+          cp site/hamza-areeba-thumb.jpg public/thumbs/hamza-areeba.jpg
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("public/templates.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "hamza-areeba"]
+          data["templates"].append({
+            "id": "hamza-areeba",
+            "name": "Hamza & Areeba",
+            "tag": "Video-reveal wedding invitation with elegant gold details",
+            "file": "templates/hamza-areeba/index.html",
+            "thumb": "thumbs/hamza-areeba.jpg",
             "tier": "premium",
             "occasion": "wedding",
             "ad": "velvet",
