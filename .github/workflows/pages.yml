@@ -180,9 +180,9 @@ jobs:
             "ad": "royal",
             "fam": False
           }
-          data["templates"].insert(0, navy)
+          data["templates"].insert(1, navy)
           # Preserve source category labels for owner review; do not infer tiers from names.\n          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-          assert data["templates"][0]["id"] == "royal-navy-blue-gold"
+          assert data["templates"][1]["id"] == "royal-navy-blue-gold", "Royal Navy must follow the approved Green Velvet template"
           assert any(t.get("id") == "velvet-curtain" for t in data["templates"]), "Green Velvet Curtain must remain active"
           ids = [t.get("id") for t in data["templates"]]
           files = [t.get("file") for t in data["templates"]]
@@ -276,7 +276,7 @@ jobs:
             "ad": "royal",
             "fam": False
           }
-          items.insert(0, royal)
+          items.insert(1, royal)
           # Future additions: place one folder in site/new-templates/<id>/ with
           # template.json, template.html and thumbnail.(svg|png|jpg|webp).
           package_root = Path("site/new-templates")
@@ -308,10 +308,10 @@ jobs:
           missing = [f for f in files if not f or not (root / f).is_file()]
           if missing:
             raise SystemExit("Missing active template files: " + ", ".join(missing))
-          if items[0].get("id") != "royal-navy-blue-gold":
-            raise SystemExit("Royal Navy Blue & Gold must be first")
-          if any(x.get("id") == "velvet-curtain" for x in items):
-            raise SystemExit("Archived Velvet Curtain must not appear in active gallery")
+          if not items or items[0].get("id") != "velvet-curtain":
+            raise SystemExit("Approved Green Velvet Curtain must remain first in the active gallery")
+          if len(items) < 2 or items[1].get("id") != "royal-navy-blue-gold":
+            raise SystemExit("Royal Navy Blue & Gold must appear second in the active gallery")
           registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           print(f"Final gallery registry validated: {len(items)} active templates.")
           PY
