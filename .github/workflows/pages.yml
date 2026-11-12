@@ -103,6 +103,15 @@ jobs:
           if (introNames) introNames.innerHTML = String(C.groom || "Groom") + "<br><small style='font-size:.5em'>&amp;</small><br>" + String(C.bride || "Bride");
           """
           s = s[:m.end()] + boot + s[m.end():]
+          # Compact the event-detail pages on tall mobile screens; the old 78vh
+          # minimum plus 17vh vertical padding left excessive empty paper below Nikah.
+          old_css = 'section.pp{background:linear-gradient(180deg,#f8eed3,#f1e2b9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:78vh;padding:9vh 7% 8vh;scroll-snap-align:start;position:relative}'
+          new_css = '''section.pp{background:linear-gradient(180deg,#f8eed3,#f1e2b9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:56svh;padding:5svh 7% 6svh;scroll-snap-align:start;position:relative;gap:clamp(3px,1vh,10px)}
+          @media(max-height:700px){section.pp{min-height:64svh;padding:4svh 6% 5svh}}
+          @media(max-width:360px){.ev{font-size:40px}.names{font-size:36px}.ir{font-size:16px;max-width:100%}.btn{font-size:13px;padding:8px 13px}}'''
+          if old_css not in s:
+              raise SystemExit("Velvet Curtain: expected event-page spacing CSS not found")
+          s = s.replace(old_css, new_css, 1)
           p.write_text(s, encoding="utf-8")
           PY
           python3 - <<'PY'
