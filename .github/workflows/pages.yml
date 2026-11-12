@@ -47,43 +47,6 @@ jobs:
           cp -R extracted/site/. public/
           if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
           if [ -f site/admin.html ]; then cp site/admin.html public/admin.html; fi
-      - name: Remove retired duplicate invitation designs from the published gallery
-        run: |
-          python3 - <<'PY'
-          import json, re
-          from pathlib import Path
-          root = Path("public")
-          registry = root / "templates.json"
-          data = json.loads(registry.read_text(encoding="utf-8"))
-          retired = re.compile(r"(royal[-_ ]?navy|royal[-_ ]?blue|hamza|areeba|099|velvet[-_ ]?curtain|green[-_ ]?velvet)", re.I)
-          kept = []
-          removed = []
-          for item in data.get("templates", []):
-            identity = " ".join(str(item.get(k, "")) for k in ("id", "name", "file", "thumb", "tag"))
-            if retired.search(identity):
-              removed.append(item)
-              continue
-            kept.append(item)
-          if not kept:
-            raise SystemExit("Refusing to publish an empty gallery; review the retirement filter.")
-          data["templates"] = kept
-          for item in removed:
-            for key in ("file", "thumb"):
-              rel = item.get(key)
-              if rel:
-                target = (root / rel).resolve()
-                if root.resolve() in target.parents and target.is_file():
-                  target.unlink()
-          # Also remove the retired, separately copied source assets from the public output.
-          for rel in ("templates/royal-navy-blue-gold.html", "thumbs/royal-navy-blue-gold.svg",
-                      "templates/velvet-curtain/index.html", "thumbs/velvet-curtain.jpg"):
-            target = root / rel
-            if target.is_file():
-              target.unlink()
-          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
-          print("Retired templates removed:", [x.get("name", x.get("id")) for x in removed])
-          print("Remaining active templates:", [x.get("name", x.get("id")) for x in kept])
-          PY
       - name: Render Hosts together on the final page of every active template
         run: |
           python3 - <<'PY'
