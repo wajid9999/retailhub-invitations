@@ -47,135 +47,42 @@ jobs:
           cp -R extracted/site/. public/
           if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
           if [ -f site/admin.html ]; then cp site/admin.html public/admin.html; fi
-      - name: Add Velvet Curtain template
+      - name: Remove retired duplicate invitation designs from the published gallery
         run: |
-          test -f site/velvet-curtain-website-package.zip
-          mkdir -p velvet-package public/templates/velvet-curtain public/thumbs
-          unzip -q site/velvet-curtain-website-package.zip -d velvet-package
-          test -f velvet-package/velvet-curtain/index.html
-          cp velvet-package/velvet-curtain/index.html public/templates/velvet-curtain/index.html
-          cp velvet-package/velvet-curtain/thumb.jpg public/thumbs/velvet-curtain.jpg
           python3 - <<'PY'
+          import json, re
           from pathlib import Path
-          import re
-          p = Path("public/templates/velvet-curtain/index.html")
-          s = p.read_text(encoding="utf-8")
-          s = s.replace("const C={", "let C={", 1)
-          # Preserve the original embedded video: it contains the curtain animation,
-          # lantern reveal, and AAC soundtrack. Start only after the visitor taps.
-          # Replace the original playback handler regardless of its previous version.
-          playback = r'''let started=false,startPending=false;
-          const intro=$("#intro");
-          function start(){
-            if(started||startPending)return;
-            startPending=true;
-            const play=vid.play();
-            if(play&&typeof play.then==="function"){
-              play.then(()=>{started=true;startPending=false;app.classList.add("started");})
-                  .catch(e=>{startPending=false;console.warn("Video playback was blocked; tap again to retry",e);});
-            }else{started=true;startPending=false;app.classList.add("started");}
-          }
-          intro.addEventListener("click",start);
-          intro.addEventListener("pointerup",start);
-          intro.addEventListener("touchend",start,{passive:true});
-          app.addEventListener("pointerup",start,{capture:true});'''
-          s, count = re.subn(r'function start\(\)\{.*?\}\s*\$\("#intro"\)\.onclick=start;', lambda _: playback, s, count=1, flags=re.S)
-          if count != 1:
-              raise SystemExit("Could not replace the Velvet Curtain playback handler")
-          # The source already declares started once immediately before the
-          # original handler; the replacement declares it with startPending.
-          s = s.replace("/* playback */\nlet started=false;\n", "/* playback */\n", 1)
-
-          pat = re.compile(r"let C=(\{.*?\n\});", re.S)
-          m = pat.search(s)
-          if not m:
-              raise SystemExit("Could not find Velvet Curtain data block")
-          boot = r"""
-          const rawPayload = location.hash.length > 1 ? location.hash.slice(1) : "";
-          if (rawPayload) {
-            try {
-              const decoded = decodeURIComponent(escape(atob(rawPayload)));
-              const payload = JSON.parse(decoded);
-              if (payload && payload.C) C = payload.C;
-            } catch (e) { console.error("Invitation data could not be read", e); }
-          }
-          const introNames = document.querySelector("#intro .script");
-          if (introNames) introNames.innerHTML = String(C.groom || "Groom") + "<br><small style='font-size:.5em'>&amp;</small><br>" + String(C.bride || "Bride");
-          """
-          s = s[:m.end()] + boot + s[m.end():]
-          # Compact the event-detail pages on tall mobile screens; the old 78vh
-          # minimum plus 17vh vertical padding left excessive empty paper below Nikah.
-          old_css = 'section.pp{background:linear-gradient(180deg,#f8eed3,#f1e2b9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:78vh;padding:9vh 7% 8vh;scroll-snap-align:start;position:relative}'
-          new_css = '''section.pp{background:linear-gradient(180deg,#f8eed3,#f1e2b9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:56svh;padding:5svh 7% 6svh;scroll-snap-align:start;position:relative;gap:clamp(3px,1vh,10px)}
-          @media(max-height:700px){section.pp{min-height:64svh;padding:4svh 6% 5svh}}
-          @media(max-width:360px){.ev{font-size:40px}.names{font-size:36px}.ir{font-size:16px;max-width:100%}.btn{font-size:13px;padding:8px 13px}}'''
-          if old_css not in s:
-              raise SystemExit("Velvet Curtain: expected event-page spacing CSS not found")
-          s = s.replace(old_css, new_css, 1)
-          p.write_text(s, encoding="utf-8")
-          PY
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p = Path("public/templates.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          data["templates"] = [t for t in data.get("templates", []) if t.get("id") != "velvet-curtain"]
-          data["templates"].append({
-            "id": "velvet-curtain",
-            "name": "Green Velvet",
-            "tag": "Green velvet curtains, glowing lanterns and sparkling lights",
-            "file": "templates/velvet-curtain/index.html",
-            "thumb": "thumbs/velvet-curtain.jpg",
-            "tier": "high",
-            "occasion": "wedding",
-            "ad": "velvet",
-            "fam": False
-          })
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-          PY
-      - name: Add Royal Navy Blue & Gold original video template; keep Green Velvet
-        run: |
-          mkdir -p public/templates public/thumbs
-          test -s site/royal-navy-blue-gold.html
-          test -s site/royal-navy-blue-gold-thumb.svg
-          cp site/royal-navy-blue-gold.html public/templates/royal-navy-blue-gold.html
-          cp site/royal-navy-blue-gold-thumb.svg public/thumbs/royal-navy-blue-gold.svg
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p = Path("public/templates.json")
-          data = json.loads(p.read_text(encoding="utf-8"))
-          velvet = next((t for t in data.get("templates", []) if t.get("id") == "velvet-curtain"), None)
-          if velvet is None:
-            raise SystemExit("Green Velvet video template missing from registry")
-          data["templates"] = [t for t in data.get("templates", []) if t.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
-          navy = {
-            "id": "royal-navy-blue-gold",
-            "name": "Royal Navy Blue & Gold",
-            "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
-            "file": "templates/royal-navy-blue-gold.html",
-            "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "high",
-            "occasion": "wedding",
-            "ad": "std",
-            "fam": False
-          }
-          data["templates"] = [velvet, navy] + data["templates"]
-          # Preserve source category labels for owner review; do not infer tiers from names.\n          p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-          assert data["templates"][0]["id"] == "velvet-curtain"
-          assert data["templates"][1]["id"] == "royal-navy-blue-gold"
-          assert sum(t.get("id") == "velvet-curtain" for t in data["templates"]) == 1
-          ids = [t.get("id") for t in data["templates"]]
-          files = [t.get("file") for t in data["templates"]]
-          names = [Path(f).name for f in files if f]
-          if len(ids) != len(set(ids)):
-              raise SystemExit("Duplicate template IDs detected; use unique IDs such as wedding-001 and wedding-002")
-          if len(files) != len(set(files)) or len(names) != len(set(names)):
-              raise SystemExit("Duplicate HTML filenames detected; use unique filenames such as wedding-001.html and wedding-002.html")
-          missing = [f for f in files if not f or not (Path("public") / f).is_file()]
-          if missing:
-              raise SystemExit("Missing template HTML file(s): " + ", ".join(map(str, missing)))
-          print("Green Velvet and Royal Navy Blue & Gold are High Premium.")
+          root = Path("public")
+          registry = root / "templates.json"
+          data = json.loads(registry.read_text(encoding="utf-8"))
+          retired = re.compile(r"(royal[-_ ]?navy|royal[-_ ]?blue|hamza|areeba|099|velvet[-_ ]?curtain|green[-_ ]?velvet)", re.I)
+          kept = []
+          removed = []
+          for item in data.get("templates", []):
+            identity = " ".join(str(item.get(k, "")) for k in ("id", "name", "file", "thumb", "tag"))
+            if retired.search(identity):
+              removed.append(item)
+              continue
+            kept.append(item)
+          if not kept:
+            raise SystemExit("Refusing to publish an empty gallery; review the retirement filter.")
+          data["templates"] = kept
+          for item in removed:
+            for key in ("file", "thumb"):
+              rel = item.get(key)
+              if rel:
+                target = (root / rel).resolve()
+                if root.resolve() in target.parents and target.is_file():
+                  target.unlink()
+          # Also remove the retired, separately copied source assets from the public output.
+          for rel in ("templates/royal-navy-blue-gold.html", "thumbs/royal-navy-blue-gold.svg",
+                      "templates/velvet-curtain/index.html", "thumbs/velvet-curtain.jpg"):
+            target = root / rel
+            if target.is_file():
+              target.unlink()
+          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          print("Retired templates removed:", [x.get("name", x.get("id")) for x in removed])
+          print("Remaining active templates:", [x.get("name", x.get("id")) for x in kept])
           PY
       - name: Render Hosts together on the final page of every active template
         run: |
@@ -235,59 +142,42 @@ jobs:
 
           print("Hosts final-page rendering patched for Royal Events, Ivory Pearl, and Velvet Curtain.")
           PY
-      - name: Finalize template registry and add future template packages
+      - name: Remove retired duplicate invitation designs from the published gallery
         run: |
           python3 - <<'PY'
-          import json, shutil
+          import json, re
           from pathlib import Path
           root = Path("public")
           registry = root / "templates.json"
           data = json.loads(registry.read_text(encoding="utf-8"))
-          items = data.setdefault("templates", [])
-          # Keep one Green Velvet entry; do not add a separate Hamza & Areeba duplicate.
-          velvet = next((t for t in items if t.get("id") == "velvet-curtain"), None)
-          if velvet is None:
-            raise SystemExit("Green Velvet must remain active")
-          static_items = [t for t in items if t.get("id") not in {"royal-navy-blue-gold", "velvet-curtain", "hamza-areeba"}]
-          royal = {
-            "id": "royal-navy-blue-gold",
-            "name": "Royal Navy Blue & Gold",
-            "tag": "Navy velvet, Mughal arch, golden lanterns and ornate invitation card",
-            "file": "templates/royal-navy-blue-gold.html",
-            "thumb": "thumbs/royal-navy-blue-gold.svg",
-            "tier": "high",
-            "occasion": "wedding",
-            "ad": "std",
-            "fam": False
-          }
-          velvet["tier"] = "high"
-          items = [velvet, royal] + static_items
-          # The approved gallery is intentionally limited to the four reviewed templates.
-          # New packages are added only after separate review and approval.
-          data["templates"] = items
-          ids = [x.get("id") for x in items]
-          files = [x.get("file") for x in items]
-          if len(ids) != len(set(ids)) or len(files) != len(set(files)):
-            raise SystemExit("Duplicate template IDs or HTML paths detected")
-          missing = [f for f in files if not f or not (root / f).is_file()]
-          if missing:
-            raise SystemExit("Missing active template files: " + ", ".join(missing))
-          if len(items) != 4:
-            raise SystemExit("Expected exactly four active templates; found " + str(len(items)))
-          by_file = {str(x.get("file", "")).split("/")[-1]: x for x in items}
-          if "index.html" not in by_file or "royal-navy-blue-gold.html" not in by_file:
-            raise SystemExit("Both approved featured template files must be active: " + str(sorted(by_file)))
-          static_items = [x for x in items if x.get("id") not in {"velvet-curtain", "royal-navy-blue-gold"}]
-          if len(static_items) != 2:
-            raise SystemExit("Expected two static templates; found " + str([(x.get("id"), x.get("file")) for x in static_items]))
-          by_file["index.html"]["tier"] = "high"
-          by_file["royal-navy-blue-gold.html"]["tier"] = "high"
-          for item in static_items:
-            item["tier"] = "premium"
-          if any("hamza" in str(x.get("id", "")).lower() or "hamza" in str(x.get("name", "")).lower() for x in items):
-            raise SystemExit("Hamza & Areeba duplicate label must not appear; use Green Velvet only")
-          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-          print(f"Final gallery registry validated: {len(items)} active templates.")
+          retired = re.compile(r"(royal[-_ ]?navy|royal[-_ ]?blue|hamza|areeba|099|velvet[-_ ]?curtain|green[-_ ]?velvet)", re.I)
+          kept = []
+          removed = []
+          for item in data.get("templates", []):
+            identity = " ".join(str(item.get(k, "")) for k in ("id", "name", "file", "thumb", "tag"))
+            if retired.search(identity):
+              removed.append(item)
+              continue
+            kept.append(item)
+          if not kept:
+            raise SystemExit("Refusing to publish an empty gallery; review the retirement filter.")
+          data["templates"] = kept
+          for item in removed:
+            for key in ("file", "thumb"):
+              rel = item.get(key)
+              if rel:
+                target = (root / rel).resolve()
+                if root.resolve() in target.parents and target.is_file():
+                  target.unlink()
+          # Also remove the retired, separately copied source assets from the public output.
+          for rel in ("templates/royal-navy-blue-gold.html", "thumbs/royal-navy-blue-gold.svg",
+                      "templates/velvet-curtain/index.html", "thumbs/velvet-curtain.jpg"):
+            target = root / rel
+            if target.is_file():
+              target.unlink()
+          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          print("Retired templates removed:", [x.get("name", x.get("id")) for x in removed])
+          print("Remaining active templates:", [x.get("name", x.get("id")) for x in kept])
           PY
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
