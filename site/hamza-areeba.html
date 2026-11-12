@@ -29,7 +29,9 @@ section.h{position:relative;height:100%;scroll-snap-align:start}
 .sh{position:absolute;bottom:1%;left:0;right:0;text-align:center;font-size:12px;letter-spacing:.22em;color:#fff3c0;text-shadow:0 1px 4px #000;animation:bl 2.4s infinite;opacity:0;transition:opacity 1s}.t2 .sh{opacity:1}
 @keyframes bl{50%{opacity:.4}}
 /* paper that unrolls inside the window */
-section.pp{background:linear-gradient(180deg,#f8eed3,#f1e2b9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:78vh;padding:9vh 7% 8vh;scroll-snap-align:start;position:relative}
+section.pp{background:linear-gradient(180deg,#f8eed3,#f1e2b9);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:56svh;padding:5svh 7% 6svh;scroll-snap-align:start;position:relative;gap:clamp(3px,1vh,10px)}
+@media(max-height:700px){section.pp{min-height:64svh;padding:4svh 6% 5svh}}
+@media(max-width:360px){.ev{font-size:40px}.names{font-size:36px}.ir{font-size:16px;max-width:100%}.btn{font-size:13px;padding:8px 13px}}
 section.pp+section.pp{border-top:1px solid rgba(168,120,42,.35)}
 .roll{height:24px;background:linear-gradient(180deg,#6b4510,#c99a46 30%,#fff1c0 52%,#b8903f 78%,#6b4510);box-shadow:0 8px 12px rgba(0,0,0,.35);scroll-snap-align:start}
 .ev{font-size:46px;margin:4px 0 12px}.names{font-size:42px;margin:6px 0}
