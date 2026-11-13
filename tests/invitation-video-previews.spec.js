@@ -45,3 +45,31 @@ for (const item of [
     expect(errors, `${item.name} browser errors: ${errors.join(' | ')}`).toEqual([]);
   });
 }
+
+
+for (const item of [
+  {
+    name: 'Royal Navy Gold',
+    id: 'royal-navy-gold-video',
+    title: 'Royal Navy Gold — Video Wedding Invitation'
+  },
+  {
+    name: 'Velvet Curtain',
+    id: 'velvet-curtain',
+    title: 'Velvet Curtain — High Premium Video Invitation'
+  }
+]) {
+  test(`${item.name} editor link opens its own editor, not the gallery`, async ({ page }) => {
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(`${base}/index.html#studio=${item.id}`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 60000
+    });
+    await expect(page.locator('#stu')).toBeVisible({ timeout: 30000 });
+    await expect(page.locator('#gal')).toBeHidden();
+    await expect(page.locator('#tt')).toHaveText(item.title);
+    await expect(page.locator('#f input').first()).toBeVisible();
+    expect(errors, `${item.name} editor errors: ${errors.join(' | ')}`).toEqual([]);
+  });
+}
