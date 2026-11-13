@@ -35,7 +35,7 @@ async function sendTemplate(to: string, name: string, values: unknown[]) {
 
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ error: "POST required" }, 405);
-  const expected = Deno.env.get("INVITEORA_DISPATCH_SECRET");
+  const expected = SERVICE_KEY;
   if (!expected || req.headers.get("x-inviteora-dispatch-secret") !== expected) return json({ error: "Unauthorized dispatcher" }, 401);
 
   const { data: jobs, error } = await db.from("invitation_notification_outbox")
