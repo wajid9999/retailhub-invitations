@@ -4,8 +4,6 @@ self.addEventListener("push", event => {
   const title = data.title || "Inviteora";
   const options = {
     body: data.body || "You have a new order update.",
-    icon: "/retailhub-invitations/icons/icon-192.png",
-    badge: "/retailhub-invitations/icons/icon-192.png",
     data: { url: data.url || "/retailhub-invitations/admin.html" },
     tag: data.tag || "inviteora-order",
     renotify: true
