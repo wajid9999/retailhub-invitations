@@ -85,8 +85,13 @@ try {
       C = { ...C, ...payload.C };
       if (Array.isArray(payload.C.events)) C.events = payload.C.events;
       if (Array.isArray(payload.C.faq)) C.faq = payload.C.faq;
-      if (payload.final === true) C.sample = false;
-      else if (typeof payload.C.sample === "boolean") C.sample = payload.C.sample;
+      if (payload.final === true) {
+        C.sample = false;
+        const watermark = document.getElementById("wm");
+        if (watermark) watermark.remove();
+      } else if (typeof payload.C.sample === "boolean") {
+        C.sample = payload.C.sample;
+      }
       document.documentElement.dataset.inviteoraPayload = "loaded";
     }
   }
