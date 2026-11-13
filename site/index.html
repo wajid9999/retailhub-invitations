@@ -118,7 +118,7 @@ async function route(){
   }catch(err){$('#tt').textContent='Preview expired';$('#preview-note').textContent=err.message;$('#ifr').src='about:blank';$('#ord').disabled=true;$('#order-panel').classList.add('h');}
   return;
  }
- const m=/studio=([\\w-]+)/.exec(location.hash);
+ const m=/studio=([\w-]+)/.exec(location.hash);
  cur=m&&(T.find(t=>t.id===m[1])||(m[1]==='velvet-curtain'?{
   id:'velvet-curtain',
   name:'Velvet Curtain — High Premium Video Invitation',
