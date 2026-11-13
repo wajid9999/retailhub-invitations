@@ -112,7 +112,7 @@ jobs:
             items.append(record)
           else:
             existing.update(record)
-          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           print("Velvet Curtain editor registration:", next(x for x in items if x.get("id") == "velvet-curtain"))
           PY
       - name: Render Hosts together on the final page of every active template
