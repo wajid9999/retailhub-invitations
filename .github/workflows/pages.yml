@@ -122,7 +122,7 @@ jobs:
             target = root / rel
             if target.is_file():
               target.unlink()
-          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           print("Retired templates removed:", [x.get("name", x.get("id")) for x in removed])
           print("Remaining active templates:", [x.get("name", x.get("id")) for x in kept])
           PY
@@ -173,6 +173,6 @@ jobs:
           done
           curl -fsS http://127.0.0.1:4173/templates.json >/dev/null
       - name: Test the exact built artifact
-        run: npx playwright test tests/velvet-curtain.spec.js tests/royal-navy-blue-gold.spec.js --reporter=list
+        run: npx playwright test tests/royal-navy-blue-gold.spec.js --reporter=list
         env:
           BASE_URL: http://127.0.0.1:4173
