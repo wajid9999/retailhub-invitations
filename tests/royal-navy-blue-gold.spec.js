@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
-test('Green Velvet and Royal Navy Blue & Gold are High Premium', async ({page})=>{
+test('Royal Navy Gold video template is registered and editor-compatible', async ({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto(process.env.BASE_URL+'/');
  const response=await page.request.get(process.env.BASE_URL+'/templates.json');
  expect(response.ok()).toBeTruthy();
  const data=await response.json();const list=data.templates;
- expect(list.some(t=>t.id==='royal-navy-blue-gold')).toBeTruthy();
- expect(list.find(t=>t.id==='royal-navy-blue-gold').tier).toBe('high');
+ expect(list.some(t=>t.id==='royal-navy-gold-video')).toBeTruthy();
+ expect(list.find(t=>t.id==='royal-navy-gold-video').tier).toBe('high');
  for (const id of ['mahad','ivory']) {
   const item=list.find(t=>t.id===id);
   if (item) expect(item.tier).toBe('premium');
@@ -23,7 +23,7 @@ test('Green Velvet and Royal Navy Blue & Gold are High Premium', async ({page})=
  const adminHtml=await admin.text();
  expect(adminHtml).toContain('payment_proof_url');
  expect(adminHtml).toContain('Payment OK');
- await page.goto(process.env.BASE_URL+'/templates/royal-navy-blue-gold.html');
+ await page.goto(process.env.BASE_URL+'/templates/royal-navy-gold-video.html');
  const video=page.locator('#vid');
  await expect(video).toHaveCount(1);
  const videoSource=await video.locator('source').getAttribute('src');
@@ -33,6 +33,20 @@ test('Green Velvet and Royal Navy Blue & Gold are High Premium', async ({page})=
  await expect.poll(()=>video.evaluate(v=>v.paused),{timeout:10000}).toBeFalsy();
  expect(errors).toEqual([]);
 });
+
+test('Royal Navy Gold receives editor payload for names and final watermark', async ({page})=>{
+ const payload={final:false,C:{groom:'Test Groom',bride:'Test Bride',sample:true,faq:[],events:[{name:'Nikah',hosts:'Family',date:'2027-04-11',time:'16:00',timeText:'4:00 PM',venue:'Test Hall',address:'Test City',dress:'Formal',map:'Test Hall Test City'}]}};
+ const encoded=Buffer.from(JSON.stringify(payload),'utf8').toString('base64');
+ await page.goto(process.env.BASE_URL+'/templates/royal-navy-gold-video.html#'+encoded);
+ await expect(page.locator('#introGroom')).toHaveText('Test Groom');
+ await expect(page.locator('#introBride')).toHaveText('Test Bride');
+ await expect(page.locator('#wm')).toBeVisible();
+ payload.final=true;
+ const finalEncoded=Buffer.from(JSON.stringify(payload),'utf8').toString('base64');
+ await page.goto(process.env.BASE_URL+'/templates/royal-navy-gold-video.html#'+finalEncoded);
+ await expect(page.locator('#wm')).toHaveCount(0);
+});
+
 test('event-based package pricing is correct and page count is not used', async ({page})=>{
  await page.goto(process.env.BASE_URL+'/');
  const result=await page.evaluate(()=>{
