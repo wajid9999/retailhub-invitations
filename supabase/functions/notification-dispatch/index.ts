@@ -45,14 +45,14 @@ Deno.serve(async (req: Request) => {
     .order("created_at", { ascending: true })
     .limit(20);
   if (error) return json({ error: error.message }, 500);
-  if (!jobs?.length) return json({ processed: 0, message: "No queued WhatsApp notifications" });
+  
 
   const ownerNumber = digits(Deno.env.get("INVITEORA_OWNER_WHATSAPP"));
   const ownerTemplate = Deno.env.get("INVITEORA_ORDER_TEMPLATE_NAME") || "order_notification";
   const customerTemplate = Deno.env.get("INVITEORA_CUSTOMER_TEMPLATE_NAME");
   let sent = 0, failed = 0, waiting = 0, pushSent = 0, pushFailed = 0, pushWaiting = 0;
 
-  for (const job of jobs) {
+  for (const job of (jobs || [])) {
     try {
       const { data: order, error: orderError } = await db.from("invitation_orders")
         .select("order_number,customer_name,customer_phone,template_name,package_tier,amount_pkr")
