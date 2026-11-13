@@ -4,6 +4,12 @@ const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"au
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,"Content-Type":"application/json"}});
 const db=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,{auth:{persistSession:false,autoRefreshToken:false}});
 async function sha256(v:string){const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,"0")).join("");}
+async function kickNotifications(){
+ const secret=Deno.env.get("INVITEORA_DISPATCH_SECRET");
+ if(!secret)return;
+ try{await fetch(Deno.env.get("SUPABASE_URL")!+"/functions/v1/notification-dispatch",{method:"POST",headers:{"Content-Type":"application/json","x-inviteora-dispatch-secret":secret},body:"{}"});}
+ catch(e){console.warn("Notification dispatcher kick failed",e);}
+}
 function eventEndDate(payload:unknown):string|null{const found:string[]=[];const walk=(v:unknown,k="")=>{if(Array.isArray(v)){for(const x of v)walk(x,k);return;}if(v&&typeof v==="object"){for(const [key,val] of Object.entries(v as Record<string,unknown>))walk(val,key);return;}if((k==="d"||k==="date")&&typeof v==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(v)){const d=new Date(v+"T00:00:00Z");if(!Number.isNaN(d.getTime())&&d.toISOString().slice(0,10)===v)found.push(v);}};walk(payload);return found.length?found.sort().at(-1)!:null;}
 async function requireAdmin(req:Request){const jwt=(req.headers.get("Authorization")||"").replace(/^Bearer\s+/i,"");if(!jwt)throw new Error("Admin sign-in required");const {data,error}=await db.auth.getUser(jwt);if(error||!data.user)throw new Error("Invalid admin session");const {data:admin}=await db.from("invitation_admins").select("user_id").eq("user_id",data.user.id).maybeSingle();if(!admin)throw new Error("Not authorized as admin");return data.user;}
 Deno.serve(async(req:Request)=>{if(req.method==="OPTIONS")return new Response("ok",{headers:cors});if(req.method!=="POST")return json({error:"POST required"},405);
@@ -46,6 +52,7 @@ if(action==="submit-order"){
   {order_id:data.id,event_type:"order_created",channel:"whatsapp_owner",recipient:ownerRecipient,payload:notice},
   {order_id:data.id,event_type:"order_created",channel:"web_push",payload:notice}
  ],{onConflict:"order_id,event_type,channel",ignoreDuplicates:true});
+ await kickNotifications();
  return json({order:data,message:"Order created. Send payment proof to WhatsApp for manual approval."},201);
 }
 if(action==="submit-payment-proof"){
@@ -75,6 +82,7 @@ if(action==="submit-payment-proof"){
   {order_id:order.id,event_type:"payment_proof_uploaded",channel:"whatsapp_owner",recipient:ownerRecipient,payload:notice},
   {order_id:order.id,event_type:"payment_proof_uploaded",channel:"web_push",payload:notice}
  ],{onConflict:"order_id,event_type,channel",ignoreDuplicates:true});
+ await kickNotifications();
  return json({received:true,message:"Payment screenshot uploaded for verification."},201);
 }
 if(action==="verify-original"){
@@ -111,6 +119,7 @@ if(["admin-list","admin-approve","admin-settings-save"].includes(action)){
    {order_id:data.id,event_type:"order_approved",channel:"whatsapp_customer",recipient:String(data.customer_phone||"").replace(/\D/g,""),payload:notice},
    {order_id:data.id,event_type:"order_approved",channel:"web_push",payload:notice}
   ],{onConflict:"order_id,event_type,channel",ignoreDuplicates:true});
+ await kickNotifications();
   return json({order:data,original_token:token,original_url:originalUrl});
  }
  const s=body.settings||{},allowed={simple_price:Math.max(0,Math.min(10000000,Number(s.simple_price)||0)),premium_price:Math.max(0,Math.min(10000000,Number(s.premium_price)||0)),high_price:Math.max(0,Math.min(10000000,Number(s.high_price)||0)),jazzcash_details:String(s.jazzcash_details||"").slice(0,300),easypaisa_details:String(s.easypaisa_details||"").slice(0,300),bank_details:String(s.bank_details||"").slice(0,500),raast_details:String(s.raast_details||"").slice(0,300),updated_at:new Date().toISOString()};
