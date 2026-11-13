@@ -5,7 +5,7 @@ const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,
 const db=createClient(Deno.env.get("SUPABASE_URL")!,Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,{auth:{persistSession:false,autoRefreshToken:false}});
 async function sha256(v:string){const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,"0")).join("");}
 async function kickNotifications(){
- const secret=Deno.env.get("INVITEORA_DISPATCH_SECRET");
+ const secret=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
  if(!secret)return;
  try{await fetch(Deno.env.get("SUPABASE_URL")!+"/functions/v1/notification-dispatch",{method:"POST",headers:{"Content-Type":"application/json","x-inviteora-dispatch-secret":secret},body:"{}"});}
  catch(e){console.warn("Notification dispatcher kick failed",e);}
