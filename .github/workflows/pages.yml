@@ -84,7 +84,7 @@ jobs:
               record["thumb"] = thumb_rel
               items.append(record)
               known.add(template_id)
-            registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+            registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             print("Added template packages:", [x.get("id") for x in items])
           PY
       - name: Render Hosts together on the final page of every active template
