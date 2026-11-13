@@ -104,8 +104,23 @@ if(action==="admin-bootstrap"){
  if(insertError)throw insertError;
  return json({admin:true,email:data.user.email});
 }
-if(["admin-list","admin-approve","admin-settings-save"].includes(action)){
+if(["admin-list","admin-approve","admin-settings-save","admin-save-push-subscription","admin-notification-status"].includes(action)){
  await requireAdmin(req);
+ if(action==="admin-save-push-subscription"){
+  const sub=body.subscription||{},endpoint=String(sub.endpoint||"");
+  const p256dh=String(sub.keys?.p256dh||""),auth=String(sub.keys?.auth||"");
+  if(!endpoint.startsWith("https://")||endpoint.length>3000||p256dh.length<20||auth.length<10)return json({error:"Invalid push subscription"},400);
+  const {error}=await db.from("invitation_push_subscriptions").upsert({endpoint,p256dh,auth,user_agent:String(body.user_agent||"").slice(0,500),enabled:true,updated_at:new Date().toISOString()},{onConflict:"endpoint"});
+  if(error)throw error;
+  return json({saved:true});
+ }
+ if(action==="admin-notification-status"){
+  const {data,error}=await db.from("invitation_notification_outbox").select("event_type,channel,status,created_at").order("created_at",{ascending:false}).limit(50);
+  if(error)throw error;
+  const {count,error:pe}=await db.from("invitation_push_subscriptions").select("id",{count:"exact",head:true}).eq("enabled",true);
+  if(pe)throw pe;
+  return json({notifications:data||[],active_push_subscriptions:count||0});
+ }
  if(action==="admin-list"){const {data,error}=await db.from("invitation_orders").select("id,order_number,customer_name,customer_phone,template_id,template_name,package_tier,amount_pkr,event_count,status,created_at,approved_at,expires_at,payment_proof_path,payment_submitted_at").order("created_at",{ascending:false}).limit(100);if(error)throw error;const orders=await Promise.all((data||[]).map(async(o)=>{if(!o.payment_proof_path)return {...o,payment_proof_url:null};const {data:signed}=await db.storage.from("payment-proofs").createSignedUrl(o.payment_proof_path,3600);return {...o,payment_proof_url:signed?.signedUrl||null};}));return json({orders});}
  if(action==="admin-approve"){
   const orderId=String(body.order_id||"");const {data:existing,error:lookupErr}=await db.from("invitation_orders").select("preview_payload,payment_proof_path").eq("id",orderId).in("status",["pending_payment","pending_approval"]).maybeSingle();if(lookupErr)throw lookupErr;if(!existing)return json({error:"Order not found or already approved"},409);if(!existing.payment_proof_path)return json({error:"Payment screenshot has not been uploaded yet"},400);
