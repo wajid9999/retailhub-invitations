@@ -56,7 +56,7 @@ const SW={groom:'Mahad',bride:'Laiba',gf:'Mr. & Mrs. Qasim',bf:'Mr. & Mrs. Nasee
 {k:'Mehndi',hosts:'Hosted by the bride’s family',d:'2027-03-06',t:'19:30',v:'Rana Farm House',a:'Canal Road, Lahore'},
 {k:'Nikah',hosts:'Laiba & Mahad',d:'2027-03-07',t:'16:00',v:'Jamia Masjid',a:'Gulberg III, Lahore'},
 {k:'Walima',hosts:'Hosted by the groom’s family',d:'2027-03-09',t:'19:30',v:'Pearl Continental',a:'Mall Road, Lahore'}]};
-let cur=null,S=SW,previewInvitation=null,publicSettings=null;
+let cur=null,S=SW,previewInvitation=null,publicSettings=null,currentPreviewToken=null;
 function cleanHosts(){return {hostsTitle:S.hostsTitle||"With best compliments",hosts:(Array.isArray(S.hosts)?S.hosts:[]).filter(x=>x&&String(x.name||"").trim()).map(x=>String(x.name).trim()+" | "+String(x.relation||"").trim())}}
 const tn=id=>(TR.find(x=>x.id===id)||{}).name||'';
 const f12=t=>{if(!t)return'';let[h,m]=t.split(':').map(Number);return(h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM')};
@@ -110,7 +110,7 @@ async function route(){
   $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#tt').textContent='Invitation preview';$('#ifr').src='about:blank';
   try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-preview',token:previewToken})});const out=await res.json();if(!res.ok||!out.valid)throw new Error('Preview link expired. Please create a new preview.');
    const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Trial Preview';$('#ifr').src=templateUrl(t.file)+'#'+b64(out.invitation);$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
-   previewInvitation=out.invitation;
+   previewInvitation=out.invitation;currentPreviewToken=previewToken;
    if(['simple','premium','high'].includes(t.tier))$('#package-tier').value=t.tier;
    $('#order-panel').classList.remove('h');
    await loadOrderSettings();
@@ -150,7 +150,9 @@ function invitationEventCount(payload){
 }
 function calculateInvitationPrice(tier,count){
  const n=Math.max(1,Math.min(30,Number(count)||1));
- return tier==='high'?2000+1000*n:tier==='premium'?1000*n:500*n;
+ if(!publicSettings)return 0;
+ const simple=Number(publicSettings.simple_price)||0,premium=Number(publicSettings.premium_price)||0,high=Number(publicSettings.high_price)||0;
+ return tier==='high'?high+premium*(n-1):tier==='premium'?premium*n:simple*n;
 }
 function updatePackagePrice(){
  if(!publicSettings)return;
@@ -164,10 +166,10 @@ let currentOrder=null;
 $('#place-order').onclick=async()=>{
  const name=$('#customer-name').value.trim(),phone=$('#customer-phone').value.trim(),tier=$('#package-tier').value;
  if(!name||phone.replace(/\D/g,'').length<10){$('#order-status').textContent='Please enter your name and a valid WhatsApp number.';return}
- if(!previewInvitation||!cur){$('#order-status').textContent='Preview details are missing. Please create a new preview.';return}
+ if(!previewInvitation||!cur||!currentPreviewToken){$('#order-status').textContent='Preview details are missing or expired. Please create a new preview.';return}
  const btn=$('#place-order');btn.disabled=true;$('#order-status').textContent='Creating your order…';
  try{
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'submit-order',customer_name:name,customer_phone:phone,template_id:cur.id,template_name:cur.name,package_tier:tier,preview_payload:previewInvitation})});
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'submit-order',customer_name:name,customer_phone:phone,template_id:cur.id,template_name:cur.name,package_tier:tier,preview_token:currentPreviewToken})});
   const j=await r.json();if(!r.ok)throw new Error(j.error||'Order could not be created');
   currentOrder={id:j.order.id,number:j.order.order_number,phone};
   $('#proof-panel').classList.remove('h');
