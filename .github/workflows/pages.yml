@@ -101,7 +101,9 @@ jobs:
           removed = []
           for item in data.get("templates", []):
             identity = " ".join(str(item.get(k, "")) for k in ("id", "name", "file", "thumb", "tag"))
-            if retired.search(identity):
+            # Keep the current Royal Navy Blue & Gold product template published.
+            # Other retired Royal Navy / Hamza-Areeba duplicates remain filtered.
+            if item.get("id") != "royal-navy-blue-gold" and retired.search(identity):
               removed.append(item)
               continue
             kept.append(item)
@@ -116,8 +118,7 @@ jobs:
                 if root.resolve() in target.parents and target.is_file():
                   target.unlink()
           # Also remove the retired, separately copied source assets from the public output.
-          for rel in ("templates/royal-navy-blue-gold.html", "thumbs/royal-navy-blue-gold.svg",
-                      "templates/velvet-curtain/index.html", "thumbs/velvet-curtain.jpg"):
+          for rel in ("templates/velvet-curtain/index.html", "thumbs/velvet-curtain.jpg"):
             target = root / rel
             if target.is_file():
               target.unlink()
