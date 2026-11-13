@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.50.0";
+import webpush from "npm:web-push@3.6.7";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -49,7 +50,7 @@ Deno.serve(async (req: Request) => {
   const ownerNumber = digits(Deno.env.get("INVITEORA_OWNER_WHATSAPP"));
   const ownerTemplate = Deno.env.get("INVITEORA_ORDER_TEMPLATE_NAME") || "order_notification";
   const customerTemplate = Deno.env.get("INVITEORA_CUSTOMER_TEMPLATE_NAME");
-  let sent = 0, failed = 0, waiting = 0;
+  let sent = 0, failed = 0, waiting = 0, pushSent = 0, pushFailed = 0, pushWaiting = 0;
 
   for (const job of jobs) {
     try {
@@ -87,5 +88,44 @@ Deno.serve(async (req: Request) => {
       failed++;
     }
   }
-  return json({ processed: jobs.length, sent, failed, waiting, push_pending: true });
+  const { data: pushJobs, error: pushError } = await db.from("invitation_notification_outbox")
+    .select("id,order_id,event_type,payload,attempts").eq("status","queued").eq("channel","web_push")
+    .order("created_at",{ascending:true}).limit(20);
+  if(pushError)throw pushError;
+  const vapidPublic=Deno.env.get("VAPID_PUBLIC_KEY"),vapidPrivate=Deno.env.get("VAPID_PRIVATE_KEY"),vapidSubject=Deno.env.get("VAPID_SUBJECT");
+  const {data:subscriptions, error:subError}=await db.from("invitation_push_subscriptions").select("id,endpoint,p256dh,auth").eq("enabled",true);
+  if(subError)throw subError;
+  if(pushJobs?.length){
+    if(!vapidPublic||!vapidPrivate||!vapidSubject||!subscriptions?.length)pushWaiting=pushJobs.length;
+    else{
+      webpush.setVapidDetails(vapidSubject,vapidPublic,vapidPrivate);
+      for(const job of pushJobs){
+        const title=job.event_type==="order_created"?"Inviteora: New order":job.event_type==="payment_proof_uploaded"?"Inviteora: Payment proof uploaded":"Inviteora: Order approved";
+        const body=job.event_type==="order_created"
+          ? "Order #"+String(job.payload?.order_number||"")+" · "+String(job.payload?.customer_name||"")+" · Rs. "+String(job.payload?.amount_pkr||"")
+          : job.event_type==="payment_proof_uploaded"
+          ? "A payment screenshot was uploaded. Open Admin to verify funds."
+          : "Order #"+String(job.payload?.order_number||"")+" has been approved.";
+        let ok=0,errors=0;
+        for(const sub of subscriptions){
+          try{
+            await webpush.sendNotification({endpoint:sub.endpoint,keys:{p256dh:sub.p256dh,auth:sub.auth}},JSON.stringify({title,body,url:"/retailhub-invitations/admin.html",tag:"inviteora-"+job.id}));
+            ok++;
+          }catch(e){
+            errors++;
+            const status=Number((e as {statusCode?:number})?.statusCode||0);
+            if(status===404||status===410)await db.from("invitation_push_subscriptions").update({enabled:false,updated_at:new Date().toISOString()}).eq("id",sub.id);
+          }
+        }
+        if(ok>0){
+          await db.from("invitation_notification_outbox").update({status:"sent",attempts:Number(job.attempts||0)+1,sent_at:new Date().toISOString(),last_error:errors?errors+" push endpoint(s) failed":null}).eq("id",job.id);
+          pushSent++;
+        }else{
+          await db.from("invitation_notification_outbox").update({status:"failed",attempts:Number(job.attempts||0)+1,last_error:"Push delivery failed for all registered devices"}).eq("id",job.id);
+          pushFailed++;
+        }
+      }
+    }
+  }
+  return json({ processed: jobs.length, sent, failed, waiting, push_processed: pushJobs?.length||0, push_sent:pushSent, push_failed:pushFailed, push_waiting:pushWaiting });
 });
