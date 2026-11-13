@@ -40,6 +40,12 @@ if(action==="submit-order"){
  const simple=Math.max(0,Number(settings.simple_price)||0),premium=Math.max(0,Number(settings.premium_price)||0),high=Math.max(0,Number(settings.high_price)||0);
  const price=tier==="high"?high+premium*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
  const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
+ const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\\D/g,"")||null;
+ const notice={order_number:data.order_number,customer_name,customer_phone,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount};
+ await db.from("invitation_notification_outbox").upsert([
+  {order_id:data.id,event_type:"order_created",channel:"whatsapp_owner",recipient:ownerRecipient,payload:notice},
+  {order_id:data.id,event_type:"order_created",channel:"web_push",payload:notice}
+ ],{onConflict:"order_id,event_type,channel",ignoreDuplicates:true});
  return json({order:data,message:"Order created. Send payment proof to WhatsApp for manual approval."},201);
 }
 if(action==="submit-payment-proof"){
@@ -63,6 +69,12 @@ if(action==="submit-payment-proof"){
  if(uploadError)throw uploadError;
  const {error:updateError}=await db.from("invitation_orders").update({payment_proof_path:path,payment_submitted_at:new Date().toISOString(),status:"pending_approval"}).eq("id",orderId);
  if(updateError){await db.storage.from("payment-proofs").remove([path]);throw updateError;}
+ const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\\D/g,"")||null;
+ const notice={order_id:order.id,customer_phone:order.customer_phone,payment_proof_uploaded:true};
+ await db.from("invitation_notification_outbox").upsert([
+  {order_id:order.id,event_type:"payment_proof_uploaded",channel:"whatsapp_owner",recipient:ownerRecipient,payload:notice},
+  {order_id:order.id,event_type:"payment_proof_uploaded",channel:"web_push",payload:notice}
+ ],{onConflict:"order_id,event_type,channel",ignoreDuplicates:true});
  return json({received:true,message:"Payment screenshot uploaded for verification."},201);
 }
 if(action==="verify-original"){
@@ -92,7 +104,14 @@ if(["admin-list","admin-approve","admin-settings-save"].includes(action)){
   const endDate=eventEndDate(existing.preview_payload);if(!endDate)return json({error:"Order has no valid event date"},400);
   const expiresAt=new Date(endDate+"T18:59:59.999Z").toISOString();if(new Date(expiresAt).getTime()<=Date.now())return json({error:"Event date has already passed"},400);
   const token=crypto.randomUUID()+crypto.randomUUID(),tokenHash=await sha256(token);
-  const {data,error}=await db.from("invitation_orders").update({status:"approved",original_token_hash:tokenHash,approved_at:new Date().toISOString(),expires_at:expiresAt}).eq("id",orderId).in("status",["pending_payment","pending_approval"]).select("id,order_number,customer_phone,template_name,expires_at").maybeSingle();if(error)throw error;if(!data)return json({error:"Order not found or already approved"},409);return json({order:data,original_token:token});
+  const {data,error}=await db.from("invitation_orders").update({status:"approved",original_token_hash:tokenHash,approved_at:new Date().toISOString(),expires_at:expiresAt}).eq("id",orderId).in("status",["pending_payment","pending_approval"]).select("id,order_number,customer_phone,template_name,expires_at").maybeSingle();if(error)throw error;if(!data)return json({error:"Order not found or already approved"},409);
+  const originalUrl="https://wajid9999.github.io/retailhub-invitations/?original="+encodeURIComponent(token);
+  const notice={order_number:data.order_number,customer_phone:data.customer_phone,template_name:data.template_name,original_url:originalUrl,expires_at:data.expires_at};
+  await db.from("invitation_notification_outbox").upsert([
+   {order_id:data.id,event_type:"order_approved",channel:"whatsapp_customer",recipient:String(data.customer_phone||"").replace(/\\D/g,""),payload:notice},
+   {order_id:data.id,event_type:"order_approved",channel:"web_push",payload:notice}
+  ],{onConflict:"order_id,event_type,channel",ignoreDuplicates:true});
+  return json({order:data,original_token:token,original_url:originalUrl});
  }
  const s=body.settings||{},allowed={simple_price:Math.max(0,Math.min(10000000,Number(s.simple_price)||0)),premium_price:Math.max(0,Math.min(10000000,Number(s.premium_price)||0)),high_price:Math.max(0,Math.min(10000000,Number(s.high_price)||0)),jazzcash_details:String(s.jazzcash_details||"").slice(0,300),easypaisa_details:String(s.easypaisa_details||"").slice(0,300),bank_details:String(s.bank_details||"").slice(0,500),raast_details:String(s.raast_details||"").slice(0,300),updated_at:new Date().toISOString()};
  const {error}=await db.from("invitation_settings").update(allowed).eq("id",true);if(error)throw error;return json({saved:true});
