@@ -75,24 +75,24 @@ let C={
   faq:[["What should I wear?","Traditional festive wear is perfect for every function."],["Can I bring my family?","Your whole family is welcome."],["Where do I park?","Parking is available at the venue."]]
 };
 /* =========================================================== */
-/* Inviteora editor payload bridge: accepts the existing royal adapter payload
-   appended to this file URL as a base64 URL fragment. */
+/* Inviteora editor payload bridge: reads the existing royal adapter payload. */
 try {
   const encoded = location.hash.startsWith("#") ? location.hash.slice(1) : "";
   if (encoded) {
-    const binary = atob(encoded);
-    const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
-    const payload = JSON.parse(new TextDecoder().decode(bytes));
+    const json = decodeURIComponent(escape(atob(encoded)));
+    const payload = JSON.parse(json);
     if (payload && payload.C && typeof payload.C === "object") {
       C = { ...C, ...payload.C };
       if (Array.isArray(payload.C.events)) C.events = payload.C.events;
       if (Array.isArray(payload.C.faq)) C.faq = payload.C.faq;
       if (payload.final === true) C.sample = false;
       else if (typeof payload.C.sample === "boolean") C.sample = payload.C.sample;
+      document.documentElement.dataset.inviteoraPayload = "loaded";
     }
   }
 } catch (error) {
-  console.warn("Inviteora template data could not be read; showing sample content.", error);
+  document.documentElement.dataset.inviteoraPayload = "error";
+  console.warn("Inviteora template payload parse failed:", error);
 }
 const M=["January","February","March","April","May","June","July","August","September","October","November","December"],D=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const $=s=>document.querySelector(s),app=$("#app"),scr=$("#scr"),vid=$("#vid");
