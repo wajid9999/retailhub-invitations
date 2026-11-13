@@ -88,6 +88,33 @@ jobs:
             registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             print("Added template packages:", [x.get("id") for x in items])
           PY
+      - name: Register Velvet Curtain in the invitation editor catalog
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("public/templates.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          items = data.setdefault("templates", [])
+          existing = next((x for x in items if x.get("id") == "velvet-curtain"), None)
+          record = {
+            "id": "velvet-curtain",
+            "name": "Velvet Curtain — High Premium Video Invitation",
+            "tag": "Animated velvet curtains and cinematic wedding reveal",
+            "tier": "high",
+            "occasion": "wedding",
+            "ad": "velvet",
+            "fam": True,
+            "file": "templates/velvet-curtain/index.html",
+            "thumb": "https://cdn.shopify.com/s/files/1/1021/1550/8503/files/velvet-curtain-thumbnail.jpg?v=1794508817"
+          }
+          if existing is None:
+            items.append(record)
+          else:
+            existing.update(record)
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          print("Velvet Curtain editor registration:", next(x for x in items if x.get("id") == "velvet-curtain"))
+          PY
       - name: Render Hosts together on the final page of every active template
         run: |
           python3 - <<'PY'
