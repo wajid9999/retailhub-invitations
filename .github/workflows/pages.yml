@@ -47,6 +47,7 @@ jobs:
           cp -R extracted/site/. public/
           if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
           if [ -f site/admin.html ]; then cp site/admin.html public/admin.html; fi
+          if [ -f site/templates/velvet-curtain/index.html ]; then mkdir -p public/templates/velvet-curtain; cp site/templates/velvet-curtain/index.html public/templates/velvet-curtain/index.html; fi
       - name: Build gallery template packages
         run: |
           python3 - <<'PY'
