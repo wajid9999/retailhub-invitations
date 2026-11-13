@@ -47,6 +47,46 @@ jobs:
           cp -R extracted/site/. public/
           if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
           if [ -f site/admin.html ]; then cp site/admin.html public/admin.html; fi
+      - name: Build gallery template packages
+        run: |
+          python3 - <<'PY'
+          import json, shutil
+          from pathlib import Path
+
+          source = Path("site/new-templates")
+          public = Path("public")
+          registry = public / "templates.json"
+          if source.exists():
+            data = json.loads(registry.read_text(encoding="utf-8"))
+            items = data.setdefault("templates", [])
+            known = {str(x.get("id")) for x in items}
+            for folder in sorted(p for p in source.iterdir() if p.is_dir()):
+              meta_path = folder / "template.json"
+              html_path = folder / "template.html"
+              if not meta_path.is_file() or not html_path.is_file():
+                raise SystemExit(f"Incomplete template package: {folder}")
+              meta = json.loads(meta_path.read_text(encoding="utf-8"))
+              template_id = str(meta.get("id", "")).strip()
+              if not template_id or template_id in known:
+                raise SystemExit(f"Missing or duplicate template id: {template_id}")
+              thumbs = [folder / ("thumbnail" + ext) for ext in (".svg", ".png", ".jpg", ".webp")]
+              thumb_src = next((p for p in thumbs if p.is_file()), None)
+              if thumb_src is None:
+                raise SystemExit(f"Missing thumbnail in {folder}")
+              html_rel = f"templates/{template_id}.html"
+              thumb_rel = f"thumbs/{template_id}{thumb_src.suffix.lower()}"
+              (public / "templates").mkdir(parents=True, exist_ok=True)
+              (public / "thumbs").mkdir(parents=True, exist_ok=True)
+              shutil.copy2(html_path, public / html_rel)
+              shutil.copy2(thumb_src, public / thumb_rel)
+              record = dict(meta)
+              record["file"] = html_rel
+              record["thumb"] = thumb_rel
+              items.append(record)
+              known.add(template_id)
+            registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print("Added template packages:", [x.get("id") for x in items])
+          PY
       - name: Render Hosts together on the final page of every active template
         run: |
           python3 - <<'PY'
@@ -101,7 +141,9 @@ jobs:
           removed = []
           for item in data.get("templates", []):
             identity = " ".join(str(item.get(k, "")) for k in ("id", "name", "file", "thumb", "tag"))
-            if retired.search(identity):
+            # Keep the current Royal Navy Blue & Gold product template published.
+            # Other retired Royal Navy / Hamza-Areeba duplicates remain filtered.
+            if item.get("id") not in ("royal-navy-blue-gold", "royal-navy-gold-video") and retired.search(identity):
               removed.append(item)
               continue
             kept.append(item)
@@ -116,12 +158,11 @@ jobs:
                 if root.resolve() in target.parents and target.is_file():
                   target.unlink()
           # Also remove the retired, separately copied source assets from the public output.
-          for rel in ("templates/royal-navy-blue-gold.html", "thumbs/royal-navy-blue-gold.svg",
-                      "templates/velvet-curtain/index.html", "thumbs/velvet-curtain.jpg"):
+          for rel in ("templates/velvet-curtain/index.html", "thumbs/velvet-curtain.jpg"):
             target = root / rel
             if target.is_file():
               target.unlink()
-          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           print("Retired templates removed:", [x.get("name", x.get("id")) for x in removed])
           print("Remaining active templates:", [x.get("name", x.get("id")) for x in kept])
           PY
@@ -172,6 +213,6 @@ jobs:
           done
           curl -fsS http://127.0.0.1:4173/templates.json >/dev/null
       - name: Test the exact built artifact
-        run: npx playwright test tests/velvet-curtain.spec.js tests/royal-navy-blue-gold.spec.js --reporter=list
+        run: npx playwright test tests/royal-navy-blue-gold.spec.js --reporter=list
         env:
           BASE_URL: http://127.0.0.1:4173
