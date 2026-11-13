@@ -40,7 +40,7 @@ if(action==="submit-order"){
  const simple=Math.max(0,Number(settings.simple_price)||0),premium=Math.max(0,Number(settings.premium_price)||0),high=Math.max(0,Number(settings.high_price)||0);
  const price=tier==="high"?high+premium*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
  const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
- const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\\D/g,"")||null;
+ const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\D/g,"")||null;
  const notice={order_number:data.order_number,customer_name,customer_phone,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount};
  await db.from("invitation_notification_outbox").upsert([
   {order_id:data.id,event_type:"order_created",channel:"whatsapp_owner",recipient:ownerRecipient,payload:notice},
@@ -69,7 +69,7 @@ if(action==="submit-payment-proof"){
  if(uploadError)throw uploadError;
  const {error:updateError}=await db.from("invitation_orders").update({payment_proof_path:path,payment_submitted_at:new Date().toISOString(),status:"pending_approval"}).eq("id",orderId);
  if(updateError){await db.storage.from("payment-proofs").remove([path]);throw updateError;}
- const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\\D/g,"")||null;
+ const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\D/g,"")||null;
  const notice={order_id:order.id,customer_phone:order.customer_phone,payment_proof_uploaded:true};
  await db.from("invitation_notification_outbox").upsert([
   {order_id:order.id,event_type:"payment_proof_uploaded",channel:"whatsapp_owner",recipient:ownerRecipient,payload:notice},
@@ -108,7 +108,7 @@ if(["admin-list","admin-approve","admin-settings-save"].includes(action)){
   const originalUrl="https://wajid9999.github.io/retailhub-invitations/?original="+encodeURIComponent(token);
   const notice={order_number:data.order_number,customer_phone:data.customer_phone,template_name:data.template_name,original_url:originalUrl,expires_at:data.expires_at};
   await db.from("invitation_notification_outbox").upsert([
-   {order_id:data.id,event_type:"order_approved",channel:"whatsapp_customer",recipient:String(data.customer_phone||"").replace(/\\D/g,""),payload:notice},
+   {order_id:data.id,event_type:"order_approved",channel:"whatsapp_customer",recipient:String(data.customer_phone||"").replace(/\D/g,""),payload:notice},
    {order_id:data.id,event_type:"order_approved",channel:"web_push",payload:notice}
   ],{onConflict:"order_id,event_type,channel",ignoreDuplicates:true});
   return json({order:data,original_token:token,original_url:originalUrl});
