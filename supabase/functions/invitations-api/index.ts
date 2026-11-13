@@ -22,18 +22,23 @@ if(action==="verify-preview"){
 }
 if(action==="public-settings"){const {data,error}=await db.from("invitation_settings").select("simple_price,premium_price,high_price,jazzcash_details,easypaisa_details,bank_details,raast_details").eq("id",true).single();if(error)throw error;return json({settings:data});}
 if(action==="submit-order"){
- const customer_name=String(body.customer_name||"").trim().slice(0,100),customer_phone=String(body.customer_phone||"").replace(/[^0-9+]/g,"").slice(0,20),template_id=String(body.template_id||"").trim().slice(0,80),template_name=String(body.template_name||"").trim().slice(0,120),tier=String(body.package_tier||""),payload=body.preview_payload;
- if(!customer_name||customer_phone.length<10||!template_id||!template_name||!payload||typeof payload!=="object")return json({error:"Required order details are missing"},400);
- if(!eventEndDate(payload))return json({error:"Add a valid event date before ordering"},400);
- const {data:settings,error:se}=await db.from("invitation_settings").select("*").eq("id",true).single();if(se)throw se;
+ const customer_name=String(body.customer_name||"").trim().slice(0,100),customer_phone=String(body.customer_phone||"").replace(/[^0-9+]/g,"").slice(0,20),template_name=String(body.template_name||"").trim().slice(0,120),tier=String(body.package_tier||""),previewToken=String(body.preview_token||"");
+ if(!customer_name||customer_phone.replace(/\D/g,"").length<10||!template_name||previewToken.length<24||previewToken.length>200)return json({error:"Required order details are missing or the preview has expired"},400);
  if(!["simple","premium","high"].includes(tier))return json({error:"Invalid package"},400);
+ const {data:preview,error:pe}=await db.from("invitation_previews").select("template_id,preview_payload,expires_at").eq("token_hash",await sha256(previewToken)).gt("expires_at",new Date().toISOString()).maybeSingle();if(pe)throw pe;
+ if(!preview)return json({error:"Preview link expired. Please create a new preview."},410);
+ const template_id=String(preview.template_id||"").slice(0,80),payload=preview.preview_payload;
+ if(!template_id||!payload||typeof payload!=="object")return json({error:"Preview details are invalid"},400);
+ if(!eventEndDate(payload))return json({error:"Add a valid event date before ordering"},400);
+ const {data:settings,error:se}=await db.from("invitation_settings").select("simple_price,premium_price,high_price").eq("id",true).single();if(se)throw se;
  const eventList=
    (payload as Record<string,any>).C&&Array.isArray((payload as Record<string,any>).C.events)?(payload as Record<string,any>).C.events:
    (payload as Record<string,any>).d&&Array.isArray((payload as Record<string,any>).d.ev)?(payload as Record<string,any>).d.ev:
    Array.isArray((payload as Record<string,any>).EV)?(payload as Record<string,any>).EV:
    Array.isArray((payload as Record<string,any>).ev)?(payload as Record<string,any>).ev:[];
  const eventCount=Math.max(1,Math.min(30,eventList.length));
- const price=tier==="high"?2000+1000*eventCount:tier==="premium"?1000*eventCount:500*eventCount;
+ const simple=Math.max(0,Number(settings.simple_price)||0),premium=Math.max(0,Number(settings.premium_price)||0),high=Math.max(0,Number(settings.high_price)||0);
+ const price=tier==="high"?high+premium*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
  const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
  return json({order:data,message:"Order created. Send payment proof to WhatsApp for manual approval."},201);
 }
