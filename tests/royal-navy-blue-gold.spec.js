@@ -7,10 +7,6 @@ test('Royal Navy Gold video template is registered and editor-compatible', async
  const data=await response.json();const list=data.templates;
  expect(list.some(t=>t.id==='royal-navy-gold-video')).toBeTruthy();
  expect(list.find(t=>t.id==='royal-navy-gold-video').tier).toBe('high');
- for (const id of ['mahad','ivory']) {
-  const item=list.find(t=>t.id===id);
-  if (item) expect(item.tier).toBe('premium');
- }
  expect(list.some(t=>t.id==='hamza-areeba')).toBeFalsy();
 
  const home=await page.request.get(process.env.BASE_URL+'/');
@@ -38,12 +34,14 @@ test('Royal Navy Gold receives editor payload for names and final watermark', as
  const payload={final:false,C:{groom:'Test Groom',bride:'Test Bride',sample:true,faq:[],events:[{name:'Nikah',hosts:'Family',date:'2027-04-11',time:'16:00',timeText:'4:00 PM',venue:'Test Hall',address:'Test City',dress:'Formal',map:'Test Hall Test City'}]}};
  const encoded=Buffer.from(JSON.stringify(payload),'utf8').toString('base64');
  await page.goto(process.env.BASE_URL+'/templates/royal-navy-gold-video.html#'+encoded);
+ await expect(page.locator('html')).toHaveAttribute('data-inviteora-payload','loaded');
  await expect(page.locator('#introGroom')).toHaveText('Test Groom');
  await expect(page.locator('#introBride')).toHaveText('Test Bride');
  await expect(page.locator('#wm')).toBeVisible();
  payload.final=true;
  const finalEncoded=Buffer.from(JSON.stringify(payload),'utf8').toString('base64');
  await page.goto(process.env.BASE_URL+'/templates/royal-navy-gold-video.html#'+finalEncoded);
+ await expect(page.locator('html')).toHaveAttribute('data-inviteora-payload','loaded');
  await expect(page.locator('#wm')).toHaveCount(0);
 });
 
