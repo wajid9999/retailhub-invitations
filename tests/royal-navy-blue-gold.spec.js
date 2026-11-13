@@ -40,7 +40,7 @@ test('Royal Navy Gold receives editor payload for names and final watermark', as
  await expect(page.locator('#wm')).toBeVisible();
  payload.final=true;
  const finalEncoded=Buffer.from(JSON.stringify(payload),'utf8').toString('base64');
- await page.goto(process.env.BASE_URL+'/templates/royal-navy-gold-video.html#'+finalEncoded);
+ await page.goto(process.env.BASE_URL+'/templates/royal-navy-gold-video.html?mode=final#'+finalEncoded);
  await expect(page.locator('html')).toHaveAttribute('data-inviteora-payload','loaded');
  await expect(page.locator('#wm')).toHaveCount(0);
 });
