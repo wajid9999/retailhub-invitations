@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="960" viewBox="0 0 720 960">
+<defs>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#17243b"/><stop offset=".52" stop-color="#241b1a"/><stop offset="1" stop-color="#080f1d"/></linearGradient>
+ <linearGradient id="curtain" x2="1" y2="0"><stop stop-color="#f4d8c9"/><stop offset=".48" stop-color="#b77c67"/><stop offset="1" stop-color="#f1d4c5"/></linearGradient>
+ <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fff0b9"/><stop offset=".5" stop-color="#d3a34d"/><stop offset="1" stop-color="#805522"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#ffe9a1" stop-opacity=".95"/><stop offset="1" stop-color="#f0b84e" stop-opacity="0"/></radialGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="720" height="960" fill="url(#bg)"/>
+<ellipse cx="360" cy="440" rx="300" ry="330" fill="#f2a849" opacity=".14" filter="url(#blur)"/>
+<path d="M0 0H160Q120 180 160 370Q170 550 70 700H0Z" fill="url(#curtain)" opacity=".92"/>
+<path d="M720 0H560Q600 180 560 370Q550 550 650 700H720Z" fill="url(#curtain)" opacity=".92"/>
+<path d="M0 0Q85 90 160 0M720 0Q635 90 560 0" fill="none" stroke="#f7e8d4" stroke-width="16" opacity=".45"/>
+<path d="M120 0Q360 150 600 0" fill="none" stroke="url(#gold)" stroke-width="6"/>
+<path d="M150 0Q360 170 570 0" fill="none" stroke="#d7a94e" stroke-width="3" opacity=".8"/>
+<g fill="#e5a72f">
+ <circle cx="140" cy="52" r="14"/><circle cx="165" cy="88" r="12"/><circle cx="190" cy="120" r="15"/><circle cx="215" cy="148" r="12"/>
+ <circle cx="580" cy="52" r="14"/><circle cx="555" cy="88" r="12"/><circle cx="530" cy="120" r="15"/><circle cx="505" cy="148" r="12"/>
+ <circle cx="250" cy="88" r="13"/><circle cx="280" cy="112" r="12"/><circle cx="310" cy="130" r="12"/>
+ <circle cx="470" cy="88" r="13"/><circle cx="440" cy="112" r="12"/><circle cx="410" cy="130" r="12"/>
+</g>
+<g stroke="url(#gold)" stroke-width="4" fill="none">
+ <path d="M220 120V270M500 120V270M360 110V290"/>
+ <path d="M202 270h36l-6 34h-24zM482 270h36l-6 34h-24zM340 290h40l-7 42h-26z" fill="#b98436"/>
+</g>
+<g fill="url(#glow)"><circle cx="220" cy="260" r="60"/><circle cx="500" cy="260" r="60"/><circle cx="360" cy="280" r="70"/></g>
+<g fill="#f7d67d"><circle cx="220" cy="285" r="8"/><circle cx="500" cy="285" r="8"/><circle cx="360" cy="310" r="10"/></g>
+<path d="M150 670Q170 400 360 380Q550 400 570 670" fill="none" stroke="url(#gold)" stroke-width="18"/>
+<path d="M178 650Q195 435 360 420Q525 435 542 650" fill="none" stroke="#e8bd6b" stroke-width="5"/>
+<g fill="#d78a28">
+ <circle cx="172" cy="520" r="18"/><circle cx="184" cy="480" r="16"/><circle cx="203" cy="448" r="17"/><circle cx="228" cy="426" r="15"/><circle cx="260" cy="410" r="15"/>
+ <circle cx="548" cy="520" r="18"/><circle cx="536" cy="480" r="16"/><circle cx="517" cy="448" r="17"/><circle cx="492" cy="426" r="15"/><circle cx="460" cy="410" r="15"/>
+ <circle cx="300" cy="400" r="14"/><circle cx="330" cy="390" r="14"/><circle cx="390" cy="390" r="14"/><circle cx="420" cy="400" r="14"/>
+</g>
+<g fill="#f3d7c9"><circle cx="202" cy="468" r="8"/><circle cx="235" cy="434" r="8"/><circle cx="487" cy="434" r="8"/><circle cx="518" cy="468" r="8"/></g>
+<path d="M190 690Q260 640 360 665Q460 640 530 690L565 765H155Z" fill="#7d342b" stroke="url(#gold)" stroke-width="5"/>
+<path d="M220 700Q360 670 500 700L480 755H240Z" fill="#d39c4d" opacity=".8"/>
+<path d="M120 790H600L650 850H70Z" fill="#33251f" stroke="#d3a34d" stroke-width="4"/>
+<g fill="#e8c06a" opacity=".9"><path d="M275 795v-60q0-24 25-24t25 24v60z"/><path d="M395 795v-60q0-24 25-24t25 24v60z"/></g>
+<g fill="#d4a34d"><path d="M265 735q20-30 45 0z"/><path d="M385 735q20-30 45 0z"/></g>
+<g fill="#f7d77e"><circle cx="300" cy="750" r="9"/><circle cx="420" cy="750" r="9"/></g>
+<g fill="#f3c66d" opacity=".8"><circle cx="92" cy="340" r="4"/><circle cx="610" cy="350" r="4"/><circle cx="135" cy="610" r="5"/><circle cx="585" cy="600" r="5"/><circle cx="260" cy="330" r="4"/><circle cx="470" cy="320" r="4"/></g>
+<rect x="26" y="24" width="668" height="912" rx="18" fill="none" stroke="#c7a15d" stroke-width="3"/>
+<text x="360" y="74" text-anchor="middle" font-family="Georgia,serif" font-size="25" letter-spacing="6" fill="#f5dfb1">INVITEORA</text>
+<rect x="520" y="95" width="145" height="42" rx="21" fill="#080d18" stroke="#d0a45a"/>
+<text x="592" y="123" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#f7e8c8">SAMPLE</text>
+<rect x="72" y="835" width="576" height="76" rx="14" fill="#091426" stroke="#d2ad66" stroke-width="2"/>
+<text x="360" y="875" text-anchor="middle" font-family="Georgia,serif" font-size="39" font-weight="bold" letter-spacing="2" fill="#f5ddb0">ROYAL JOURNEY</text>
+<text x="360" y="899" text-anchor="middle" font-family="Georgia,serif" font-size="15" letter-spacing="2" fill="#f2e5ce">MEHNDI  •  BARAAT  •  WALIMA</text>
+</svg>
