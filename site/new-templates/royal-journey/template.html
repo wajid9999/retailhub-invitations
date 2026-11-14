@@ -111,18 +111,8 @@ section.pp+section.pp{border-top:1px solid rgba(244,185,66,.28)}
 #pv,#nx{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#fff;font:600 26px/1 Georgia,serif;padding:0 0 4px;cursor:pointer;z-index:4}
 #pv{left:18px}#nx{right:18px}
 @media (prefers-reduced-motion:reduce){.gs,.gs.on::before{transition:none;animation:none}}
-/* ===== +Seal and +Scratch add-ons ===== */
+/* ===== Scratch-to-reveal add-on ===== */
 #fx{z-index:7}.cap{letter-spacing:.3em;font-size:12px;opacity:.85;margin:10px 0}
-#intro.seal-mode{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);background:rgba(6,3,0,.5);cursor:default}#intro.seal-mode::before{display:none}
-.ew{position:relative;width:min(78vw,340px);aspect-ratio:1.5;perspective:900px}.ew>*{position:absolute}
-.eb{inset:0;background:#efe3c4;border-radius:8px;box-shadow:0 30px 60px rgba(0,0,0,.55)}
-.cd2{left:5%;right:5%;top:6%;bottom:6%;background:#fbf5e6;border-radius:4px;display:flex;align-items:center;justify-content:center;text-align:center;color:#3b2a0a;font:400 28px "Great Vibes",cursive;transition:transform 1s cubic-bezier(.2,.8,.2,1) .5s}
-.ef{inset:0;background:#e6d6ae;clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%);border-radius:8px}
-.fl{left:0;right:0;top:0;height:62%;background:#f3e7c9;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:50% 0;transition:transform .8s .15s ease-in-out;z-index:3}
-.open .fl{transform:rotateX(180deg);z-index:0}.open .cd2{transform:translateY(-58%)}
-.seal{left:50%;top:62%;width:64px;height:64px;margin:-32px 0 0 -32px;border:0;border-radius:50%;z-index:5;cursor:pointer;color:#f7dfb0;font:600 17px "Cormorant Garamond",serif;background:radial-gradient(circle at 35% 30%,#c4384a,#8c1c2b 55%,#5a0f1a);box-shadow:0 6px 14px rgba(0,0,0,.5),inset 0 0 0 4px rgba(255,255,255,.08),inset 0 -4px 8px rgba(0,0,0,.35);animation:spl 2.2s ease-in-out infinite}
-@keyframes spl{50%{transform:scale(1.08)}}.open .seal{animation:spop .5s forwards}@keyframes spop{to{transform:scale(1.7);opacity:0}}
-.eh{margin-top:48px;text-align:center;color:#f6efdc}
 .calw{position:relative;width:min(78vw,340px);border-radius:18px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.5)}
 .cal{background:#fbf5e6;color:#1c2b24;padding:16px 14px 14px}.cal h3{margin:0 0 10px;font:600 24px "Cormorant Garamond",serif}
 .g7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:16px}.g7 i{font-style:normal;opacity:.55;font-size:12px;letter-spacing:.1em}
@@ -155,7 +145,6 @@ section.pp+section.pp{border-top:1px solid rgba(244,185,66,.28)}
 const C={
   groom:"Hamza", bride:"Areeba", sample:true,
   slides:"glass",       // glass slides (D3)
-  seal:true,           // wax-seal envelope before the video (+Seal)
   scratch:true,        // scratch-to-reveal date calendar slide (+Scratch)
   editor:true,         // shows the edit form button (set false in the final file you give a customer)
   hostsTitle:"With best compliments",
@@ -168,25 +157,8 @@ const C={
   faq:[["What should I wear?","Bright festive colours (yellow and green are lovely) are perfect."],["Can I bring my family?","Your whole family is welcome."],["Where do I park?","Parking is available at the venue."]]
 };
 /* =========================================================== */
-/* Inviteora gallery payload bridge: preserve this card's original design,
-   effects and editor while accepting the existing gallery's standard payload. */
-try {
-  const rawInviteoraPayload = location.hash.slice(1);
-  if (rawInviteoraPayload && !rawInviteoraPayload.startsWith("edit") && !rawInviteoraPayload.startsWith("studio=")) {
-    const payloadBytes = Uint8Array.from(atob(rawInviteoraPayload), ch => ch.charCodeAt(0));
-    const inviteoraPayload = JSON.parse(new TextDecoder().decode(payloadBytes));
-    if (inviteoraPayload && inviteoraPayload.C && typeof inviteoraPayload.C === "object") {
-      Object.assign(C, inviteoraPayload.C);
-      C.sample = inviteoraPayload.final === true ? false : true;
-      C.editor = false;
-    }
-  }
-} catch (inviteoraPayloadError) {
-  /* Invalid or absent gallery data: use the template's original sample defaults. */
-}
 const CODE="011-royal-journey";try{const sv=JSON.parse(localStorage.getItem("card-"+CODE)||"null");if(sv&&C.editor!==false)Object.assign(C,sv)}catch(e){}document.title=C.groom+" & "+C.bride+" · Wedding Invitation · "+CODE.slice(0,3);
 document.querySelector("#intro .gold").innerHTML=C.groom+'<br><small style="font-size:.5em">&amp;</small><br>'+C.bride;
-if(C.seal){const it=document.getElementById("intro");it.classList.add("seal-mode");it.innerHTML=`<div class="ew"><div class="eb"></div><div class="cd2">${C.groom} &amp; ${C.bride}</div><div class="ef"></div><div class="fl"></div><button class="seal" id="sealb" aria-label="Open the invitation">${C.groom[0]}&amp;${C.bride[0]}</button></div><div class="eh"><div class="cap">WEDDING CELEBRATIONS</div><div class="it" style="font-size:19px">Tap the seal to open</div></div>`}
 const M=["January","February","March","April","May","June","July","August","September","October","November","December"],D=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const $=s=>document.querySelector(s),app=$("#app"),scr=$("#scr"),vid=$("#vid");
 const IC={c:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',t:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>',p:'<svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.6 6.5-11A6.5 6.5 0 0 0 5.5 10C5.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></svg>'};
@@ -254,8 +226,7 @@ lay();addEventListener("resize",lay);
 /* playback */
 let started=false;
 function start(){if(started)return;started=true;app.classList.add("started");vid.play().catch(()=>{});}
-function openSeal(){const it=$("#intro");if(it.classList.contains("open"))return;it.classList.add("open");navigator.vibrate&&navigator.vibrate(25);vid.play().catch(()=>{});setTimeout(()=>{started=true;app.classList.add("started")},1500)}
-if(C.seal){$("#sealb").onclick=openSeal}else{$("#intro").onclick=start}
+$("#intro").onclick=start;
 vid.addEventListener("timeupdate",()=>{const t=vid.currentTime;if(t>7)app.classList.add("t1");if(t>8)app.classList.add("t2");if(t>8.6)app.classList.add("go")});
 vid.addEventListener("ended",()=>{app.classList.add("ended","t1","t2","go")});
 scr.addEventListener("scroll",()=>app.classList.toggle("sd",scr.scrollTop>20),{passive:true});
@@ -280,12 +251,12 @@ function confetti(){const c=["#f6c451","#fff1c8","#1f8a5b","#d86b9a","#b0213a"];
 if(C.editor||/edit/.test(location.hash)){
  const TY=["Mehndi","Mayun","Dholki","Baraat","Nikah","Rukhsati","Walima","Wedding"],t12=t=>{const[h,m]=(t||"12:00").split(":").map(Number);return((h%12)||12)+":"+String(m).padStart(2,"0")+" "+(h<12?"AM":"PM")},
   esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
- let ev=C.events.map(e=>({...e}));const st={groom:C.groom,bride:C.bride,hostsTitle:C.hostsTitle||"",hostsText:(C.hosts||[]).join("\n"),faqText:(C.faq||[]).map(q=>q.join(" | ")).join("\n"),seal:!!C.seal,scratch:!!C.scratch};
+ let ev=C.events.map(e=>({...e}));const st={groom:C.groom,bride:C.bride,hostsTitle:C.hostsTitle||"",hostsText:(C.hosts||[]).join("\n"),faqText:(C.faq||[]).map(q=>q.join(" | ")).join("\n"),scratch:!!C.scratch};
  const ed=document.createElement("div");ed.id="ed";const eb=document.createElement("button");eb.id="edb";eb.textContent="✎";eb.setAttribute("aria-label","Edit this card");app.appendChild(ed);app.appendChild(eb);
  const draw=()=>{ed.innerHTML=`<h3>Edit this card</h3><label>Groom<input data-s="groom" value="${esc(st.groom)}"></label><label>Bride<input data-s="bride" value="${esc(st.bride)}"></label><h4>Events</h4>`+
   ev.map((e,i)=>`<div class="er"><div class="r2"><select data-i="${i}" data-k="name">${TY.map(t=>`<option${t==e.name?" selected":""}>${t}</option>`).join("")}</select><button data-d="${i}">Remove</button></div><div class="r2"><input type="date" data-i="${i}" data-k="date" value="${esc(e.date)}"><input type="time" data-i="${i}" data-k="time" value="${esc(e.time)}"></div><input placeholder="Venue" data-i="${i}" data-k="venue" value="${esc(e.venue)}"><input placeholder="Address / city" data-i="${i}" data-k="address" value="${esc(e.address)}"><input placeholder="Dress code" data-i="${i}" data-k="dress" value="${esc(e.dress)}"><input placeholder="Hosted by (line under the event name)" data-i="${i}" data-k="hosts" value="${esc(e.hosts)}"></div>`).join("")+
-  `<button id="ea">+ Add event</button><h4>Hosts (one per line: Name | relation)</h4><input data-s="hostsTitle" placeholder="Heading" value="${esc(st.hostsTitle)}"><textarea data-s="hostsText" rows="5">${esc(st.hostsText)}</textarea><h4>Questions (one per line: question | answer)</h4><textarea data-s="faqText" rows="5">${esc(st.faqText)}</textarea><label class="ck"><input type="checkbox" data-c="seal" ${st.seal?"checked":""}> Wax-seal envelope</label><label class="ck"><input type="checkbox" data-c="scratch" ${st.scratch?"checked":""}> Scratch-to-reveal date</label><div class="r2"><button id="ap" class="pri">Apply</button><button id="rs">Reset</button></div><div class="r2"><button id="cp">Show code</button><button id="dl">Download final HTML</button></div><textarea id="co" rows="7" hidden readonly></textarea><div id="em"></div><button id="ex">Close</button>`};
- const get=()=>({groom:st.groom,bride:st.bride,hostsTitle:st.hostsTitle,hosts:st.hostsText.split("\n").map(s=>s.trim()).filter(Boolean),faq:st.faqText.split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(a=>a.length>1&&a[0]),events:ev.map(e=>({...e,timeText:t12(e.time),map:(e.venue||"")+" "+(e.address||"")})),seal:st.seal,scratch:st.scratch}),
+  `<button id="ea">+ Add event</button><h4>Hosts (one per line: Name | relation)</h4><input data-s="hostsTitle" placeholder="Heading" value="${esc(st.hostsTitle)}"><textarea data-s="hostsText" rows="5">${esc(st.hostsText)}</textarea><h4>Questions (one per line: question | answer)</h4><textarea data-s="faqText" rows="5">${esc(st.faqText)}</textarea><label class="ck"><input type="checkbox" data-c="scratch" ${st.scratch?"checked":""}> Scratch-to-reveal date</label><div class="r2"><button id="ap" class="pri">Apply</button><button id="rs">Reset</button></div><div class="r2"><button id="cp">Show code</button><button id="dl">Download final HTML</button></div><textarea id="co" rows="7" hidden readonly></textarea><div id="em"></div><button id="ex">Close</button>`};
+ const get=()=>({groom:st.groom,bride:st.bride,hostsTitle:st.hostsTitle,hosts:st.hostsText.split("\n").map(s=>s.trim()).filter(Boolean),faq:st.faqText.split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(a=>a.length>1&&a[0]),events:ev.map(e=>({...e,timeText:t12(e.time),map:(e.venue||"")+" "+(e.address||"")})),scratch:st.scratch}),
   fin=()=>Object.assign({},C,get(),{sample:false,editor:false}),msg=t=>{ed.querySelector("#em").textContent=t};
  eb.onclick=()=>{draw();ed.classList.add("on")};
  ed.addEventListener("input",e=>{const t=e.target;if(t.dataset.s)st[t.dataset.s]=t.value;else if(t.dataset.k!==undefined)ev[t.dataset.i][t.dataset.k]=t.value});
