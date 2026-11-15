@@ -78,7 +78,27 @@ jobs:
               thumb_rel = f"thumbs/{template_id}{thumb_src.suffix.lower()}"
               (public / "templates").mkdir(parents=True, exist_ok=True)
               (public / "thumbs").mkdir(parents=True, exist_ok=True)
-              shutil.copy2(html_path, public / html_rel)
+              # Extract embedded media from template HTML into cacheable files.
+              # This keeps the delivered HTML lightweight and avoids base64 video playback stalls.
+              html_text = html_path.read_text(encoding="utf-8")
+              asset_dir = public / "templates" / template_id / "media"
+              asset_dir.mkdir(parents=True, exist_ok=True)
+              asset_counts = {}
+              def externalize(match):
+                mime, encoded = match.group(1), match.group(2)
+                import base64
+                ext = "mp4" if mime == "video/mp4" else ("png" if mime == "image/png" else "jpg")
+                asset_counts[ext] = asset_counts.get(ext, 0) + 1
+                filename = f"asset-{asset_counts[ext]:02d}.{ext}"
+                (asset_dir / filename).write_bytes(base64.b64decode(encoded))
+                return f"{template_id}/media/{filename}"
+              import re
+              html_text = re.sub(r"data:(image/jpeg|image/png|video/mp4);base64,([A-Za-z0-9+/=]+)", externalize, html_text)
+              # Also copy separately supplied media assets for future templates.
+              supplied_media = folder / "media"
+              if supplied_media.is_dir():
+                shutil.copytree(supplied_media, asset_dir, dirs_exist_ok=True)
+              (public / html_rel).write_text(html_text, encoding="utf-8")
               shutil.copy2(thumb_src, public / thumb_rel)
               record = dict(meta)
               record["file"] = html_rel
@@ -237,6 +257,6 @@ jobs:
           done
           curl -fsS http://127.0.0.1:4173/templates.json >/dev/null
       - name: Test the exact built artifact
-        run: npx playwright test tests/royal-navy-blue-gold.spec.js tests/invitation-video-previews.spec.js tests/order-flow.spec.js tests/template-contract.spec.js --reporter=list
+        run: npx playwright test tests/royal-navy-blue-gold.spec.js tests/invitation-video-previews.spec.js tests/order-flow.spec.js tests/template-contract.spec.js tests/grand-entrance.spec.js --reporter=list
         env:
           BASE_URL: http://127.0.0.1:4173
