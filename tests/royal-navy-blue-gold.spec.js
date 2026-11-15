@@ -23,7 +23,7 @@ test('Royal Navy Gold video template is registered and editor-compatible', async
  const video=page.locator('#vid');
  await expect(video).toHaveCount(1);
  const videoSource=await video.locator('source').getAttribute('src');
- expect(videoSource).toMatch(/^royal-navy-gold-video\\/media\\/asset-\\d+\\.mp4$/);
+ expect(videoSource).toMatch(/^royal-navy-gold-video\/media\/asset-\d+\.mp4$/);
  await expect(page.locator('#intro')).toBeVisible();
  await page.locator('#intro').click();
  await expect.poll(()=>video.evaluate(v=>v.paused),{timeout:10000}).toBeFalsy();
