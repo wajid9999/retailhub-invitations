@@ -189,7 +189,7 @@ function tab(n){$('#pd').classList.toggle('h',n!==1);$('#pp').classList.toggle('
 async function show(){
  for(const e of S.ev)if(!e.d||!e.k){alert('Please fill the name and date of every event.');return}
  try{const payload=ad(cur)(S,false);const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'create-preview',template_id:cur.id,preview_payload:payload})});const out=await res.json();if(!res.ok)throw new Error(out.error||'Could not create preview');
-  const u=new URL(location.href);u.hash='';u.searchParams.set('preview',out.preview_token);location.href=u.toString();
+  const u=new URL(location.href);u.hash='';u.searchParams.set('preview',out.preview_token);history.replaceState(null,'',u.toString());await route();
  }catch(err){alert(err.message||'Preview could not be created. Please try again.')}
 }
 function form(){const L=(l,a,ty='text')=>`<label>${l}<input type="${ty}" ${a}></label>`,ev=cur.form==='event';
