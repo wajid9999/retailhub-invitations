@@ -55,7 +55,7 @@ if(action==="submit-order"){
    Array.isArray((payload as Record<string,any>).ev)?(payload as Record<string,any>).ev:[];
  const eventCount=Math.max(1,Math.min(30,eventList.length));
  const simple=Math.max(0,Number(settings.simple_price)||0),premium=Math.max(0,Number(settings.premium_price)||0),high=Math.max(0,Number(settings.high_price)||0);
- const price=tier==="high"?high+premium*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
+ const price=tier==="high"?3000+1000*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
  const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
  const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\D/g,"")||null;
  const notice={order_number:data.order_number,customer_name,customer_phone,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount};
