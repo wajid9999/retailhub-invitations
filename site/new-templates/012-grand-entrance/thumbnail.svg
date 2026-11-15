@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="640" viewBox="0 0 360 640">
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#392719"/><stop offset="1" stop-color="#130d0b"/></linearGradient><linearGradient id="gold" x2="0" y2="1"><stop stop-color="#fff0b9"/><stop offset=".55" stop-color="#d4a64d"/><stop offset="1" stop-color="#81531f"/></linearGradient><radialGradient id="glow"><stop stop-color="#ffe6a0" stop-opacity=".7"/><stop offset="1" stop-color="#ffe6a0" stop-opacity="0"/></radialGradient></defs>
+<rect width="360" height="640" fill="url(#bg)"/><ellipse cx="180" cy="250" rx="170" ry="210" fill="url(#glow)"/>
+<path d="M0 0H44Q22 180 62 390H0ZM360 0H316Q338 180 298 390H360Z" fill="#9a7048" opacity=".75"/>
+<path d="M35 520V230Q180 -20 325 230V520" fill="none" stroke="url(#gold)" stroke-width="9"/>
+<path d="M70 520V260Q180 65 290 260V520" fill="none" stroke="url(#gold)" stroke-width="5"/>
+<g fill="#e7bd69"><circle cx="70" cy="230" r="5"/><circle cx="95" cy="175" r="5"/><circle cx="130" cy="130" r="5"/><circle cx="180" cy="112" r="6"/><circle cx="230" cy="130" r="5"/><circle cx="265" cy="175" r="5"/><circle cx="290" cy="230" r="5"/></g>
+<path d="M20 555H340" stroke="url(#gold)" stroke-width="2"/>
+<text x="180" y="570" text-anchor="middle" fill="#ffe8ad" font-family="Georgia,serif" font-size="22" letter-spacing="2">GRAND ENTRANCE</text>
+<text x="180" y="600" text-anchor="middle" fill="#f6ead0" font-family="Georgia,serif" font-size="12" letter-spacing="2">OPEN SCROLL · SCRATCH DATE</text>
+</svg>
