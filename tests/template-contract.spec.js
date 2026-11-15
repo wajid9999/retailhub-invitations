@@ -31,7 +31,7 @@ test('Royal Journey renders the latest editor payload instead of demo dates', as
   });
   await expect.poll(async () => page.locator('body').innerText(), { timeout: 45000 })
     .toContain('Inviteora Payload Groom 8472');
-  const rendered = await page.locator('body').innerText();
+  const rendered = await page.locator('body').textContent();
   expect(rendered).toContain('Inviteora Payload Bride 5931');
   expect(rendered).toContain('Payload Mehndi 8472');
   expect(rendered).toContain('Payload Venue 8472');
