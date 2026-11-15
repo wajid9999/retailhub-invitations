@@ -33,11 +33,7 @@ test('order form uses configured prices for all packages and event counts', asyn
   });
   await expect(page.locator('#order-panel')).toBeVisible({ timeout: 30000 });
   await expect(page.locator('#package-price')).toContainText('Rs. 5,000');
-  await page.locator('#package-tier').selectOption('premium');
-  await expect(page.locator('#package-price')).toContainText('Rs. 3,600');
-  await page.locator('#package-tier').selectOption('simple');
-  await expect(page.locator('#package-price')).toContainText('Rs. 1,800');
-  await page.locator('#package-tier').selectOption('high');
+  await expect(page.locator('#package-tier')).toBeDisabled();
   await expect(page.locator('#package-price')).toContainText('Rs. 5,000');
 });
 
