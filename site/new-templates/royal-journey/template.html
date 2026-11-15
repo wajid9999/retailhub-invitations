@@ -142,7 +142,7 @@ section.pp+section.pp{border-top:1px solid rgba(244,185,66,.28)}
 </div>
 <script>
 /* ========= EDIT ONLY THIS BLOCK FOR EACH CUSTOMER ========= */
-const C={
+let C={
   groom:"Hamza", bride:"Areeba", sample:true,
   slides:"glass",       // glass slides (D3)
   scratch:true,        // scratch-to-reveal date calendar slide (+Scratch)
@@ -156,9 +156,32 @@ const C={
   ],
   faq:[["What should I wear?","Bright festive colours (yellow and green are lovely) are perfect."],["Can I bring my family?","Your whole family is welcome."],["Where do I park?","Parking is available at the venue."]]
 };
+/* Apply the editor/preview payload before rendering any invitation content. */
+try {
+ const encoded=location.hash.slice(1);
+ if(encoded && encoded!=="edit"){
+  const bytes=Uint8Array.from(atob(encoded.replace(/-/g,"+").replace(/_/g,"/")),ch=>ch.charCodeAt(0));
+  const incoming=JSON.parse(new TextDecoder("utf-8").decode(bytes));
+  if(incoming && incoming.C && typeof incoming.C==="object"){
+   const p=incoming.C, esc=v=>String(v==null?"":v).replace(/[&<>"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+   C={...C,...p,
+    groom:esc(p.groom),bride:esc(p.bride),
+    hostsTitle:esc(p.hostsTitle||"With best compliments"),
+    hosts:Array.isArray(p.hosts)?p.hosts.map(esc):[],
+    events:Array.isArray(p.events)?p.events.map(e=>({
+     name:esc(e.name),hosts:esc(e.hosts),date:String(e.date||""),
+     time:String(e.time||"19:00"),timeText:esc(e.timeText||e.time||""),
+     venue:esc(e.venue),address:esc(e.address),dress:esc(e.dress),map:String(e.map||"")
+    })):C.events,
+    sample:incoming.final===true?false:incoming.final===false?true:p.sample!==false
+   };
+  }
+ }
+} catch(err){console.error("Inviteora payload could not be applied",err);}
 /* =========================================================== */
 const CODE="011-royal-journey";try{const sv=JSON.parse(localStorage.getItem("card-"+CODE)||"null");if(sv&&C.editor!==false)Object.assign(C,sv)}catch(e){}document.title=C.groom+" & "+C.bride+" · Wedding Invitation · "+CODE.slice(0,3);
 document.querySelector("#intro .gold").innerHTML=C.groom+'<br><small style="font-size:.5em">&amp;</small><br>'+C.bride;
+document.querySelector("#intro .s").textContent="invite you to their "+(C.events[0]?.name||"celebration");
 const M=["January","February","March","April","May","June","July","August","September","October","November","December"],D=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const $=s=>document.querySelector(s),app=$("#app"),scr=$("#scr"),vid=$("#vid");
 const IC={c:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',t:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>',p:'<svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.6 6.5-11A6.5 6.5 0 0 0 5.5 10C5.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></svg>'};
@@ -215,6 +238,7 @@ if(C.slides=="glass"){
  document.querySelector(".sh").textContent="TAP TO CONTINUE ▾";
 }
 if(!C.sample)$("#wm").remove();
+document.documentElement.dataset.inviteoraPayload="loaded";
 /* place text exactly over the video (icon positions measured from the video) */
 const WIN=[[0,0],[100,0],[100,100],[0,100]];
 function lay(){const W=app.clientWidth,H=app.clientHeight,s=Math.max(W/720,H/1280),dw=720*s,dh=1280*s,ox=(W-dw)/2,oy=(H-dh)/2,X=p=>ox+dw*p/100,Y=p=>oy+dh*p/100;
