@@ -87,22 +87,16 @@ $('#grid').onclick=e=>{const b=e.target.closest('[data-t]');if(b)location.hash='
 async function route(){
  const originalToken=new URLSearchParams(location.search).get('original');
  if(originalToken){
-  $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#order-panel').classList.add('h');$('#tt').textContent='Your original invitation';$('#ifr').src='about:blank';
-  try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-original',token:originalToken})});const j=await r.json();if(!r.ok||!j.valid)throw new Error('This original invitation link is invalid or has expired.');
-   const t=T.find(x=>x.id===j.template_id);if(!t)throw new Error('Invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Original invitation';$('#ifr').src=templateUrl(t.file)+'#'+b64(j.invitation);$('#preview-note').textContent='Original invitation · valid through the event date.';
-  }catch(e){$('#tt').textContent='Invitation unavailable';$('#preview-note').textContent=e.message;$('#ifr').src='about:blank'}
-  return;
- }
-
- if(originalToken){
-  $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');$('#tt').textContent='Your original invitation';$('#ifr').src='about:blank';$('#order-panel').classList.add('h');$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
+  $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');
+  $('#order-panel').classList.add('h');$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
+  $('#tt').textContent='Your original invitation';$('#ifr').src='about:blank';
   try{
-   const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-original',token:originalToken})});
-   const out=await res.json();if(!res.ok||!out.valid)throw new Error('This original invitation link is invalid or has expired.');
-   const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');
-   cur=t;$('#tt').textContent=t.name+' — Original Invitation';$('#ifr').src=templateUrl(t.file)+'#'+b64(out.invitation);
-   $('#preview-note').textContent='Your original invitation is ready to share.';
-  }catch(err){$('#tt').textContent='Invitation unavailable';$('#preview-note').textContent=err.message;$('#ifr').src='about:blank';}
+   const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-original',token:originalToken})});
+   const j=await r.json();if(!r.ok||!j.valid)throw new Error('This original invitation link is invalid or has expired.');
+   const t=T.find(x=>x.id===j.template_id);if(!t)throw new Error('Invitation design is unavailable.');
+   cur=t;$('#tt').textContent=t.name+' — Original invitation';$('#ifr').src=templateUrl(t.file)+'#'+b64(j.invitation);
+   $('#preview-note').textContent='Original invitation · valid through the event date.';
+  }catch(e){$('#tt').textContent='Invitation unavailable';$('#preview-note').textContent=e.message;$('#ifr').src='about:blank';}
   return;
  }
  const previewToken=new URLSearchParams(location.search).get('preview');
