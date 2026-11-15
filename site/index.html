@@ -74,7 +74,7 @@ floral:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both"
 velvet:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}})
 };
 const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
-const SITE_BASE='https://wajid9999.github.io/retailhub-invitations/';
+const SITE_BASE='https://inviteora-preview.vercel.app/';
 const templateUrl=file=>new URL(file,SITE_BASE).href;
 const link=fin=>templateUrl(cur.file)+'#'+b64(ad(cur)(S,fin));
 function grid(){const bt=(l,k,v)=>`<button data-${k}="${v}" class="${(k==='o'?fo:ft)===v?'on':''}">${l}</button>`;
