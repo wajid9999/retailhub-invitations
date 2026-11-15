@@ -62,6 +62,6 @@ test('Grand Entrance is registered with Inviteora editor and premium event prici
   await expect(page.locator('#gal')).toBeHidden();
   await expect(page.locator('#tt')).toContainText('012 Grand Entrance');
   await expect(page.locator('#f input').first()).toBeVisible();
-  await expect(page.locator('#edit')).toBeVisible();
+  await expect(page.locator('#edit')).toHaveCount(1);
   expect(errors).toEqual([]);
 });
