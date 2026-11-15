@@ -200,6 +200,7 @@ function readInviteoraPayload(){
 const C=readInviteoraPayload();
 if(!C)throw new Error("Inviteora payload validation failed.");
 document.title=C.groom+" & "+C.bride+" · Wedding Invitation · 012";
+document.getElementById("intro").innerHTML=`<div class="ar fg" style="font-size:36px;font-family:'Aref Ruqaa',Amiri,serif">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div class="script fg" style="font-size:clamp(52px,15vw,70px);margin:14px 0 2px;line-height:1.05">${C.groom} &amp; ${C.bride}</div><div class="s it" style="margin:6px 0 18px">invite you to celebrate their wedding</div><span class="btn">Tap to open</span>`;
 const M=["January","February","March","April","May","June","July","August","September","October","November","December"],D=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const $=s=>document.querySelector(s),app=$("#app"),scr=$("#scr"),vid=$("#vid");
 const IC={c:'<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',t:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>',p:'<svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.6 6.5-11A6.5 6.5 0 0 0 5.5 10C5.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></svg>'};
