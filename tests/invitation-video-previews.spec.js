@@ -8,7 +8,7 @@ for (const item of [
     path: '/templates/royal-navy-gold-video.html',
     video: '#vid',
     intro: '#intro',
-    source: 'data:video/mp4;base64,'
+    source: 'royal-navy-gold-video/media/asset-01.mp4'
   },
   {
     name: 'Velvet Curtain',
