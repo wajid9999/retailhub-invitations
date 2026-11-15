@@ -56,3 +56,10 @@ fields as empty strings and escape user-provided text before inserting HTML.
 3. Check the sample watermark is visible only in preview, never in final.
 4. Open the standalone preview and final link, then verify expiry/validity.
 5. Check mobile loading, console errors, and video/image behavior.
+
+
+## Open Scroll / future template editor boundary
+
+The gallery/editor is the single source of customer input. A template must decode the UTF-8 JSON payload from the URL fragment, render `C.groom`, `C.bride`, every `C.events[]` item, optional `C.hosts`, and optional `C.faq`, and respect `final` / `C.sample` for the SAMPLE watermark. It must not create a floating edit pencil, localStorage editor, or separate customer data form. Use escaped text for all customer-provided content and URL-encode map queries.
+
+For High Premier templates, retain the shared order-pricing rule: Rs. 3,000 for one event, then Rs. 1,000 for each additional event. Pages, slides, and decorative sections do not count as events.
