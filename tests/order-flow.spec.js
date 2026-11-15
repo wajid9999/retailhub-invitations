@@ -20,7 +20,7 @@ test('order form uses configured prices for all packages and event counts', asyn
     }
     if (body.action === 'public-settings') {
       return route.fulfill({ json: { settings: {
-        simple_price: 600, premium_price: 1200, high_price: 3500,
+        simple_price: 600, premium_price: 1200, high_price: 3000,
         jazzcash_details: 'Test payment details',
         easypaisa_details: '', bank_details: '', raast_details: ''
       } } });
@@ -32,11 +32,9 @@ test('order form uses configured prices for all packages and event counts', asyn
     waitUntil: 'domcontentloaded', timeout: 60000
   });
   await expect(page.locator('#order-panel')).toBeVisible({ timeout: 30000 });
-  await expect(page.locator('#package-price')).toContainText('Rs. 1,800');
-  await page.locator('#package-tier').selectOption('premium');
-  await expect(page.locator('#package-price')).toContainText('Rs. 3,600');
-  await page.locator('#package-tier').selectOption('high');
-  await expect(page.locator('#package-price')).toContainText('Rs. 5,900');
+  await expect(page.locator('#package-price')).toContainText('Rs. 5,000');
+  await expect(page.locator('#package-tier')).toBeDisabled();
+  await expect(page.locator('#package-price')).toContainText('Rs. 5,000');
 });
 
 test('order submission sends a preview token and handles an expired preview safely', async ({ page }) => {

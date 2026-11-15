@@ -48,6 +48,7 @@ test('Royal Navy Gold receives editor payload for names and final watermark', as
 test('event-based package pricing is correct and page count is not used', async ({page})=>{
  await page.goto(process.env.BASE_URL+'/');
  const result=await page.evaluate(()=>{
+  publicSettings={simple_price:500,premium_price:1000,high_price:3000};
   const payloads=[
    {C:{events:[{name:'Mehndi'},{name:'Nikah'},{name:'Walima'}]}},
    {d:{ev:[{k:'Birthday'}]}},

@@ -17,21 +17,32 @@ try{const body=await req.json(),action=String(body.action||"");
 if(action==="create-preview"){
  const payload=body.preview_payload,template_id=String(body.template_id||"").trim().slice(0,80);
  if(!payload||typeof payload!=="object"||!template_id)return json({error:"Template and invitation details are required"},400);
- const token=crypto.randomUUID()+crypto.randomUUID(),expiresAt=new Date(Date.now()+5*60*1000).toISOString(),tokenHash=await sha256(token);
- const {error}=await db.from("invitation_previews").insert({token_hash:tokenHash,template_id,preview_payload:payload,expires_at:expiresAt});if(error)throw error;
- return json({preview_token:token,expires_at:expiresAt,valid_for_seconds:300},201);
+ const token=crypto.randomUUID()+crypto.randomUUID(),createdAt=new Date(),activationDeadline=new Date(createdAt.getTime()+15*60*1000).toISOString(),tokenHash=await sha256(token);
+ const {error}=await db.from("invitation_previews").insert({token_hash:tokenHash,template_id,preview_payload:payload,expires_at:activationDeadline,activated_at:null});if(error)throw error;
+ return json({preview_token:token,expires_at:activationDeadline,valid_for_seconds:900,activation_window_seconds:900},201);
 }
 if(action==="verify-preview"){
  const token=String(body.token||"");if(token.length<24||token.length>200)return json({valid:false},400);
- const {data,error}=await db.from("invitation_previews").select("template_id,preview_payload,expires_at").eq("token_hash",await sha256(token)).gt("expires_at",new Date().toISOString()).maybeSingle();if(error)throw error;
- return json(data?{valid:true,template_id:data.template_id,invitation:data.preview_payload,expires_at:data.expires_at}:{valid:false,reason:"expired_or_invalid"},data?200:404);
+ const tokenHash=await sha256(token),now=new Date(),nowIso=now.toISOString();
+ let {data,error}=await db.from("invitation_previews").select("template_id,preview_payload,expires_at,activated_at,created_at").eq("token_hash",tokenHash).gt("expires_at",nowIso).maybeSingle();if(error)throw error;
+ if(data&&!data.activated_at){
+  const createdAt=new Date(data.created_at).getTime();
+  if(!Number.isFinite(createdAt)||now.getTime()-createdAt>15*60*1000)return json({valid:false,reason:"activation_window_expired"},404);
+  const activatedAt=nowIso,expiresAt=new Date(now.getTime()+5*60*1000).toISOString();
+  const {data:activated,error:activationError}=await db.from("invitation_previews").update({activated_at:activatedAt,expires_at:expiresAt}).eq("token_hash",tokenHash).is("activated_at",null).gt("expires_at",nowIso).select("template_id,preview_payload,expires_at,activated_at").maybeSingle();
+  if(activationError)throw activationError;
+  if(activated)data=activated;
+  else {const {data:existing,error:existingError}=await db.from("invitation_previews").select("template_id,preview_payload,expires_at,activated_at").eq("token_hash",tokenHash).gt("expires_at",nowIso).maybeSingle();if(existingError)throw existingError;data=existing;}
+ }
+ const valid=!!data&&!!data.activated_at&&new Date(data.expires_at).getTime()>Date.now();
+ return json(valid?{valid:true,template_id:data.template_id,invitation:data.preview_payload,expires_at:data.expires_at}:{valid:false,reason:"expired_or_invalid"},valid?200:404);
 }
 if(action==="public-settings"){const {data,error}=await db.from("invitation_settings").select("simple_price,premium_price,high_price,jazzcash_details,easypaisa_details,bank_details,raast_details").eq("id",true).single();if(error)throw error;return json({settings:data});}
 if(action==="submit-order"){
  const customer_name=String(body.customer_name||"").trim().slice(0,100),customer_phone=String(body.customer_phone||"").replace(/[^0-9+]/g,"").slice(0,20),template_name=String(body.template_name||"").trim().slice(0,120),tier=String(body.package_tier||""),previewToken=String(body.preview_token||"");
  if(!customer_name||customer_phone.replace(/\D/g,"").length<10||!template_name||previewToken.length<24||previewToken.length>200)return json({error:"Required order details are missing or the preview has expired"},400);
  if(!["simple","premium","high"].includes(tier))return json({error:"Invalid package"},400);
- const {data:preview,error:pe}=await db.from("invitation_previews").select("template_id,preview_payload,expires_at").eq("token_hash",await sha256(previewToken)).gt("expires_at",new Date().toISOString()).maybeSingle();if(pe)throw pe;
+ const {data:preview,error:pe}=await db.from("invitation_previews").select("template_id,preview_payload,expires_at,activated_at").eq("token_hash",await sha256(previewToken)).not("activated_at","is",null).gt("expires_at",new Date().toISOString()).maybeSingle();if(pe)throw pe;
  if(!preview)return json({error:"Preview link expired. Please create a new preview."},410);
  const template_id=String(preview.template_id||"").slice(0,80),payload=preview.preview_payload;
  if(!template_id||!payload||typeof payload!=="object")return json({error:"Preview details are invalid"},400);
@@ -44,7 +55,7 @@ if(action==="submit-order"){
    Array.isArray((payload as Record<string,any>).ev)?(payload as Record<string,any>).ev:[];
  const eventCount=Math.max(1,Math.min(30,eventList.length));
  const simple=Math.max(0,Number(settings.simple_price)||0),premium=Math.max(0,Number(settings.premium_price)||0),high=Math.max(0,Number(settings.high_price)||0);
- const price=tier==="high"?high+premium*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
+ const price=tier==="high"?3000+1000*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
  const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
  const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\D/g,"")||null;
  const notice={order_number:data.order_number,customer_name,customer_phone,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount};

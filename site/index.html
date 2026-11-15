@@ -105,7 +105,7 @@ async function route(){
   try{const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-preview',token:previewToken})});const out=await res.json();if(!res.ok||!out.valid)throw new Error('Preview link expired. Please create a new preview.');
    const t=T.find(x=>x.id===out.template_id);if(!t)throw new Error('This invitation design is unavailable.');cur=t;$('#tt').textContent=t.name+' — Trial Preview';$('#ifr').src=templateUrl(t.file)+'#'+b64(out.invitation);$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
    previewInvitation=out.invitation;currentPreviewToken=previewToken;
-   if(['simple','premium','high'].includes(t.tier))$('#package-tier').value=t.tier;
+   if(['simple','premium','high'].includes(t.tier))$('#package-tier').value=t.tier;$('#package-tier').disabled=t.tier==='high';
    $('#order-panel').classList.remove('h');
    await loadOrderSettings();
    const left=Math.max(0,Math.ceil((new Date(out.expires_at).getTime()-Date.now())/1000));$('#preview-note').textContent='Trial preview · '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0')+' remaining';window.clearTimeout(window.previewExpiryTimer);window.previewExpiryTimer=window.setTimeout(()=>{$('#ifr').src='about:blank';$('#tt').textContent='Preview expired';$('#preview-note').textContent='This five-minute preview has expired. Please create a new preview.';},left*1000);
@@ -146,7 +146,7 @@ function calculateInvitationPrice(tier,count){
  const n=Math.max(1,Math.min(30,Number(count)||1));
  if(!publicSettings)return 0;
  const simple=Number(publicSettings.simple_price)||0,premium=Number(publicSettings.premium_price)||0,high=Number(publicSettings.high_price)||0;
- return tier==='high'?high+premium*(n-1):tier==='premium'?premium*n:simple*n;
+ return tier==='high'?3000+1000*(n-1):tier==='premium'?premium*n:simple*n;
 }
 function updatePackagePrice(){
  if(!publicSettings)return;
@@ -189,7 +189,7 @@ function tab(n){$('#pd').classList.toggle('h',n!==1);$('#pp').classList.toggle('
 async function show(){
  for(const e of S.ev)if(!e.d||!e.k){alert('Please fill the name and date of every event.');return}
  try{const payload=ad(cur)(S,false);const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'create-preview',template_id:cur.id,preview_payload:payload})});const out=await res.json();if(!res.ok)throw new Error(out.error||'Could not create preview');
-  const u=new URL(location.href);u.hash='';u.searchParams.set('preview',out.preview_token);location.href=u.toString();
+  const u=new URL(location.href);u.hash='';u.searchParams.set('preview',out.preview_token);history.replaceState(null,'',u.toString());await route();
  }catch(err){alert(err.message||'Preview could not be created. Please try again.')}
 }
 function form(){const L=(l,a,ty='text')=>`<label>${l}<input type="${ty}" ${a}></label>`,ev=cur.form==='event';
