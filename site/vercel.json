@@ -1,16 +1,1 @@
-{
-  "rewrites": [
-    {
-      "source": "/templates.json",
-      "destination": "https://wajid9999.github.io/retailhub-invitations/templates.json"
-    },
-    {
-      "source": "/templates/:path*",
-      "destination": "https://wajid9999.github.io/retailhub-invitations/templates/:path*"
-    },
-    {
-      "source": "/thumbs/:path*",
-      "destination": "https://wajid9999.github.io/retailhub-invitations/thumbs/:path*"
-    }
-  ]
-}
+{}
