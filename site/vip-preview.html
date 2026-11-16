@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#081125">
+<title>Inviteora VIP Royal Wedding Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Noto+Naskh+Arabic:wght@500&family=Noto+Nastaliq+Urdu:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--g1:#f6e3a6;--g2:#d6b062;--g3:#a77d34;--n0:#050b17;--n1:#081125;--n2:#0d213b}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:radial-gradient(#0d213b,#03070f);overscroll-behavior:none;touch-action:none}
+body{font-family:'Cormorant Garamond',serif;color:var(--g2);user-select:none;-webkit-user-select:none}
+#stage{position:absolute;overflow:hidden;background:var(--n1);--u:.5px}
+#vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:var(--n1)}
+.pg{position:absolute;left:calc(var(--u)*110);top:calc(var(--u)*306);width:calc(var(--u)*500);height:calc(var(--u)*600);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:calc(var(--u)*14);opacity:0;pointer-events:none;transition:opacity .5s}
+.pg.on{opacity:1;pointer-events:auto}
+.it{opacity:0;transform:translateY(calc(var(--u)*20));filter:blur(3px);transition:opacity 1s ease calc(var(--i,0)*.09s),transform 1s ease calc(var(--i,0)*.09s),filter 1s ease calc(var(--i,0)*.09s);max-width:100%}
+.pg.on .it.on{opacity:1;transform:none;filter:none}
+.ur{font-family:'Noto Nastaliq Urdu','Jameel Noori Nastaleeq','Noto Naskh Arabic',serif;direction:rtl;line-height:2;color:var(--g1);text-shadow:0 0 calc(var(--u)*18) rgba(214,176,98,.45)}
+.en{font-family:'Cinzel',serif;letter-spacing:.14em;background:linear-gradient(180deg,var(--g1),var(--g2) 55%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent;padding:.1em 0}
+.sm{font-size:calc(var(--u)*25);font-style:italic;color:var(--g2);letter-spacing:.04em}
+.bis{font-family:'Noto Naskh Arabic',serif;font-size:calc(var(--u)*40);color:var(--g1);direction:rtl}
+.nm{font-size:calc(var(--u)*76);line-height:1.7}.nme{font-size:calc(var(--u)*30)}
+.amp{display:flex;align-items:center;gap:calc(var(--u)*16);width:70%}.amp:before,.amp:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--g2))}.amp:after{transform:scaleX(-1)}
+.amp i{font:normal calc(var(--u)*34) 'Cormorant Garamond',serif;color:var(--g1)}
+.tt{font-size:calc(var(--u)*88);line-height:1.7}.te{font-size:calc(var(--u)*28)}
+.orn{width:60%;height:calc(var(--u)*14);background:radial-gradient(circle,var(--g1) 0 calc(var(--u)*5),transparent calc(var(--u)*6)) center/calc(var(--u)*14) 100% no-repeat,linear-gradient(90deg,transparent,var(--g2) 35%,var(--g2) 65%,transparent) center/100% 1px no-repeat}
+.dt{font-size:calc(var(--u)*40);font-weight:500;color:var(--g1)}
+.tm{font-size:calc(var(--u)*34);color:var(--g2);letter-spacing:.12em}
+.vn{font-size:calc(var(--u)*34);color:var(--g1);font-weight:500}.ad{font-size:calc(var(--u)*27);color:var(--g2);line-height:1.35}
+.ho{font-size:calc(var(--u)*25);font-style:italic;opacity:.9}
+#plq{position:absolute;left:calc(var(--u)*100);top:calc(var(--u)*924);width:calc(var(--u)*520);height:calc(var(--u)*94);display:flex;align-items:center;justify-content:center;gap:calc(var(--u)*12);font:600 calc(var(--u)*27)/1.2 'Cinzel',serif;letter-spacing:.1em;color:var(--g1);text-decoration:none;text-align:center;opacity:0;transition:opacity .8s;pointer-events:none;text-shadow:0 0 calc(var(--u)*14) rgba(214,176,98,.5)}
+#plq.on{opacity:1}#plq.btn{pointer-events:auto;cursor:pointer}
+#plq.btn:active{transform:scale(.97)}#plq svg{width:calc(var(--u)*30);height:calc(var(--u)*30);fill:none;stroke:var(--g1);stroke-width:1.8}
+#dots{transition:opacity .8s;position:absolute;left:0;right:0;top:calc(var(--u)*1046);display:flex;justify-content:center;gap:calc(var(--u)*14)}
+#dots b{width:calc(var(--u)*10);height:calc(var(--u)*10);border-radius:50%;background:var(--g3);opacity:.45;transition:.4s}#dots b.on{background:var(--g1);opacity:1;transform:scale(1.5)}
+#hint{position:absolute;left:0;right:0;top:calc(var(--u)*1086);text-align:center;font-size:calc(var(--u)*23);letter-spacing:.14em;color:var(--g2);opacity:0;transition:opacity 1s}
+#hint.on{opacity:.9;animation:pl 2.4s ease-in-out infinite}@keyframes pl{50%{opacity:.35}}
+#brand{position:absolute;left:0;right:0;top:calc(var(--u)*1168);text-align:center;font:calc(var(--u)*17)/1 'Cinzel',serif;letter-spacing:.4em;color:var(--g3);opacity:.8}
+#intro{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:12vh;gap:14px;background:linear-gradient(transparent 35%,rgba(3,7,15,.82));cursor:pointer;transition:opacity .9s}
+#intro.off{opacity:0;pointer-events:none}
+#seal{width:104px;height:104px;border-radius:50%;border:1.5px solid var(--g2);display:grid;place-items:center;font:600 30px 'Cinzel',serif;color:var(--g1);background:radial-gradient(#10294a,#081125);box-shadow:0 0 0 7px rgba(214,176,98,.14),0 0 34px rgba(214,176,98,.35);animation:bt 2.6s ease-in-out infinite}
+@keyframes bt{50%{box-shadow:0 0 0 14px rgba(214,176,98,.06),0 0 46px rgba(214,176,98,.5)}}
+#intro p{font:600 14px 'Cinzel',serif;letter-spacing:.3em;color:var(--g1)}#intro p.ur{font-size:18px;letter-spacing:0;line-height:1.8}
+#snd{position:absolute;z-index:15;top:max(14px,env(safe-area-inset-top));right:14px;width:42px;height:42px;border-radius:50%;border:1px solid var(--g3);background:rgba(8,17,37,.6);display:none;place-items:center;cursor:pointer}
+#snd.on{display:grid}#snd svg{width:20px;height:20px;fill:none;stroke:var(--g1);stroke-width:1.8}
+#wm{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden}
+#wm div{position:absolute;inset:-50%;transform:rotate(-28deg);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='150'%3E%3Ctext x='150' y='85' text-anchor='middle' font-family='Arial' font-weight='700' font-size='38' letter-spacing='6' fill='white' fill-opacity='.2' stroke='black' stroke-opacity='.12'%3ESAMPLE%3C/text%3E%3C/svg%3E")}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01s!important}}
+
+body:not(.ready) #stage,body:not(.ready) #intro,body:not(.ready) #snd{visibility:hidden}
+.nl{font-size:calc(var(--u)*46);line-height:1.5;letter-spacing:.1em;overflow-wrap:anywhere}.nl.lg{font-size:calc(var(--u)*34)}.nm.lg{font-size:calc(var(--u)*58)}
+.hl{font-size:calc(var(--u)*30);color:var(--g1);line-height:1.3;overflow-wrap:anywhere}.hl small{display:block;font-size:.72em;color:var(--g2);font-style:italic}
+.qa{font-size:calc(var(--u)*25);line-height:1.35;color:var(--g2)}.qa b{display:block;color:var(--g1);font-weight:500;font-size:1.1em}
+#err{position:fixed;inset:0;display:none;place-items:center;padding:28px;text-align:center;color:var(--g1);font:15px/1.6 system-ui,sans-serif}body.bad #err{display:grid}
+</style>
+</head>
+<body>
+<div id="stage">
+ <video id="vid" playsinline webkit-playsinline preload="metadata" disablepictureinpicture poster="new-templates/vip-royal-wedding/thumbnail.svg"><source src="new-templates/vip-royal-wedding/media/vip-wedding.mp4" type="video/mp4"></video>
+ <div id="pages"></div><a id="plq"></a><div id="dots"></div><div id="hint"></div><div id="brand">INVITEORA</div>
+</div>
+<div id="intro"><div id="seal"></div><p>TAP TO OPEN</p><p class="ur" dir="rtl">دعوت نامہ کھولنے کے لیے ٹیپ کریں</p></div>
+<button id="snd" type="button" aria-label="Sound on/off"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="sw" d="M16 9c1.5 1.5 1.5 4.5 0 6M19 6c3 3 3 9 0 12"/></svg></button>
+<div id="err" role="alert"></div>
+<script>
+(()=>{'use strict';
+/* Inviteora editor contract: payload = base64(UTF-8 JSON) in the URL fragment → {final, C:{groom,bride,sample,hosts,hostsTitle,faq,events[{name,hosts,date,time,timeText,venue,address,dress,map}]}}.
+   Optional extra: C.rsvp {name,phone,deadline,button}. No customer data is stored in this file. */
+const $=id=>document.getElementById(id),v=$('vid'),st=$('stage'),pgs=$('pages'),plq=$('plq'),hint=$('hint');
+const UR={nikah:'نکاح',baraat:'بارات',barat:'بارات',walima:'ولیمہ',mehndi:'مہندی',mehendi:'مہندی',mayun:'مایوں',mayoon:'مایوں',dholki:'ڈھولکی',rukhsati:'رخصتی',rukhsat:'رخصتی',engagement:'منگنی'};
+const AR=/[\u0600-\u06FF]/,S=x=>x==null?'':String(x).trim();
+function decode(){let h=location.hash.slice(1);if(!h)throw Error('Invitation payload is missing. Open this template through Inviteora preview.');
+ try{h=decodeURIComponent(h)}catch(e){}h=h.replace(/-/g,'+').replace(/_/g,'/');while(h.length%4)h+='=';
+ const b=atob(h);return JSON.parse(new TextDecoder('utf-8').decode(Uint8Array.from(b,c=>c.charCodeAt(0))))}
+const fmtDate=d=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(S(d));if(!m)return S(d);return new Date(Date.UTC(+m[1],+m[2]-1,+m[3])).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'})};
+const mapUrl=x=>{x=S(x);return !x?'':/^https?:\/\//i.test(x)?x:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(x)};
+const E=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const list=x=>Array.isArray(x)?x:(typeof x==='string'&&x.trim()?x.split(/\n/):[]);
+let C={},events=[],pages=[],idx=0,started=false,sw=0,preview=true,t0=0,fb=0;
+const T=()=>fb?(performance.now()-t0)/1e3:v.currentTime;
+function item(p,cls,x,t,id){if((x===''||x==null)&&!/\b(amp|orn|qa)\b/.test(cls))return null;const e=E('div','it '+cls,x);e.style.setProperty('--i',p.children.length);if(t!=null)e.dataset.t=t;if(id)e.id=id;p.appendChild(e);return e}
+function name(p,txt,t,id){const u=AR.test(txt);return item(p,u?'ur nm'+(txt.length>12?' lg':''):'en nl'+(txt.length>14?' lg':''),txt,t,id)}
+function render(P){C=P.C||P;events=Array.isArray(C.events)?C.events:[];
+ if(!S(C.groom)||!S(C.bride)||!events.length||!events.every(e=>e&&e.name!==undefined&&e.date!==undefined&&e.time!==undefined&&e.venue!==undefined&&e.address!==undefined))throw Error('Invitation details are incomplete. Please complete the event details in Inviteora.');
+ preview=!(P.final===true)||C.sample===true;pgs.textContent='';pages=[];
+ $('seal').textContent=(S(C.groom)[0]||'')+(S(C.bride)[0]||'');
+ // intro: timings follow the video — curtains 0–2.5s, light & arch 2.5–6.5s, plaque appears at 6.5s
+ const a=E('div','pg');item(a,'bis','بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ',2.4);item(a,'sm','With the blessings of Allah Almighty',3.4);
+ name(a,S(C.groom),5,'introGroom');const m=item(a,'amp','',5.8);m.appendChild(E('i','','&'));name(a,S(C.bride),6.2,'introBride');item(a,'sm','request the honour of your presence',7.6);
+ pages.push({el:a,plq:()=>({t:fmtDate(events[0].date),on:T()>=6.6}),hint:()=>T()>=8.6});
+ const hs=list(C.hosts).map(h=>typeof h==='object'&&h?[S(h.name),S(h.relation)]:S(h).split('|').map(S)).filter(h=>h[0]);
+ if(hs.length){const p=E('div','pg');item(p,'ur tt','بامسرت');item(p,'en te',S(C.hostsTitle)||'With best compliments');item(p,'orn','');
+  hs.forEach(h=>{const d=item(p,'hl',h[0]);if(h[1])d.appendChild(E('small','',h[1]))});pages.push({el:p,plq:()=>({}),hint:()=>1})}
+ events.forEach(e=>{const p=E('div','pg'),n=S(e.name)||'Celebration',u=UR[n.toLowerCase().replace(/[^a-z]/g,'')];
+  if(AR.test(n))item(p,'ur tt',n);else{if(u)item(p,'ur tt',u);item(p,'en te',n)}
+  item(p,'orn','');item(p,'dt',fmtDate(e.date));item(p,'tm',S(e.timeText)||S(e.time));item(p,'vn',S(e.venue));item(p,'ad',S(e.address));
+  item(p,'ho',S(e.hosts));item(p,'ho',S(e.dress)?'Dress code: '+S(e.dress):'');const url=mapUrl(e.map);
+  pages.push({el:p,plq:()=>({t:'Open Location',href:url,icon:'pin',on:!!url}),hint:()=>1})});
+ const qa=list(C.faq).map(f=>typeof f==='object'&&f?[S(f.q||f.question),S(f.a||f.answer)]:[S(f),'']).filter(f=>f[0]).slice(0,4);
+ if(qa.length){const p=E('div','pg');item(p,'en te','Good to know');item(p,'orn','');qa.forEach(f=>{const d=item(p,'qa','');d.appendChild(E('b','',f[0]));d.appendChild(document.createTextNode(f[1]))});pages.push({el:p,plq:()=>({}),hint:()=>1})}
+ const R=C.rsvp&&typeof C.rsvp==='object'?C.rsvp:{},f=E('div','pg');item(f,'ur tt','خوش آمدید');item(f,'en te','We look forward to celebrating with you');item(f,'orn','');
+ item(f,'vn',S(R.name));item(f,'sm',S(R.deadline)?'Kindly reply by '+S(R.deadline):'');item(f,'ur nm','آپ کی آمد ہمارے لیے باعثِ عزت ہوگی').style.fontSize='calc(var(--u)*34)';
+ const ph=S(R.phone).replace(/\D/g,'');pages.push({el:f,plq:()=>({t:S(R.button)||'RSVP on WhatsApp',href:ph?'https://wa.me/'+ph+'?text='+encodeURIComponent('Assalamu Alaikum, I will attend the wedding of '+S(C.groom)+' & '+S(C.bride)+'.'):'',icon:'wa',on:!!ph}),hint:()=>0});
+ pages.forEach(p=>pgs.appendChild(p.el));$('dots').textContent='';pages.forEach(()=>$('dots').appendChild(E('b')));
+ setWm();go(Math.min(idx,pages.length-1),1);
+ document.body.classList.remove('bad');document.body.classList.add('ready');document.documentElement.dataset.inviteoraPayload='loaded'}
+// SAMPLE watermark: exists only in preview; the element is never created for a final invitation
+function setWm(){const o=$('wm');if(o)o.remove();if(!preview)return;const w=E('div');w.id='wm';w.appendChild(E('div'));document.body.appendChild(w)}
+new MutationObserver(()=>{if(preview&&!$('wm')&&document.body.classList.contains('ready'))setWm()}).observe(document.body,{childList:true});
+function go(n,force){n=Math.max(0,Math.min(pages.length-1,n));if(n===idx&&!force&&pages[n].el.classList.contains('on'))return;idx=n;
+ pages.forEach((p,i)=>p.el.classList.toggle('on',i===n));[...$('dots').children].forEach((d,i)=>d.classList.toggle('on',i===n));
+ if(n>0)requestAnimationFrame(()=>pages[n].el.querySelectorAll('.it').forEach(e=>e.classList.add('on')));tick()}
+function step(d){if(!started)return;if(idx===0&&d>0&&T()<8.6){if(fb)t0=performance.now()-8.6e3;else v.currentTime=8.6;tick();return}go(idx+d)}
+const ICO={pin:'<svg viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',wa:'<svg viewBox="0 0 24 24"><path d="M4 20l1.3-4A8 8 0 1112 20a8 8 0 01-3.8-1z"/></svg>'};
+function tick(){if(!pages.length)return;const t=T();
+ if(idx===0)pages[0].el.querySelectorAll('[data-t]').forEach(e=>e.classList.toggle('on',t>=+e.dataset.t));
+ const s=pages[idx].plq();plq.className=(s.on?'on':'')+(s.on&&s.href?' btn':'');plq.textContent='';
+ if(s.icon)plq.insertAdjacentHTML('beforeend',ICO[s.icon]);plq.appendChild(document.createTextNode(s.t||''));
+ if(s.href&&s.on){plq.href=s.href;plq.target='_blank';plq.rel='noopener'}else plq.removeAttribute('href');
+ $('dots').style.opacity=idx>0||t>=6.6?1:0;hint.className=pages[idx].hint()?'on':'';hint.textContent=idx<pages.length-1?'TAP OR SWIPE TO CONTINUE':''}
+let last='';(function loop(){const k=idx+'|'+(idx===0?Math.floor(T()*4):0);if(k!==last){last=k;tick()}requestAnimationFrame(loop)})();
+// stage: tall phones fill the screen (cover); wide screens show a centred 9:16 frame
+function fit(){const W=innerWidth,H=innerHeight;let h=H;if(W/H<.66)h=Math.max(H,W*16/9);const w=h*9/16;
+ Object.assign(st.style,{width:w+'px',height:h+'px',left:(W-w)/2+'px',top:(H-h)/2+'px'});st.style.setProperty('--u',h/1280+'px');$('snd').style.right=Math.max(14,(W+w)/2<W?W-(W+w)/2+14:14)+'px'}
+addEventListener('resize',fit);fit();
+v.addEventListener('error',()=>{if(started&&!fb){fb=1;t0=performance.now()}});
+$('intro').addEventListener('click',()=>{if(started)return;started=true;$('intro').classList.add('off');v.muted=false;$('snd').classList.add('on');
+ const bad=()=>{fb=1;t0=performance.now()};
+ if(v.error)bad();else v.play().catch(()=>{v.muted=true;v.play().catch(bad)})});
+$('snd').addEventListener('click',e=>{e.stopPropagation();v.muted=!v.muted;$('sw').style.opacity=v.muted?.2:1});
+document.addEventListener('visibilitychange',()=>{if(!started||fb)return;document.hidden?v.pause():(v.ended||v.play().catch(()=>{}))});
+let sx,sy;st.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+st.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>45||Math.abs(dy)>45){sw=1;step((Math.abs(dx)>Math.abs(dy)?dx:dy)<0?1:-1)}},{passive:true});
+st.addEventListener('click',e=>{if(sw){sw=0;return}if(e.target.closest('a'))return;step(e.clientX<innerWidth*.3?-1:1)});
+addEventListener('keydown',e=>{if(/Arrow(Right|Down)| /.test(e.key))step(1);if(/Arrow(Left|Up)/.test(e.key))step(-1)});
+function boot(){try{render(decode())}catch(e){document.body.classList.add('bad');$('err').textContent=e.message;console.error(e)}}
+addEventListener('hashchange',boot);boot();
+})();
+</script>
+</body>
+</html>
