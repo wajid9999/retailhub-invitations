@@ -1,1 +1,16 @@
-{}
+{
+  "rewrites": [
+    {
+      "source": "/templates/vip-royal-wedding.html",
+      "destination": "/new-templates/vip-royal-wedding/template.html"
+    },
+    {
+      "source": "/templates/vip-royal-wedding/media/:file*",
+      "destination": "/new-templates/vip-royal-wedding/media/:file*"
+    },
+    {
+      "source": "/thumbs/vip-royal-wedding.svg",
+      "destination": "/new-templates/vip-royal-wedding/thumbnail.svg"
+    }
+  ]
+}
