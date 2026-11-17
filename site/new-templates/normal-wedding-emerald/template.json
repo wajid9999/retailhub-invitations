@@ -1,7 +1,7 @@
 {
   "id": "normal-wedding-emerald",
   "name": "Emerald Mughal Wedding — Normal",
-  "tag": "Bilingual five-slide wedding invitation with emerald and antique-gold styling",
+  "tag": "Original single-page Mughal wedding invitation with editable bilingual details",
   "tier": "simple",
   "occasion": "wedding",
   "ad": "inviteoraNormal",
@@ -11,14 +11,14 @@
     "ur"
   ],
   "features": [
-    "slideshow",
-    "autoplay",
-    "manual-navigation",
-    "swipe",
+    "single-page-invitation",
     "bilingual",
+    "original-mughal-artwork",
+    "editable-couple-and-parents",
+    "event-details",
     "google-maps-link",
-    "hosts",
-    "dua"
+    "whatsapp-rsvp",
+    "share-invitation"
   ],
   "color": "emerald-gold"
 }
