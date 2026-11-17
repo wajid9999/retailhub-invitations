@@ -1,0 +1,29 @@
+{
+  "occasions": [
+    {
+      "id": "wedding",
+      "name": "Wedding",
+      "form": "wedding"
+    }
+  ],
+  "tiers": [
+    {
+      "id": "premium",
+      "name": "Premium",
+      "price": "Rs. 3,000"
+    }
+  ],
+  "templates": [
+    {
+      "id": "vip-royal-wedding",
+      "name": "Royal Mughal Wedding — Premium",
+      "tag": "Ornate Mughal arch, gold filigree and cinematic wedding invitation",
+      "tier": "premium",
+      "occasion": "wedding",
+      "ad": "royal",
+      "fam": true,
+      "file": "templates/vip-royal-wedding.html",
+      "thumb": "thumbs/vip-royal-wedding.svg"
+    }
+  ]
+}

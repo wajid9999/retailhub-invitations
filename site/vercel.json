@@ -1,16 +1,16 @@
 {
   "rewrites": [
     {
-      "source": "/templates.json",
-      "destination": "https://wajid9999.github.io/retailhub-invitations/templates.json"
+      "source": "/templates/vip-royal-wedding.html",
+      "destination": "/new-templates/vip-royal-wedding/template.html"
     },
     {
-      "source": "/templates/:path*",
-      "destination": "https://wajid9999.github.io/retailhub-invitations/templates/:path*"
+      "source": "/templates/vip-royal-wedding/media/:file*",
+      "destination": "/new-templates/vip-royal-wedding/media/:file*"
     },
     {
-      "source": "/thumbs/:path*",
-      "destination": "https://wajid9999.github.io/retailhub-invitations/thumbs/:path*"
+      "source": "/thumbs/vip-royal-wedding.svg",
+      "destination": "/new-templates/vip-royal-wedding/thumbnail.svg"
     }
   ]
 }
