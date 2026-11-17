@@ -79,6 +79,8 @@ test('Emerald Normal template does not show demo customer data without a payload
   await expect(page.locator('.slides')).toContainText('Invitation payload is missing');
   await expect(page.locator('.slides')).not.toContainText('Ayesha');
   await expect(page.locator('.slides')).not.toContainText('Ahmed');
+  await expect(page.locator('.slides')).not.toContainText('Inviteora Groom Payload 8472');
+  await expect(page.locator('.slides')).not.toContainText('Inviteora Bride Payload 5931');
   await page.waitForTimeout(7000);
   expect(errors).toEqual([]);
 });
