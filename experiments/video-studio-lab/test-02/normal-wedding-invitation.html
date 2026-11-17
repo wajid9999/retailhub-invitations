@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12382f">
+<title>Wedding Invitation | Inviteora</title>
+<style>
+:root{--green:#12382f;--green2:#0b2923;--gold:#c9a765;--cream:#f7f0df;--muted:#d8cba9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#081b17;color:var(--cream);font-family:Georgia,'Times New Roman',serif}
+.page{min-height:100svh;display:grid;place-items:center;padding:22px 14px;background:radial-gradient(ellipse at 50% 18%,#285447 0,#102f28 48%,#081b17 100%);overflow:hidden}
+.card{position:relative;width:min(100%,440px);min-height:780px;padding:32px 25px 28px;text-align:center;background:linear-gradient(160deg,rgba(28,72,60,.96),rgba(9,37,31,.98));border:1px solid rgba(201,167,101,.7);box-shadow:0 24px 80px #0009;overflow:hidden;animation:appear 1.2s ease both}
+.card:before,.card:after{content:"";position:absolute;width:170px;height:170px;border:1px solid rgba(201,167,101,.28);border-radius:50%;pointer-events:none}
+.card:before{top:-110px;left:-90px;box-shadow:0 0 0 12px rgba(201,167,101,.035),0 0 0 26px rgba(201,167,101,.025)}
+.card:after{right:-110px;bottom:-110px;box-shadow:0 0 0 12px rgba(201,167,101,.035),0 0 0 26px rgba(201,167,101,.025)}
+.corner{position:absolute;width:52px;height:52px;border-color:var(--gold);opacity:.8}
+.tl{top:12px;left:12px;border-top:1px solid;border-left:1px solid}.tr{top:12px;right:12px;border-top:1px solid;border-right:1px solid}.bl{bottom:12px;left:12px;border-bottom:1px solid;border-left:1px solid}.br{bottom:12px;right:12px;border-bottom:1px solid;border-right:1px solid}
+.lang{position:absolute;top:20px;right:22px;border:1px solid #c9a76588;background:#0b2923;color:var(--cream);padding:7px 11px;font:11px Arial;letter-spacing:1px;cursor:pointer}
+.content{position:relative;z-index:1;padding-top:38px}
+.eyebrow{font:10px Arial,sans-serif;letter-spacing:4px;color:var(--gold);text-transform:uppercase;animation:rise 1s .2s both}
+.motif{width:74px;height:74px;margin:28px auto 20px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:29px;animation:glow 3s ease-in-out infinite}
+h1{font-size:clamp(34px,9vw,48px);line-height:1.05;font-weight:400;margin:12px 0;color:#fff4dc;animation:rise 1s .35s both}
+.names{font-size:clamp(25px,7vw,34px);line-height:1.35;color:#e5c987;margin:22px 0 10px}
+.amp{font-style:italic;font-size:19px;color:var(--cream);display:block;margin:3px}
+.copy{font:13px/1.8 Arial,sans-serif;letter-spacing:.6px;color:#e4ddca;max-width:310px;margin:18px auto 22px}
+.rule{width:70px;height:1px;background:var(--gold);margin:24px auto}
+.details{display:grid;gap:13px;margin:22px auto;max-width:310px}
+.detail{border:1px solid #c9a76555;padding:13px 10px;background:#071d1833}
+.detail b{display:block;color:var(--gold);font:10px Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
+.detail span{font-size:17px;line-height:1.4}
+.footer{font:10px Arial,sans-serif;letter-spacing:3px;color:var(--gold);margin-top:28px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+.actions a{color:var(--green2);background:var(--gold);padding:11px 17px;text-decoration:none;font:11px Arial,sans-serif;letter-spacing:1px}
+.actions button{color:var(--cream);background:transparent;border:1px solid #c9a76588;padding:10px 14px;font:11px Arial,sans-serif;letter-spacing:1px}
+[dir=rtl] .eyebrow,[dir=rtl] .copy,[dir=rtl] .footer{letter-spacing:0}
+[dir=rtl] .lang{right:auto;left:22px}
+@keyframes appear{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 rgba(201,167,101,0)}50%{box-shadow:0 0 28px #c9a76533}}
+@media(max-height:760px){.card{min-height:0}.content{padding-top:35px}.motif{margin:18px auto 14px}.rule{margin:17px auto}.footer{margin-top:20px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main class="page">
+<section class="card" id="card">
+<i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+<button class="lang" id="lang" type="button">اردو</button>
+<div class="content" id="content">
+<div class="eyebrow" data-en="WITH THE BLESSINGS OF ALLAH" data-ur="اللہ کے فضل و کرم سے">WITH THE BLESSINGS OF ALLAH</div>
+<div class="motif" aria-hidden="true">✦</div>
+<h1 data-en="Wedding Invitation" data-ur="دعوتِ ولیمہ">Wedding Invitation</h1>
+<div class="names"><span data-en="Ayesha" data-ur="عائشہ">Ayesha</span><span class="amp">&amp;</span><span data-en="Ahmed" data-ur="احمد">Ahmed</span></div>
+<p class="copy" data-en="Together with our families, we joyfully invite you to celebrate our wedding." data-ur="ہم اپنے اہلِ خانہ کے ساتھ آپ کو اپنی خوشیوں میں شرکت کی دعوت دیتے ہیں۔">Together with our families, we joyfully invite you to celebrate our wedding.</p>
+<div class="rule"></div>
+<div class="details">
+<div class="detail"><b data-en="THE DATE" data-ur="تاریخ">THE DATE</b><span data-en="Saturday, 20 December 2026" data-ur="ہفتہ، 20 دسمبر 2026">Saturday, 20 December 2026</span></div>
+<div class="detail"><b data-en="THE TIME" data-ur="وقت">THE TIME</b><span data-en="7:30 PM onwards" data-ur="شام 7:30 بجے">7:30 PM onwards</span></div>
+<div class="detail"><b data-en="THE VENUE" data-ur="مقام">THE VENUE</b><span data-en="Royal Garden Marquee, Karachi" data-ur="رائل گارڈن مارکی، کراچی">Royal Garden Marquee, Karachi</span></div>
+</div>
+<div class="copy" data-en="Your presence will make our day more memorable." data-ur="آپ کی تشریف آوری ہمارے لیے باعثِ مسرت ہوگی۔">Your presence will make our day more memorable.</div>
+<div class="actions">
+<a href="https://wa.me/" aria-label="RSVP on WhatsApp">RSVP ON WHATSAPP</a>
+<button type="button" id="share">SHARE INVITATION</button>
+</div>
+<div class="footer" data-en="WE LOOK FORWARD TO CELEBRATING WITH YOU" data-ur="آپ کی آمد کے منتظر">WE LOOK FORWARD TO CELEBRATING WITH YOU</div>
+</div>
+</section>
+</main>
+<script>
+let urdu=false;
+const langButton=document.getElementById('lang');
+langButton.addEventListener('click',()=>{
+  urdu=!urdu;
+  document.documentElement.lang=urdu?'ur':'en';
+  document.getElementById('content').dir=urdu?'rtl':'ltr';
+  document.querySelectorAll('[data-en]').forEach(el=>el.textContent=urdu?el.dataset.ur:el.dataset.en);
+  langButton.textContent=urdu?'English':'اردو';
+});
+document.getElementById('share').addEventListener('click',async()=>{
+  const data={title:'Wedding Invitation',text:'You are invited to celebrate with us.',url:location.href};
+  if(navigator.share){try{await navigator.share(data)}catch(e){}}
+  else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);alert('Invitation link copied');}
+  else{alert('Copy this page link from your browser address bar.');}
+});
+</script>
+</body>
+</html>
