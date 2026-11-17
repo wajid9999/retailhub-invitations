@@ -65,3 +65,17 @@ test('Emerald Normal final invitation removes SAMPLE watermark', async ({ page }
   await expect(page.locator('#sample-watermark')).toBeHidden();
   expect(errors).toEqual([]);
 });
+
+test('Emerald Normal template does not show demo customer data without a payload', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`${process.env.BASE_URL}/templates/normal-wedding-emerald.html`, {
+    waitUntil: 'domcontentloaded',
+    timeout: 60000
+  });
+  await expect(page.locator('html')).toHaveAttribute('data-inviteora-payload', 'error');
+  await expect(page.locator('.slides')).toContainText('Invitation payload is missing');
+  await expect(page.locator('#groom-name')).toBeEmpty();
+  await page.waitForTimeout(7000);
+  expect(errors).toEqual([]);
+});
