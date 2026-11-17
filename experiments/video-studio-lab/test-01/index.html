@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inviteora Video Lab — Test 01</title>
+<style>
+:root{color-scheme:dark;--cream:#f5ead7;--gold:#d8b36a;--ink:#161b25}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#10141c;color:var(--cream);font-family:Georgia,serif;display:grid;place-items:center;padding:24px}
+.wrap{width:min(100%,430px);display:grid;gap:14px}.stage{position:relative;aspect-ratio:9/16;overflow:hidden;border:1px solid #78623e;border-radius:22px;background:linear-gradient(155deg,#31443d 0%,#172820 48%,#10151a 100%);box-shadow:0 24px 70px #0009}
+.glow{position:absolute;width:80%;aspect-ratio:1;border-radius:50%;background:#d6a75b33;filter:blur(50px);top:12%;left:10%;animation:breathe 5s ease-in-out infinite}
+.grain{position:absolute;inset:0;opacity:.11;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E")}
+.frame{position:absolute;inset:7%;border:1px solid #d8b36a88}
+.copy{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12%;animation:rise 1.2s both}
+.eyebrow{font:10px/1.5 Arial,sans-serif;letter-spacing:.35em;text-transform:uppercase;color:var(--gold)}
+h1{font-size:clamp(38px,11vw,54px);font-weight:400;line-height:1.02;margin:22px 0 14px;text-shadow:0 4px 30px #0008}
+p{font:12px/1.8 Arial,sans-serif;letter-spacing:.08em;color:#eadfc9;max-width:250px}
+.seal{margin-top:30px;width:74px;height:74px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:26px}
+.cta{position:absolute;bottom:10%;left:0;right:0;text-align:center;font:9px Arial,sans-serif;letter-spacing:.3em;color:var(--gold)}
+.controls{display:flex;gap:10px;align-items:center;justify-content:space-between;font:12px Arial,sans-serif;color:#d4d0c7}
+button{background:#d8b36a;color:#17191d;border:0;border-radius:999px;padding:11px 18px;font-weight:700;cursor:pointer}
+.note{font:11px/1.5 Arial,sans-serif;color:#a8a8a8}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+@keyframes breathe{0%,100%{transform:scale(.92);opacity:.55}50%{transform:scale(1.12);opacity:1}}
+.stage.replay .copy{animation:none}.stage.replay .copy{animation:rise 1.2s both}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="stage" id="stage" aria-label="Animated 9 by 16 premium product promo preview">
+    <div class="glow"></div><div class="grain"></div><div class="frame"></div>
+    <div class="copy">
+      <div class="eyebrow">A quieter kind of luxury</div>
+      <h1>THE<br>ART OF<br>BREWING</h1>
+      <p>Small-batch coffee. Carefully selected beans. A moment worth slowing down for.</p>
+      <div class="seal">✦</div>
+    </div>
+    <div class="cta">DISCOVER THE DIFFERENCE</div>
+  </section>
+  <div class="controls"><span>TEST 01 · CINEMATIC PRODUCT PROMO</span><button id="replay">Replay animation</button></div>
+  <div class="note">Draft preview only. This page is not connected to a public gallery and does not export MP4 yet.</div>
+</main>
+<script>
+const stage=document.getElementById('stage');
+document.getElementById('replay').addEventListener('click',()=>{stage.classList.remove('replay');void stage.offsetWidth;stage.classList.add('replay')});
+</script>
+</body>
+</html>
