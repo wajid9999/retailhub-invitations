@@ -38,7 +38,7 @@ body{font-family:Georgia,'Times New Roman',serif;display:grid;place-items:center
 .error{position:absolute;inset:20% 10%;display:grid;place-items:center;text-align:center;font:14px/1.6 Arial,sans-serif;color:#ffe5a5}
 .rtl{direction:rtl}.rtl .eyebrow,.rtl .detail b{letter-spacing:0}.rtl .copy,.rtl .parents{font-family:Arial,sans-serif}
 @media(max-height:720px){.content{inset:11.5% 14.5% 9%}.bism{margin-bottom:4px}.eyebrow{margin-bottom:7px}.title{margin-bottom:5px}.copy{margin:5px auto}.details{gap:3px}.detail{padding:4px}.closing{margin:1px 0 4px}.footer{margin-top:4px}}
-@media(max-width:350px){.content{inset-left:13%;inset-right:13%}.names{font-size:25px}.actions{gap:4px}.actions a,.actions button{font-size:7px;padding:6px 8px}}
+@media(max-width:350px){.content{left:13%;right:13%}.names{font-size:25px}.actions{gap:4px}.actions a,.actions button{font-size:7px;padding:6px 8px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
@@ -96,7 +96,7 @@ body{font-family:Georgia,'Times New Roman',serif;display:grid;place-items:center
  }
  if(decode())render();
  $('lang').addEventListener('click',()=>{ur=!ur;document.documentElement.lang=ur?'ur':'en';content.dir=ur?'rtl':'ltr';content.classList.toggle('rtl',ur);document.querySelectorAll('[data-en]').forEach(el=>el.textContent=ur?el.dataset.ur:el.dataset.en);$('lang').textContent=ur?'English':'اردو';render();});
- $('share').addEventListener('click',async()=>{const data={title:'Wedding Invitation',text:`You are invited to celebrate ${safe(C.bride)} & ${safe(C.groom)}'s wedding.`,url:location.href};try{if(navigator.share)await navigator.share(data);else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);$('share').textContent=ur?'لنک کاپی ہوگیا':'LINK COPIED';}}catch(e){}});
+ $('share')?.addEventListener('click',async()=>{const data={title:'Wedding Invitation',text:`You are invited to celebrate ${safe(C.bride)} & ${safe(C.groom)}'s wedding.`,url:location.href};try{if(navigator.share)await navigator.share(data);else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);$('share').textContent=ur?'لنک کاپی ہوگیا':'LINK COPIED';}}catch(e){}});
 })();
 </script>
 </body></html>
