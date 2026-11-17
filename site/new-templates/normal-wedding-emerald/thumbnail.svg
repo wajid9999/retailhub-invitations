@@ -1,9 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="360" height="640" viewBox="0 0 360 640">
-<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#123f32"/><stop offset=".55" stop-color="#06281f"/><stop offset="1" stop-color="#031a14"/></linearGradient><linearGradient id="gold"><stop stop-color="#f5dfa0"/><stop offset=".5" stop-color="#bd8b3f"/><stop offset="1" stop-color="#f0d38a"/></linearGradient></defs>
-<rect width="360" height="640" fill="url(#bg)"/><rect x="7" y="7" width="346" height="626" fill="none" stroke="url(#gold)" stroke-width="2"/>
-<path d="M42 555V220Q42 70 180 45Q318 70 318 220V555" fill="none" stroke="url(#gold)" stroke-width="5"/><path d="M56 555V225Q56 90 180 68Q304 90 304 225V555" fill="none" stroke="#f0d38a" stroke-width="1.5"/>
-<g fill="none" stroke="#d9b66e" stroke-width="1.5"><path d="M90 102q20-35 42-10q-18 7-20 27q-18-4-22-17zM270 102q-20-35-42-10q18 7 20 27q18-4 22-17z"/><path d="M180 25l7 14-7 14-7-14z"/></g>
-<g fill="#e5c77f" text-anchor="middle" font-family="Georgia,serif"><text x="180" y="125" font-size="11" letter-spacing="3">INVITEORA</text><text x="180" y="250" font-size="25">Wedding</text><text x="180" y="280" font-size="25">Invitation</text><text x="180" y="350" font-size="26">Ayesha</text><text x="180" y="380" font-size="16">&amp;</text><text x="180" y="414" font-size="26">Ahmed</text><text x="180" y="475" font-size="12">BILINGUAL SLIDESHOW</text><text x="180" y="500" font-size="10" letter-spacing="2">URDU • ENGLISH</text></g>
-<g fill="#d9b66e"><circle cx="55" cy="580" r="5"/><circle cx="305" cy="580" r="5"/><path d="M180 550l5 12-5 12-5-12z"/></g>
-<path d="M28 595h304" stroke="url(#gold)" stroke-width="2"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="960" viewBox="0 0 540 960"><image width="540" height="960" preserveAspectRatio="xMidYMid slice" href="https://cdn.shopify.com/s/files/1/1021/1550/8503/files/emerald-mughal-original-design-thumbnail.jpg?v=1794939020"/><rect x="8" y="8" width="524" height="944" fill="none" stroke="#d9b66e" stroke-width="3"/></svg>
