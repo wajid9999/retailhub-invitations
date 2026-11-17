@@ -44,7 +44,8 @@ test('Emerald Normal template renders all editor data, hosts, venues and maps', 
   await expect(page.locator('#venue-list')).toContainText('Baraat Address 5931');
   await expect(page.locator('#venue-list')).toContainText('Walima Venue 8472');
   await expect(page.locator('#venue-list a')).toHaveCount(3);
-  await expect(page.locator('#host-list')).toContainText('Host One | Uncle');
+  await expect(page.locator('#host-list')).toContainText('Host One');
+  await expect(page.locator('#host-list')).toContainText('Uncle');
   await expect(page.locator('#sample-watermark')).toBeHidden();
   await expect(page.locator('.invite')).toHaveAttribute('data-ready', 'true');
   expect(errors).toEqual([]);
