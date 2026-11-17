@@ -2,18 +2,123 @@
   "occasions": [
     {
       "id": "wedding",
-      "name": "Wedding",
-      "form": "wedding"
+      "name": "Wedding"
+    },
+    {
+      "id": "birthday",
+      "name": "Birthday & Salgirah",
+      "form": "event"
+    },
+    {
+      "id": "islamic",
+      "name": "Islamic event",
+      "form": "event"
+    },
+    {
+      "id": "homedawat",
+      "name": "Home dawat",
+      "form": "event"
+    },
+    {
+      "id": "officedawat",
+      "name": "Office dawat",
+      "form": "event"
+    },
+    {
+      "id": "family",
+      "name": "Engagement & family",
+      "form": "event"
+    },
+    {
+      "id": "other",
+      "name": "Other event",
+      "form": "event"
     }
   ],
   "tiers": [
     {
+      "id": "simple",
+      "name": "Simple",
+      "price": ""
+    },
+    {
       "id": "premium",
       "name": "Premium",
-      "price": "Rs. 3,000"
+      "price": ""
+    },
+    {
+      "id": "high",
+      "name": "High Premium",
+      "price": ""
     }
   ],
   "templates": [
+    {
+      "id": "mahad",
+      "name": "Royal Events",
+      "tag": "Mayun, mehndi, nikah, baraat and walima, each with its own background",
+      "file": "templates/mahad-laiba.html",
+      "thumb": "thumbs/royal-events.jpg",
+      "occasion": "wedding",
+      "tier": "simple",
+      "ad": "mahad",
+      "fam": true
+    },
+    {
+      "id": "ivory",
+      "name": "Ivory Pearl",
+      "tag": "Pearl frame, dua page and guest questions",
+      "file": "templates/ivory-pearl.html",
+      "thumb": "thumbs/ivory-pearl.jpg",
+      "occasion": "wedding",
+      "tier": "premium",
+      "ad": "ivory",
+      "fam": false
+    },
+    {
+      "id": "012-grand-entrance",
+      "name": "012 Grand Entrance — Open Scroll",
+      "tag": "Cinematic Open Scroll video invitation with scratch-to-reveal date and countdown",
+      "tier": "high",
+      "occasion": "wedding",
+      "ad": "open-scroll",
+      "fam": true,
+      "file": "templates/012-grand-entrance.html",
+      "thumb": "thumbs/012-grand-entrance.svg"
+    },
+    {
+      "id": "royal-journey",
+      "name": "Royal Journey — Wedding Invitation",
+      "tag": "Animated wedding invitation with Mehndi, Baraat and Walima scenes",
+      "tier": "high",
+      "occasion": "wedding",
+      "ad": "royal",
+      "fam": true,
+      "file": "templates/royal-journey.html",
+      "thumb": "thumbs/royal-journey.svg"
+    },
+    {
+      "id": "royal-navy-gold-video",
+      "name": "Royal Navy Gold — Video Wedding Invitation",
+      "tag": "Animated velvet curtains, gold lanterns and cinematic wedding reveal",
+      "tier": "high",
+      "occasion": "wedding",
+      "ad": "royal",
+      "fam": true,
+      "file": "templates/royal-navy-gold-video.html",
+      "thumb": "thumbs/royal-navy-gold-video.svg"
+    },
+    {
+      "id": "velvet-curtain",
+      "name": "Velvet Curtain — High Premium Video Invitation",
+      "tag": "Animated velvet curtains and cinematic wedding reveal",
+      "tier": "high",
+      "occasion": "wedding",
+      "ad": "velvet",
+      "fam": true,
+      "file": "templates/velvet-curtain/index.html",
+      "thumb": "https://cdn.shopify.com/s/files/1/1021/1550/8503/files/velvet-curtain-thumbnail.jpg?v=1794508817"
+    },
     {
       "id": "vip-royal-wedding",
       "name": "Royal Mughal Wedding — Premium",
