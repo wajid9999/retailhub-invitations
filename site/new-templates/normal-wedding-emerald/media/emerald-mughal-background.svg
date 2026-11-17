@@ -4,34 +4,34 @@
  <radialGradient id="glow"><stop stop-color="#a77b35" stop-opacity=".22"/><stop offset="1" stop-color="#a77b35" stop-opacity="0"/></radialGradient>
  <linearGradient id="gold" x2="1" y2="1"><stop stop-color="#f5dfa0"/><stop offset=".48" stop-color="#bd8b3f"/><stop offset="1" stop-color="#f0d38a"/></linearGradient>
  <pattern id="lattice" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M17 0L34 17 17 34 0 17Z M0 0L34 34 M34 0L0 34" fill="none" stroke="#d4ad62" stroke-width="1" opacity=".55"/></pattern>
- <pattern id="stars" width="52" height="52" patternUnits="userSpaceOnUse"><path d="M26 4L30 21 48 26 30 31 26 48 21 31 4 26 21 21Z" fill="none" stroke="#d8b66e" stroke-width="1" opacity=".35"/></pattern>
+ <pattern id="stars" width="52" height="52" patternUnits="userSpaceOnUse"><path d="M26 4L30 21 48 26 30 31 26 48 21 31 4 26 21 21Z" fill="none" stroke="#d8b66e" stroke-width="1.4" opacity=".62"/></pattern>
  <g id="flower"><circle r="8" fill="#b88b45"/><g fill="#f3dfb1" stroke="#b88b45" stroke-width="1"><ellipse cy="-15" ry="13" rx="7"/><ellipse cy="15" ry="13" rx="7"/><ellipse cx="-15" rx="13" ry="7"/><ellipse cx="15" rx="13" ry="7"/><ellipse cx="-11" cy="-11" rx="7" ry="12" transform="rotate(-45 -11 -11)"/><ellipse cx="11" cy="-11" rx="7" ry="12" transform="rotate(45 11 -11)"/><ellipse cx="-11" cy="11" rx="7" ry="12" transform="rotate(45 -11 11)"/><ellipse cx="11" cy="11" rx="7" ry="12" transform="rotate(-45 11 11)"/></g><circle r="4" fill="#8b1f2d"/></g>
  <g id="leaf" fill="none" stroke="#d8b66e" stroke-width="2"><path d="M0 0Q18 -16 36 -42M12 -14Q-5 -18 -8 -34Q9 -34 12 -14M23 -29Q15 -48 30 -58Q39 -43 23 -29M6 -9Q-12 -2 -20 -15Q-5 -26 6 -9"/></g>
  <g id="lantern"><path d="M-20 -36H20L15 -22H-15Z" fill="url(#gold)" stroke="#8d6229" stroke-width="2"/><path d="M-14 -22H14L21 22 0 48 -21 22Z" fill="#e7c77d" fill-opacity=".22" stroke="url(#gold)" stroke-width="3"/><path d="M-11 -14V18M0 -14V34M11 -14V18" stroke="#e8c779" stroke-width="2"/><path d="M-20 22H20M-15 34H15" stroke="url(#gold)" stroke-width="3"/><circle cy="51" r="4" fill="#d9b66e"/></g>
  <g id="dome" fill="#b88b45" stroke="#f0d18a" stroke-width="2"><path d="M-42 0Q-39 -48 0 -58Q39 -48 42 0Z"/><path d="M-7 -58Q-5 -80 0 -92Q5 -80 7 -58Z"/><path d="M-2 -92V-104" stroke-width="3"/></g>
 </defs>
-<rect width="720" height="1280" fill="url(#bg)"/><rect width="720" height="1280" fill="url(#glow)"/><rect width="720" height="1280" fill="url(#stars)" opacity=".35"/>
+<rect width="720" height="1280" fill="url(#bg)"/><rect width="720" height="1280" fill="url(#glow)"/><rect width="720" height="1280" fill="url(#stars)" opacity=".72"/>
 <!-- outer ornamental frame -->
 <rect x="18" y="18" width="684" height="1244" rx="8" fill="none" stroke="url(#gold)" stroke-width="4"/>
 <rect x="30" y="30" width="660" height="1220" rx="6" fill="none" stroke="#d8b66e" stroke-width="1.5" opacity=".65"/>
 <!-- side lattice rails -->
-<rect x="28" y="240" width="52" height="780" fill="url(#lattice)" opacity=".8"/><rect x="640" y="240" width="52" height="780" fill="url(#lattice)" opacity=".8"/>
-<path d="M28 240V1020M80 240V1020M640 240V1020M692 240V1020" stroke="url(#gold)" stroke-width="5"/>
+<rect x="28" y="220" width="76" height="820" fill="url(#lattice)" opacity="1"/><rect x="616" y="220" width="76" height="820" fill="url(#lattice)" opacity="1"/>
+<path d="M28 220V1040M104 220V1040M616 220V1040M692 220V1040" stroke="url(#gold)" stroke-width="6"/>
 <!-- Mughal arch around central text area -->
 <path d="M92 1040V425Q92 160 360 120Q628 160 628 425V1040" fill="none" stroke="#9b6c2f" stroke-width="22" opacity=".55"/>
 <path d="M102 1040V430Q102 180 360 140Q618 180 618 430V1040" fill="none" stroke="url(#gold)" stroke-width="8"/>
 <path d="M122 1040V435Q122 205 360 170Q598 205 598 435V1040" fill="none" stroke="#f2d895" stroke-width="2" opacity=".75"/>
 <!-- arch crown filigree -->
-<path d="M180 238Q360 45 540 238M210 250Q360 95 510 250" fill="none" stroke="url(#gold)" stroke-width="3"/>
-<g fill="none" stroke="#d9b66e" stroke-width="2" opacity=".85"><path d="M360 76l15 25-15 25-15-25zM330 110l-12 18 12 18 12-18zM390 110l-12 18 12 18 12-18z"/><path d="M155 295q35-70 70-20q-35 10-42 52q-25-7-28-32zM565 295q-35-70-70-20q35 10 42 52q25-7 28-32z"/></g>
+<path d="M150 250Q360 5 570 250M180 265Q360 55 540 265M210 280Q360 105 510 280" fill="none" stroke="url(#gold)" stroke-width="3"/>
+<g fill="none" stroke="#d9b66e" stroke-width="2" opacity=".85"><path d="M360 76l15 25-15 25-15-25zM330 110l-12 18 12 18 12-18zM390 110l-12 18 12 18 12-18z"/><path d="M155 295q35-70 70-20q-35 10-42 52q-25-7-28-32zM565 295q-35-70-70-20q35 10 42 52q25-7 28-32zM145 350q30-48 58-12q-29 8-36 38q-20-5-22-26zM575 350q-30-48-58-12q29 8 36 38q20-5 22-26z"/></g>
 <!-- lantern chains and lamps -->
 <path d="M135 250V385M585 250V385" stroke="#d9b66e" stroke-width="2"/><use href="#lantern" x="135" y="430"/><use href="#lantern" x="585" y="430"/>
 <!-- floral upper corners -->
-<g transform="translate(75 80)"><use href="#leaf"/><use href="#flower" x="42" y="40"/><use href="#flower" x="88" y="16"/><use href="#flower" x="12" y="100"/></g>
-<g transform="translate(645 80) scale(-1 1)"><use href="#leaf"/><use href="#flower" x="42" y="40"/><use href="#flower" x="88" y="16"/><use href="#flower" x="12" y="100"/></g>
+<g transform="translate(75 80) scale(1.2)"><use href="#leaf"/><use href="#flower" x="42" y="40"/><use href="#flower" x="88" y="16"/><use href="#flower" x="12" y="100"/></g>
+<g transform="translate(645 80) scale(-1.2 1.2)"><use href="#leaf"/><use href="#flower" x="42" y="40"/><use href="#flower" x="88" y="16"/><use href="#flower" x="12" y="100"/></g>
 <!-- lower floral corners -->
-<g transform="translate(48 1110) scale(1.45)"><use href="#leaf"/><use href="#flower" x="35" y="25"/><use href="#flower" x="72" y="55"/><use href="#flower" x="5" y="90"/></g>
-<g transform="translate(672 1110) scale(-1.45 1.45)"><use href="#leaf"/><use href="#flower" x="35" y="25"/><use href="#flower" x="72" y="55"/><use href="#flower" x="5" y="90"/></g>
+<g transform="translate(48 1090) scale(1.7)"><use href="#leaf"/><use href="#flower" x="35" y="25"/><use href="#flower" x="72" y="55"/><use href="#flower" x="5" y="90"/></g>
+<g transform="translate(672 1090) scale(-1.7 1.7)"><use href="#leaf"/><use href="#flower" x="35" y="25"/><use href="#flower" x="72" y="55"/><use href="#flower" x="5" y="90"/></g>
 <!-- palace silhouette at bottom -->
 <g transform="translate(0 1120)" fill="#a87936" stroke="#e8c77d" stroke-width="2">
  <path d="M55 120V82H115V48H165V78H225V30H285V78H435V30H495V78H555V48H605V82H665V120Z"/>
