@@ -31,7 +31,7 @@ async function openTemplate(page, data) {
 }
 
 test('Emerald Normal template renders all editor data, hosts, venues and maps', async ({ page }) => {
-  const errors = await openTemplate(page, payload(false));
+  const errors = await openTemplate(page, payload(true));
   await expect(page.locator('#groom-name')).toHaveText('Inviteora Groom Payload 8472');
   await expect(page.locator('#bride-name')).toHaveText('Inviteora Bride Payload 5931');
   await expect(page.locator('#groom-parents')).toHaveText('Groom Parents Payload');
