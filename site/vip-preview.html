@@ -39,11 +39,11 @@ body{font-family:'Cormorant Garamond',serif;color:var(--g2);user-select:none;-we
 #hint{position:absolute;left:0;right:0;top:calc(var(--u)*1086);text-align:center;font-size:calc(var(--u)*23);letter-spacing:.14em;color:var(--g2);opacity:0;transition:opacity 1s}
 #hint.on{opacity:.9;animation:pl 2.4s ease-in-out infinite}@keyframes pl{50%{opacity:.35}}
 #brand{position:absolute;left:0;right:0;top:calc(var(--u)*1168);text-align:center;font:calc(var(--u)*17)/1 'Cinzel',serif;letter-spacing:.4em;color:var(--g3);opacity:.8}
-#intro{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:5vh;gap:10px;background:linear-gradient(transparent 35%,rgba(3,7,15,.82));cursor:pointer;transition:opacity .9s}
+#intro{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:17vh;gap:12px;background:linear-gradient(transparent 35%,rgba(3,7,15,.82));cursor:pointer;transition:opacity .9s}
 #intro.off{opacity:0;pointer-events:none}
- #seal{width:78px;height:78px;border-radius:50%;border:1.5px solid var(--g2);display:grid;place-items:center;font:600 24px 'Cinzel',serif;color:var(--g1);background:radial-gradient(#10294a,#081125);box-shadow:0 0 0 5px rgba(214,176,98,.12),0 0 24px rgba(214,176,98,.28);animation:bt 2.6s ease-in-out infinite}
+ #seal{width:68px;height:68px;border-radius:50%;border:1.5px solid var(--g2);display:grid;place-items:center;font:600 22px 'Cinzel',serif;color:var(--g1);background:radial-gradient(#10294a,#081125);box-shadow:0 0 0 5px rgba(214,176,98,.12),0 0 24px rgba(214,176,98,.28);animation:bt 2.6s ease-in-out infinite}
 @keyframes bt{50%{box-shadow:0 0 0 10px rgba(214,176,98,.05),0 0 32px rgba(214,176,98,.38)}}
-#intro p{font:600 12px 'Cinzel',serif;letter-spacing:.28em;color:var(--g1)}#intro p.ur{font-size:16px;letter-spacing:0;line-height:1.7}
+#intro p{font:600 11px 'Cinzel',serif;letter-spacing:.22em;color:var(--g1)}#intro p.ur{font-size:16px;letter-spacing:0;line-height:1.7}\n#openInvite{min-width:min(78vw,310px);min-height:58px;padding:0 24px;border:1px solid var(--g1);border-radius:999px;background:linear-gradient(135deg,#f2dfa0,#c99b4d 55%,#a87932);color:#091326;display:flex;align-items:center;justify-content:center;gap:12px;font:600 14px 'Cinzel',serif;letter-spacing:.13em;box-shadow:0 0 0 5px rgba(214,176,98,.13),0 8px 28px rgba(0,0,0,.45),0 0 28px rgba(214,176,98,.32);cursor:pointer;animation:ctaGlow 2.2s ease-in-out infinite}\n#openInvite:before{content:'';width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:11px solid #091326}\n#openInvite:active{transform:scale(.97)}\n@keyframes ctaGlow{50%{box-shadow:0 0 0 8px rgba(214,176,98,.07),0 8px 28px rgba(0,0,0,.45),0 0 36px rgba(214,176,98,.48)}}\n@media(max-height:650px){#intro{padding-bottom:9vh;gap:7px}#seal{width:52px;height:52px}#openInvite{min-height:48px}}
 #snd{position:absolute;z-index:15;top:max(14px,env(safe-area-inset-top));right:14px;width:42px;height:42px;border-radius:50%;border:1px solid var(--g3);background:rgba(8,17,37,.6);display:none;place-items:center;cursor:pointer}
 #snd.on{display:grid}#snd svg{width:20px;height:20px;fill:none;stroke:var(--g1);stroke-width:1.8}
 #wm{position:fixed;inset:0;z-index:50;pointer-events:none;overflow:hidden}
@@ -62,7 +62,7 @@ body:not(.ready) #stage,body:not(.ready) #intro,body:not(.ready) #snd{visibility
  <video id="vid" playsinline webkit-playsinline preload="metadata" disablepictureinpicture poster="new-templates/vip-royal-wedding/thumbnail.svg"><source src="new-templates/vip-royal-wedding/media/vip-wedding.mp4" type="video/mp4"></video>
  <div id="pages"></div><a id="plq"></a><div id="dots"></div><div id="hint"></div><div id="brand">INVITEORA</div>
 </div>
-<div id="intro"><div id="seal"></div><p>TAP TO OPEN</p><p class="ur" dir="rtl">دعوت نامہ کھولنے کے لیے ٹیپ کریں</p></div>
+<div id="intro"><div id="seal"></div><p>A SPECIAL INVITATION AWAITS</p><button id="openInvite" type="button">OPEN INVITATION</button><p class="ur" dir="rtl">دعوت نامہ کھولنے کے لیے یہاں ٹیپ کریں</p></div>
 <button id="snd" type="button" aria-label="Sound on/off"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="sw" d="M16 9c1.5 1.5 1.5 4.5 0 6M19 6c3 3 3 9 0 12"/></svg></button>
 <div id="err" role="alert"></div>
 <script>
