@@ -79,3 +79,22 @@ test('Emerald Normal template does not show demo customer data without a payload
   await page.waitForTimeout(7000);
   expect(errors).toEqual([]);
 });
+
+test('Emerald Normal opens in the existing central editor with parent and event fields', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`${process.env.BASE_URL}/index.html#studio=normal-wedding-emerald`, {
+    waitUntil: 'domcontentloaded',
+    timeout: 60000
+  });
+  await expect(page.locator('#stu')).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('#gal')).toBeHidden();
+  await expect(page.locator('#tt')).toContainText('Emerald Mughal Wedding');
+  await expect(page.locator('#f')).toContainText('Groom’s parents');
+  await expect(page.locator('#f')).toContainText('Bride’s parents');
+  await expect(page.locator('#f input[data-e="k"]').first()).toBeVisible();
+  await expect(page.locator('#f input[data-e="d"]').first()).toBeVisible();
+  await expect(page.locator('#f input[data-e="v"]').first()).toBeVisible();
+  await expect(page.locator('#f input[data-e="a"]').first()).toBeVisible();
+  expect(errors).toEqual([]);
+});
