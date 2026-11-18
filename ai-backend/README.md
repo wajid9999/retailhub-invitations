@@ -39,6 +39,10 @@ From this directory:
 
 Mastra Studio uses local port 4111.
 
+## Gateway security contract
+
+See [docs/gateway-contract.md](./docs/gateway-contract.md) for the authentication, tenant isolation, app-specific data boundaries, and implementation gates. This is a design baseline only; no public AI route is enabled.
+
 ## Integration sequence
 
 1. Add a Supabase-authenticated API gateway and verify user/business roles.
