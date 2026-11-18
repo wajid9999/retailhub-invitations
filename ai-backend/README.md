@@ -4,12 +4,22 @@ Separate TypeScript + Mastra backend for the two existing products. This directo
 isolated from the current Shopify theme, invitation site, Supabase Edge Functions, and
 HisaabPro Android application.
 
+## Selected model provider
+
+OpenAI API is the selected provider for both agents.
+
+- Model route: `openai/gpt-4.1-mini`
+- Required server-side environment variable: `OPENAI_API_KEY`
+- The key is never committed, returned by the backend, or placed in Shopify/browser/Android code.
+- Model selection can be changed later by updating `MASTRA_MODEL` after evaluating cost,
+  latency, quality, and availability.
+
 ## Current scope
 
 - Two separate agents: Inviteora and HisaabPro.
 - Mem0 adapter with namespaced memory scopes.
-- Composio, Langfuse, and Promptfoo are planned but are not yet connected to live accounts
-  or production workflows.
+- Composio and Langfuse are planned but are not yet connected to live accounts or production
+  workflows.
 - No production API route, OAuth connection, database write tool, Shopify mutation,
   GitHub mutation, or financial write action is enabled in this bootstrap.
 
@@ -17,15 +27,17 @@ HisaabPro Android application.
 
 - Node.js 22.22.3 or newer (Node.js 24 LTS recommended).
 - An OpenAI API key for the configured model.
-- Optional service credentials are added only when their integrations are enabled.
 
 ## Local setup
 
-From this directory, copy .env.example to .env, add the required model key, then run
-npm install followed by npm run dev. Mastra Studio uses local port 4111.
+From this directory:
 
-Keep .env private. Never place service secrets in the browser, Shopify theme, static site,
-or Android application.
+1. Copy `.env.example` to `.env`.
+2. Set `OPENAI_API_KEY` in the private `.env` file.
+3. Keep the key server-side; do not paste it into source files or commit it.
+4. Run `npm install`, then `npm run dev`.
+
+Mastra Studio uses local port 4111.
 
 ## Integration sequence
 
@@ -50,5 +62,6 @@ or Android application.
 
 ## Status
 
-Bootstrap branch only. No deployment or live-store changes have been made. Dependency
-versions and SDK integration APIs must be installed and type-checked before production use.
+Bootstrap branch only. CI type-check and Mastra build passed. No production deployment or
+live-store changes have been made. API key setup and a live model smoke test are still
+required before enabling runtime requests.
