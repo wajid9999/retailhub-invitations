@@ -1,19 +1,70 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 857 1536">
 <defs>
- <linearGradient id="wine" x2="0" y2="1"><stop stop-color="#210916"/><stop offset=".48" stop-color="#5b1b35"/><stop offset="1" stop-color="#250b19"/></linearGradient>
- <linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff0df"/><stop offset=".45" stop-color="#dcae94"/><stop offset="1" stop-color="#9d5b50"/></linearGradient>
- <radialGradient id="glow"><stop stop-color="#a95a65" stop-opacity=".55"/><stop offset="1" stop-color="#3a1024" stop-opacity="0"/></radialGradient>
- <pattern id="motif" width="86" height="86" patternUnits="userSpaceOnUse"><path d="M43 4 C56 22 66 34 43 43 C20 34 30 22 43 4Z M43 82 C30 64 20 52 43 43 C66 52 56 64 43 82Z" fill="none" stroke="#e8bd9b" stroke-opacity=".18" stroke-width="1.5"/><circle cx="43" cy="43" r="4" fill="#e8bd9b" fill-opacity=".28"/></pattern>
- <g id="flower" fill="none" stroke="url(#gold)" stroke-width="3"><path d="M0-28 C12-20 17-9 0 0 C-17-9-12-20 0-28Z M28 0 C20 12 9 17 0 0 C9-17 20-12 28 0Z M0 28 C-12 20-17 9 0 0 C17 9 12 20 0 28Z M-28 0 C-20-12-9-17 0 0 C-9 17-20 12-28 0Z"/><circle r="5" fill="#e8bd9b"/></g>
+ <linearGradient id="wine" x2="0" y2="1"><stop stop-color="#210916"/><stop offset=".42" stop-color="#51172f"/><stop offset=".72" stop-color="#3b1024"/><stop offset="1" stop-color="#1c0712"/></linearGradient>
+ <linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff1df"/><stop offset=".28" stop-color="#e8bd9b"/><stop offset=".62" stop-color="#b87961"/><stop offset="1" stop-color="#f4d9b8"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#c77b83" stop-opacity=".32"/><stop offset="1" stop-color="#3a1024" stop-opacity="0"/></radialGradient>
+ <pattern id="brocade" width="112" height="112" patternUnits="userSpaceOnUse">
+  <path d="M56 5C75 27 78 43 56 56C34 43 37 27 56 5ZM56 107C37 85 34 69 56 56C78 69 75 85 56 107Z" fill="none" stroke="#e8bd9b" stroke-opacity=".13" stroke-width="1.5"/>
+  <path d="M5 56C27 37 43 34 56 56C43 78 27 75 5 56ZM107 56C85 75 69 78 56 56C69 34 85 37 107 56Z" fill="none" stroke="#e8bd9b" stroke-opacity=".1" stroke-width="1.2"/>
+  <circle cx="56" cy="56" r="4" fill="#f3d6b7" fill-opacity=".22"/>
+ </pattern>
+ <g id="flower" fill="none" stroke="url(#gold)" stroke-width="2.4">
+  <ellipse cy="-19" ry="17" rx="8"/><ellipse cy="-19" ry="17" rx="8" transform="rotate(45)"/><ellipse cy="-19" ry="17" rx="8" transform="rotate(90)"/><ellipse cy="-19" ry="17" rx="8" transform="rotate(135)"/><circle r="5" fill="#f5d8b7"/>
+ </g>
+ <g id="leaf" fill="none" stroke="#e8bd9b" stroke-width="2"><path d="M0 0C18-28 42-28 54 0C38 26 15 25 0 0Z"/><path d="M0 0Q27 0 54 0"/></g>
+ <g id="sprig" fill="none" stroke="url(#gold)" stroke-width="2">
+  <path d="M0 0Q25-28 45-58Q63-83 76-112"/>
+  <use href="#leaf" transform="translate(18 -20) rotate(-28) scale(.55)"/>
+  <use href="#leaf" transform="translate(36 -43) rotate(155) scale(.5)"/>
+  <use href="#leaf" transform="translate(53 -70) rotate(-30) scale(.46)"/>
+  <use href="#leaf" transform="translate(66 -91) rotate(150) scale(.4)"/>
+ </g>
+ <g id="pearl" fill="#f5dfca" stroke="#b87961" stroke-width="1"><circle r="4"/><circle r="1.3" fill="#fff8ed" stroke="none" cx="-1" cy="-1"/></g>
+ <g id="corner" fill="none" stroke="url(#gold)" stroke-width="2">
+  <path d="M0 170Q12 80 88 45Q135 22 170 0M0 170Q80 158 112 94Q140 43 170 0"/>
+  <use href="#sprig" transform="translate(12 150) rotate(-5) scale(.9)"/>
+  <use href="#sprig" transform="translate(50 115) rotate(35) scale(.72)"/>
+  <use href="#flower" transform="translate(94 70) scale(.8)"/>
+  <use href="#flower" transform="translate(23 151) scale(.55)"/>
+ </g>
 </defs>
-<rect width="857" height="1536" fill="url(#wine)"/><rect width="857" height="1536" fill="url(#motif)"/>
-<ellipse cx="428" cy="690" rx="390" ry="620" fill="url(#glow)"/>
-<path d="M35 1536V490 C35 215 220 60 428 60S822 215 822 490V1536" fill="none" stroke="url(#gold)" stroke-width="9"/>
-<path d="M72 1536V510 C72 250 230 105 428 105S785 250 785 510V1536" fill="none" stroke="#f5d4bd" stroke-opacity=".55" stroke-width="2"/>
-<path d="M120 1536V530 C120 300 250 165 428 165S737 300 737 530V1536" fill="none" stroke="#dcae94" stroke-opacity=".38" stroke-width="2"/>
-<path d="M35 490 Q130 400 165 260 Q205 120 330 95 M822 490 Q727 400 692 260 Q652 120 527 95" fill="none" stroke="#e8bd9b" stroke-opacity=".7" stroke-width="3"/>
-<g opacity=".75"><use href="#flower" x="140" y="260"/><use href="#flower" x="717" y="260"/><use href="#flower" x="92" y="760"/><use href="#flower" x="765" y="760"/><use href="#flower" x="160" y="1290"/><use href="#flower" x="697" y="1290"/></g>
-<g fill="none" stroke="#e8bd9b" stroke-width="3" opacity=".6"><path d="M60 540q75-80 110 0q-40 80-110 0M797 540q-75-80-110 0q40 80 110 0"/><path d="M60 1120q75-80 110 0q-40 80-110 0M797 1120q-75-80-110 0q40 80 110 0"/></g>
-<g fill="#f5d4bd" opacity=".65"><circle cx="428" cy="72" r="7"/><circle cx="35" cy="490" r="7"/><circle cx="822" cy="490" r="7"/><circle cx="428" cy="1460" r="7"/></g>
-<path d="M220 1460 Q428 1390 637 1460" fill="none" stroke="url(#gold)" stroke-width="4"/>
+<rect width="857" height="1536" fill="url(#wine)"/>
+<rect width="857" height="1536" fill="url(#brocade)"/>
+<ellipse cx="428" cy="700" rx="405" ry="650" fill="url(#glow)"/>
+<!-- Outer double frame -->
+<rect x="12" y="12" width="833" height="1512" rx="7" fill="none" stroke="#b87961" stroke-opacity=".65" stroke-width="2"/>
+<rect x="23" y="23" width="811" height="1490" rx="5" fill="none" stroke="#f1d2b2" stroke-opacity=".48" stroke-width="1.5"/>
+<!-- Grand Mughal cusped arch -->
+<path d="M42 1510V500C42 253 193 76 428 58C663 76 815 253 815 500V1510" fill="none" stroke="#7f493e" stroke-width="15" opacity=".55"/>
+<path d="M48 1510V500C48 260 198 83 428 67C658 83 809 260 809 500V1510" fill="none" stroke="url(#gold)" stroke-width="8"/>
+<path d="M75 1510V510C75 291 211 119 428 103C645 119 782 291 782 510V1510" fill="none" stroke="#f4d9bd" stroke-opacity=".72" stroke-width="2.4"/>
+<path d="M101 1510V526C101 322 229 153 428 137C627 153 756 322 756 526V1510" fill="none" stroke="#d9a98a" stroke-opacity=".38" stroke-width="1.4"/>
+<!-- Arch scallops -->
+<path d="M49 495Q78 454 106 495Q134 536 162 495Q190 454 218 495Q246 536 274 495Q302 454 330 495Q358 536 386 495Q414 454 442 495Q470 536 498 495Q526 454 554 495Q582 536 610 495Q638 454 666 495Q694 536 722 495Q750 454 778 495Q806 536 809 495" fill="none" stroke="#e8bd9b" stroke-opacity=".35" stroke-width="2"/>
+<!-- Crown medallion -->
+<path d="M428 31L447 54L476 58L455 78L460 106L428 92L396 106L401 78L380 58L409 54Z" fill="#3a1024" stroke="url(#gold)" stroke-width="3"/>
+<use href="#flower" transform="translate(428 68) scale(.65)"/>
+<path d="M428 95V133" stroke="#e8bd9b" stroke-width="2"/>
+<use href="#pearl" transform="translate(428 143)"/>
+<!-- Pearl strings and hanging pendants -->
+<g fill="none" stroke="#e8bd9b" stroke-opacity=".42" stroke-width="1.5">
+ <path d="M137 158Q110 255 137 350Q164 445 137 540"/><path d="M190 133Q164 245 190 357Q216 469 190 581"/>
+ <path d="M667 158Q694 255 667 350Q640 445 667 540"/><path d="M614 133Q640 245 614 357Q588 469 614 581"/>
+</g>
+<g><use href="#pearl" transform="translate(137 180)"/><use href="#pearl" transform="translate(137 260)"/><use href="#pearl" transform="translate(137 340)"/><use href="#pearl" transform="translate(190 205)"/><use href="#pearl" transform="translate(190 300)"/><use href="#pearl" transform="translate(190 395)"/><use href="#pearl" transform="translate(667 180)"/><use href="#pearl" transform="translate(667 260)"/><use href="#pearl" transform="translate(667 340)"/><use href="#pearl" transform="translate(614 205)"/><use href="#pearl" transform="translate(614 300)"/><use href="#pearl" transform="translate(614 395)"/></g>
+<!-- Floral corner compositions -->
+<use href="#corner" transform="translate(32 170)"/>
+<use href="#corner" transform="translate(825 170) scale(-1 1)"/>
+<use href="#corner" transform="translate(32 1360) scale(1 -1)"/>
+<use href="#corner" transform="translate(825 1360) scale(-1 -1)"/>
+<!-- Side floral medallions -->
+<g><use href="#flower" transform="translate(70 610) scale(1.15)"/><use href="#flower" transform="translate(787 610) scale(1.15)"/><use href="#flower" transform="translate(70 930) scale(1.15)"/><use href="#flower" transform="translate(787 930) scale(1.15)"/></g>
+<g fill="none" stroke="#e8bd9b" stroke-width="2" opacity=".55"><path d="M48 610H110M747 610H809M48 930H110M747 930H809"/></g>
+<!-- Lower ornamental cartouche -->
+<path d="M205 1450Q270 1400 340 1432Q428 1474 517 1432Q587 1400 652 1450Q590 1512 428 1500Q266 1512 205 1450Z" fill="#2a0b19" fill-opacity=".55" stroke="url(#gold)" stroke-width="2.5"/>
+<path d="M265 1450Q428 1390 591 1450" fill="none" stroke="#f1d2b2" stroke-width="2"/>
+<use href="#flower" transform="translate(428 1465) scale(.75)"/>
+<use href="#pearl" transform="translate(250 1450)"/><use href="#pearl" transform="translate(606 1450)"/>
+<!-- Subtle inner edge glints -->
+<g fill="#f4d9bd" opacity=".72"><circle cx="48" cy="500" r="5"/><circle cx="809" cy="500" r="5"/><circle cx="428" cy="67" r="5"/><circle cx="48" cy="1510" r="5"/><circle cx="809" cy="1510" r="5"/></g>
 </svg>
