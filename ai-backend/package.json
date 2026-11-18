@@ -14,8 +14,6 @@
     "@mastra/core": "^1.39.0",
     "@composio/core": "^0.26.0",
     "@composio/mastra": "^0.10.3",
-    "@langfuse/otel": "latest",
-    "@opentelemetry/sdk-node": "latest",
     "mem0ai": "latest",
     "zod": "latest"
   },
