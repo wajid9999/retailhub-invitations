@@ -35,3 +35,16 @@ await page.goto(`${base}/index.html#studio=blush-garden`,{waitUntil:'domcontentl
 await expect(page.locator('#stu')).toBeVisible({timeout:30000});await expect(page.locator('#gal')).toBeHidden();
 await expect(page.locator('#tt')).toContainText('Blush Garden');await expect(page.locator('#f input').first()).toBeVisible();expect(errors).toEqual([]);
 });
+
+test('Blush Garden fits a mobile viewport without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const response = await page.goto(`${base}/templates/blush-garden.html#${encode(payload)}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  expect(response?.ok()).toBeTruthy();
+  await expect.poll(() => page.locator('html').getAttribute('data-inviteora-payload')).toBe('loaded');
+  const appWidth = await page.locator('#app').evaluate(el => el.getBoundingClientRect().width);
+  const bodyWidth = await page.locator('body').evaluate(el => el.scrollWidth);
+  expect(appWidth).toBeLessThanOrEqual(390);
+  expect(bodyWidth).toBeLessThanOrEqual(390);
+  await expect(page.locator('#ht')).toContainText('Inviteora Blush Groom 8472');
+  await expect(page.locator('#scr .evb')).toHaveCount(2);
+});
