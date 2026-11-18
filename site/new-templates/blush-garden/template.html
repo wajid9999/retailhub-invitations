@@ -78,7 +78,7 @@ const validPayload=!!(INVITEORA_PAYLOAD&&typeof INVITEORA_PAYLOAD.final==="boole
   INVITEORA_PAYLOAD.C&&typeof INVITEORA_PAYLOAD.C==="object"&&
   typeof INVITEORA_PAYLOAD.C.groom==="string"&&typeof INVITEORA_PAYLOAD.C.bride==="string"&&
   Array.isArray(INVITEORA_PAYLOAD.C.events)&&INVITEORA_PAYLOAD.C.events.length>0&&
-  INVITEORA_PAYLOAD.C.events.every(e=>e&&/^\\d{4}-\\d{2}-\\d{2}$/.test(e.date||"")&&e.name));
+  INVITEORA_PAYLOAD.C.events.every(e=>e&&/^\d{4}-\d{2}-\d{2}$/.test(e.date||"")&&e.name));
 if(!validPayload){
   document.documentElement.dataset.inviteoraPayload="error";
   document.body.innerHTML='<main style="min-height:100dvh;display:grid;place-items:center;padding:28px;text-align:center;background:#f9f8f3;color:#4a3640;font:20px Georgia,serif"><div><h1>Invitation unavailable</h1><p>Invitation payload is missing or incomplete. Please reopen this design from the Inviteora editor.</p></div></main>';
