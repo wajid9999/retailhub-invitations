@@ -1,0 +1,9 @@
+import { test, expect } from '@playwright/test';
+const base=process.env.BASE_URL||'https://wajid9999.github.io/retailhub-invitations';
+const route='/templates/royal-mughal-palace-vip.html';
+const data=(final=false)=>({final,C:{groom:'Palace Test Groom',bride:'Palace Test Bride',sample:!final,hostsTitle:'With best compliments',hosts:['Test Host | Family'],events:[{name:'Mehndi',date:'2028-08-19',time:'18:00',timeText:'6:00 PM',venue:'Mehndi Venue',address:'Mehndi Address',hosts:'Bride family',dress:'Festive'},{name:'Baraat',date:'2028-08-20',time:'19:30',timeText:'7:30 PM',venue:'Baraat Venue',address:'Baraat Address'},{name:'Walima',date:'2028-08-22',time:'20:00',timeText:'8:00 PM',venue:'Walima Venue',address:'Walima Address'}]}});
+const enc=x=>Buffer.from(JSON.stringify(x),'utf8').toString('base64');
+async function open(page,p){await page.goto(base+route+'#'+enc(p),{waitUntil:'domcontentloaded'});await expect(page.locator('html')).toHaveAttribute('data-inviteora-payload','loaded')}
+test('Royal Palace renders all three events and preview watermark',async({page})=>{const errors=[];page.on('pageerror',e=>errors.push(e.message));await open(page,data());await expect(page.locator('#wm')).toBeVisible();for(const x of ['Palace Test Groom','Palace Test Bride','Mehndi Venue','Baraat Venue','Walima Venue','Test Host'])await expect(page.locator('body')).toContainText(x);expect(errors).toEqual([])});
+test('Royal Palace final removes SAMPLE watermark',async({page})=>{await open(page,data(true));await expect(page.locator('#wm')).toBeHidden()});
+test('Royal Palace navigation advances through function pages',async({page})=>{await open(page,data());await page.locator('#begin').click();await page.locator('#next').click();await expect(page.locator('#count')).toContainText('03');});
