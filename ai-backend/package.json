@@ -1,0 +1,27 @@
+{
+  "name": "inviteora-ai-backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=22.22.3" },
+  "scripts": {
+    "dev": "mastra dev",
+    "build": "mastra build",
+    "start": "mastra start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mastra/core": "^1.39.0",
+    "@composio/core": "^0.26.0",
+    "@composio/mastra": "^0.10.3",
+    "@langfuse/otel": "latest",
+    "@opentelemetry/sdk-node": "latest",
+    "mem0ai": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "mastra": "^1.39.0",
+    "typescript": "latest"
+  }
+}
