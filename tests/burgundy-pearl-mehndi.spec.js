@@ -70,3 +70,26 @@ test('Burgundy Pearl requires an editor payload and does not show hardcoded cust
   await expect(page.locator('body')).not.toContainText('Ayesha');
   expect(errors).toEqual([]);
 });
+
+test('Burgundy Pearl is available in the central editor with editable couple and event fields', async ({ page }) => {
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto(`${process.env.BASE_URL}/index.html#studio=burgundy-pearl-mehndi`, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#stu')).toBeVisible();
+  await expect(page.locator('#gal')).toBeHidden();
+  await expect(page.locator('#tt')).toContainText('Burgundy Pearl Mehndi');
+  await expect(page.locator('#f')).toContainText('Groom');
+  await expect(page.locator('#f')).toContainText('Bride');
+  await expect(page.locator('#f')).toContainText('Groom’s parents');
+  await expect(page.locator('#f')).toContainText('Bride’s parents');
+  await expect(page.locator('#f input[data-e="k"]').first()).toBeVisible();
+  await expect(page.locator('#f input[data-e="d"]').first()).toBeVisible();
+  await expect(page.locator('#f input[data-e="v"]').first()).toBeVisible();
+  await expect(page.locator('#f input[data-e="a"]').first()).toBeVisible();
+  await page.locator('#f input[data-s="groom"]').fill('Test Groom');
+  await page.locator('#f input[data-s="bride"]').fill('Test Bride');
+  await page.locator('#f input[data-e="k"]').first().fill('Mehndi');
+  await expect(page.locator('#f input[data-s="groom"]')).toHaveValue('Test Groom');
+  await expect(page.locator('#f input[data-s="bride"]')).toHaveValue('Test Bride');
+  expect(errors).toEqual([]);
+});
