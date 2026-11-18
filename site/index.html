@@ -73,10 +73,11 @@ royal:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],...
 floral:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both",...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
 "floral-burgundy":(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,fx:"both",...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
 velvet:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,faq:[],...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}}),
+"vipRoyalPalace":(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,groomParents:s.gf||"",brideParents:s.bf||"",sample:!fin,hostsTitle:s.hostsTitle||"With best compliments",hosts:(Array.isArray(s.hosts)?s.hosts:[]).filter(x=>x&&String(x.name||"").trim()).map(x=>({name:String(x.name).trim(),relation:String(x.relation||"").trim()})),message:s.message||"",closing:s.close||"",dressCode:s.dressCode||"",rsvp:{phone:s.whatsapp||"",message:s.rsvpMessage||""},events:s.ev.map(e=>({name:e.k,tagline:e.tagline||"",hosts:e.hosts||"",date:e.d,time:e.t||"19:00",endTime:e.endTime||"",venue:e.v,address:e.a,dress:e.dress||s.dressCode||"",map:e.map||""}))}}),
 palace:(s,fin)=>({final:fin,C:{groom:s.groom,bride:s.bride,sample:!fin,...cleanHosts(),events:s.ev.map(e=>({name:e.k,hosts:e.hosts,date:e.d,time:e.t||"19:00",timeText:f12(e.t),venue:e.v,address:e.a,dress:"Festive formal",map:e.v+" "+e.a}))}})
 };
 const b64=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
-const SITE_BASE='https://inviteora-preview.vercel.app/';
+const SITE_BASE=location.origin+'/';
 const templateUrl=file=>new URL(file,SITE_BASE).href;
 const link=fin=>templateUrl(cur.file)+'#'+b64(ad(cur)(S,fin));
 function grid(){const bt=(l,k,v)=>`<button data-${k}="${v}" class="${(k==='o'?fo:ft)===v?'on':''}">${l}</button>`;
