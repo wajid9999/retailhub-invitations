@@ -13,7 +13,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0;background:#e9e6dc;color:var(--ink);font-family:"Cormorant Garamond",Georgia,serif}
 #app{visibility:hidden;position:fixed;inset:0;max-width:480px;margin:0 auto;overflow:hidden;background:var(--bg)}
-#art{position:absolute;left:50%;top:50%;width:min(128vw,620px);aspect-ratio:9/16;transform:translate(-50%,-50%);transition:filter 1s,opacity 1s,transform 1s;animation:in 2s ease-out backwards;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent)}
+#art{position:absolute;left:50%;top:50%;width:min(128vw,620px);aspect-ratio:896/1200;transform:translate(-50%,-50%);transition:filter 1s,opacity 1s,transform 1s;animation:in 2s ease-out backwards;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(to bottom,transparent,#000 6%,#000 94%,transparent)}
 @keyframes in{from{opacity:0;filter:blur(10px);transform:translate(-50%,-50%) scale(1.06)}}
 #art>img{display:block;width:100%;height:100%}
 .sd #sh{display:none}.sd #art{filter:blur(7px);opacity:.42;transform:translate(-50%,-50%) scale(1.05)}
@@ -58,7 +58,7 @@ input.ul{background:none;border:0;border-bottom:1px solid rgba(74,54,64,.6);bord
 </head>
 <body>
 <div id="app">
- <div id="art"><img alt="" src="../thumbs/blush-garden.svg"><div id="ht"></div></div>
+ <div id="art"><img alt="" src="https://cdn.shopify.com/s/files/1/1021/1550/8503/files/blush-garden-original-artwork.jpg?v=1794962670"><div id="ht"></div></div>
  <div id="scr"></div><div id="sh">SCROLL ▾</div>
  <canvas id="fx"></canvas><div class="wm" id="wm">SAMPLE</div>
 </div>
@@ -107,7 +107,7 @@ function gcal(e){const p=n=>String(n).padStart(2,"0"),[y,m,d]=e.date.split("-").
  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent(`${esc(e.name)}: ${C.groom} & ${C.bride}`)+"&dates="+f(new Date(y,m-1,d,h,mi))+"/"+f(new Date(y,m-1,d,h+3,mi))+"&location="+encodeURIComponent(e.venue+", "+e.address)}
 const e0=C.events[0];
 /* hero text sits inside the picture frame */
-const u=()=>app.style.setProperty("--u",($("#art").offsetWidth/864)+"px");u();addEventListener("resize",u);
+const u=()=>app.style.setProperty("--u",($("#art").offsetWidth/896)+"px");u();addEventListener("resize",u);
 const fz=n=>`font-size:calc(var(--u,.5px)*${n})`;
 $("#ht").innerHTML=`<div class="ar fg" style="${fz(38)};animation-delay:.9s;white-space:nowrap">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div><div class="it" style="${fz(27)};margin:2px 0 6px;animation-delay:1.3s">Together with the blessing of Allah</div><div class="script fn" style="${fz(96)};animation-delay:1.7s">${esc(C.groom)}</div><div class="script fg" style="${fz(52)};animation-delay:2s">&amp;</div><div class="script fn" style="${fz(96)};animation-delay:2.3s">${esc(C.bride)}</div><div class="it" style="${fz(27)};line-height:1.3;margin-top:8px;animation-delay:2.8s">request the honour of your presence<br>at their wedding</div>`;
 const hero='<section class="sc h0"></section>';
