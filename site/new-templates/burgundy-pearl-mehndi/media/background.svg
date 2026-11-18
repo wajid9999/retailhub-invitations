@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 857 1536">
+<defs>
+ <linearGradient id="wine" x2="0" y2="1"><stop stop-color="#210916"/><stop offset=".48" stop-color="#5b1b35"/><stop offset="1" stop-color="#250b19"/></linearGradient>
+ <linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff0df"/><stop offset=".45" stop-color="#dcae94"/><stop offset="1" stop-color="#9d5b50"/></linearGradient>
+ <radialGradient id="glow"><stop stop-color="#a95a65" stop-opacity=".55"/><stop offset="1" stop-color="#3a1024" stop-opacity="0"/></radialGradient>
+ <pattern id="motif" width="86" height="86" patternUnits="userSpaceOnUse"><path d="M43 4 C56 22 66 34 43 43 C20 34 30 22 43 4Z M43 82 C30 64 20 52 43 43 C66 52 56 64 43 82Z" fill="none" stroke="#e8bd9b" stroke-opacity=".18" stroke-width="1.5"/><circle cx="43" cy="43" r="4" fill="#e8bd9b" fill-opacity=".28"/></pattern>
+ <g id="flower" fill="none" stroke="url(#gold)" stroke-width="3"><path d="M0-28 C12-20 17-9 0 0 C-17-9-12-20 0-28Z M28 0 C20 12 9 17 0 0 C9-17 20-12 28 0Z M0 28 C-12 20-17 9 0 0 C17 9 12 20 0 28Z M-28 0 C-20-12-9-17 0 0 C-9 17-20 12-28 0Z"/><circle r="5" fill="#e8bd9b"/></g>
+</defs>
+<rect width="857" height="1536" fill="url(#wine)"/><rect width="857" height="1536" fill="url(#motif)"/>
+<ellipse cx="428" cy="690" rx="390" ry="620" fill="url(#glow)"/>
+<path d="M35 1536V490 C35 215 220 60 428 60S822 215 822 490V1536" fill="none" stroke="url(#gold)" stroke-width="9"/>
+<path d="M72 1536V510 C72 250 230 105 428 105S785 250 785 510V1536" fill="none" stroke="#f5d4bd" stroke-opacity=".55" stroke-width="2"/>
+<path d="M120 1536V530 C120 300 250 165 428 165S737 300 737 530V1536" fill="none" stroke="#dcae94" stroke-opacity=".38" stroke-width="2"/>
+<path d="M35 490 Q130 400 165 260 Q205 120 330 95 M822 490 Q727 400 692 260 Q652 120 527 95" fill="none" stroke="#e8bd9b" stroke-opacity=".7" stroke-width="3"/>
+<g opacity=".75"><use href="#flower" x="140" y="260"/><use href="#flower" x="717" y="260"/><use href="#flower" x="92" y="760"/><use href="#flower" x="765" y="760"/><use href="#flower" x="160" y="1290"/><use href="#flower" x="697" y="1290"/></g>
+<g fill="none" stroke="#e8bd9b" stroke-width="3" opacity=".6"><path d="M60 540q75-80 110 0q-40 80-110 0M797 540q-75-80-110 0q40 80 110 0"/><path d="M60 1120q75-80 110 0q-40 80-110 0M797 1120q-75-80-110 0q40 80 110 0"/></g>
+<g fill="#f5d4bd" opacity=".65"><circle cx="428" cy="72" r="7"/><circle cx="35" cy="490" r="7"/><circle cx="822" cy="490" r="7"/><circle cx="428" cy="1460" r="7"/></g>
+<path d="M220 1460 Q428 1390 637 1460" fill="none" stroke="url(#gold)" stroke-width="4"/>
+</svg>
