@@ -38,7 +38,7 @@ test('Royal Mughal Palace VIP maps editor data and serves all four video scenes'
   await page.goto(base + route + '#' + encoded, { waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-inviteora-payload', 'loaded');
   await expect(page.locator('.sample-pill')).toContainText('Sample');
-  await expect(page.locator('section.scene--video')).toHaveCount(4);
+  await expect(page.locator('.film .layer')).toHaveCount(4);
   await expect(page.locator('[data-event="mehndi"]')).toContainText('Mehndi Venue');
   await expect(page.locator('[data-event="baraat"]')).toContainText('Baraat Venue');
   await expect(page.locator('[data-event="walima"]')).toContainText('Walima Venue');
