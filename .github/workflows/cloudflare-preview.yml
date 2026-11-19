@@ -1,0 +1,267 @@
+name: Deploy Inviteora Cloudflare Preview
+
+on:
+  push:
+    branches: [cloudflare-preview-vip]
+    paths:
+      - 'retailhub-invitations.zip'
+      - 'site/**'
+      - 'tests/**'
+      - 'supabase/**'
+      - '.github/workflows/cloudflare-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: inviteora-cloudflare-preview
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout preview branch
+        uses: actions/checkout@v4
+
+      - name: Extract the same source package used by GitHub Pages
+        run: |
+          if [ -f retailhub-invitations.zip ]; then ZIP_PATH=retailhub-invitations.zip; else ZIP_PATH=site.zip; fi
+          test -f "$ZIP_PATH"
+          mkdir -p public
+          unzip -q "$ZIP_PATH" -d extracted
+          test -f extracted/site/index.html
+          cp -R extracted/site/. public/
+          if [ -f site/index.html ]; then cp site/index.html public/index.html; fi
+          if [ -f site/admin.html ]; then cp site/admin.html public/admin.html; fi
+          if [ -f site/templates/velvet-curtain/index.html ]; then
+            mkdir -p public/templates/velvet-curtain
+            cp site/templates/velvet-curtain/index.html public/templates/velvet-curtain/index.html
+          fi
+
+      - name: Build gallery template packages and extract media
+        run: |
+          python3 - <<'PY'
+          import base64, json, re, shutil
+          from pathlib import Path
+
+          source = Path("site/new-templates")
+          public = Path("public")
+          registry = public / "templates.json"
+          if source.exists():
+            data = json.loads(registry.read_text(encoding="utf-8"))
+            items = data.setdefault("templates", [])
+            known = {str(x.get("id")) for x in items}
+            for folder in sorted(p for p in source.iterdir() if p.is_dir()):
+              meta_path, html_path = folder / "template.json", folder / "template.html"
+              if not meta_path.is_file() or not html_path.is_file():
+                raise SystemExit(f"Incomplete template package: {folder}")
+              meta = json.loads(meta_path.read_text(encoding="utf-8"))
+              template_id = str(meta.get("id", "")).strip()
+              if not template_id or template_id in known:
+                raise SystemExit(f"Missing or duplicate template id: {template_id}")
+              thumb_src = next((folder / ("thumbnail" + ext) for ext in (".svg", ".png", ".jpg", ".webp") if (folder / ("thumbnail" + ext)).is_file()), None)
+              if thumb_src is None:
+                raise SystemExit(f"Missing thumbnail in {folder}")
+              html_rel, thumb_rel = f"templates/{template_id}.html", f"thumbs/{template_id}{thumb_src.suffix.lower()}"
+              (public / "templates").mkdir(parents=True, exist_ok=True)
+              (public / "thumbs").mkdir(parents=True, exist_ok=True)
+              html_text = html_path.read_text(encoding="utf-8")
+              asset_dir = public / "templates" / template_id / "media"
+              asset_dir.mkdir(parents=True, exist_ok=True)
+              asset_counts = {}
+              def externalize(match):
+                mime, encoded = match.group(1), match.group(2)
+                ext = "mp4" if mime == "video/mp4" else ("png" if mime == "image/png" else "jpg")
+                asset_counts[ext] = asset_counts.get(ext, 0) + 1
+                filename = f"asset-{asset_counts[ext]:02d}.{ext}"
+                (asset_dir / filename).write_bytes(base64.b64decode(encoded))
+                return f"{template_id}/media/{filename}"
+              html_text = re.sub(r"data:(image/jpeg|image/png|video/mp4);base64,([A-Za-z0-9+/=]+)", externalize, html_text)
+              supplied_media = folder / "media"
+              if supplied_media.is_dir():
+                shutil.copytree(supplied_media, asset_dir, dirs_exist_ok=True)
+              (public / html_rel).write_text(html_text, encoding="utf-8")
+              shutil.copy2(thumb_src, public / thumb_rel)
+              record = dict(meta)
+              record["file"], record["thumb"] = html_rel, thumb_rel
+              items.append(record)
+              known.add(template_id)
+            registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print("Built templates:", [x.get("id") for x in items])
+          PY
+
+      - name: Register Velvet Curtain in the editor catalog
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("public/templates.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          items = data.setdefault("templates", [])
+          record = {
+            "id": "velvet-curtain",
+            "name": "Velvet Curtain — High Premium Video Invitation",
+            "tag": "Animated velvet curtains and cinematic wedding reveal",
+            "tier": "high", "occasion": "wedding", "ad": "velvet", "fam": True,
+            "file": "templates/velvet-curtain/index.html",
+            "thumb": "https://cdn.shopify.com/s/files/1/1021/1550/8503/files/velvet-curtain-thumbnail.jpg?v=1794508817"
+          }
+          existing = next((x for x in items if x.get("id") == "velvet-curtain"), None)
+          if existing is None: items.append(record)
+          else: existing.update(record)
+          p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Apply preview-only URL fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("public/index.html")
+          s = p.read_text(encoding="utf-8")
+          old_base = "const SITE_BASE='https://inviteora-preview.vercel.app/';"
+          new_base = "const SITE_BASE=location.origin+'/';"
+          if old_base not in s:
+            raise SystemExit("Expected Vercel preview base was not found; refusing an unsafe patch.")
+          s = s.replace(old_base, new_base, 1)
+          old_back = "$('#back').onclick=()=>location.href='https://retailhub-store.myshopify.com/collections/all';"
+          new_back = "$('#back').onclick=()=>{location.hash='';route()};"
+          if old_back not in s:
+            raise SystemExit("Expected legacy Shopify back link was not found; refusing an unsafe patch.")
+          s = s.replace(old_back, new_back, 1)
+          p.write_text(s, encoding="utf-8")
+          print("Preview links now stay on the Cloudflare Preview host.")
+          PY
+
+      - name: Apply current active-template host rendering patches
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("public/templates/mahad-laiba.html")
+          if p.is_file():
+            s = p.read_text(encoding="utf-8")
+            needle = "function renderPages(){\n P=[];"
+            replacement = """function renderPages(){
+           P=[];
+           const hostsBlock=(Array.isArray(C.hosts)?C.hosts:[]).map(n=>{const[a,b]=String(n||"").split("|");const name=a.trim();return name?\x60<div style="font-size:5.1cqw;line-height:1.15;margin:1.8cqw 0">\x24{esc(name)}\x24{b&&b.trim()?\x60<div class="sm" style="font-size:3.8cqw;margin-top:.5cqw">\x24{esc(b.trim())}</div>\x60:""}</div>\x60:""}).join("");
+           const hostsMarkup=hostsBlock?\x60<div style="margin-top:3cqw"><div class="cap">\x24{esc(C.hostsTitle||"With best compliments")}</div>\x24{hostsBlock}</div>\x60:"";"""
+            if needle not in s: raise SystemExit("Royal Events insertion point not found")
+            s = s.replace(needle, replacement, 1)
+            needle = "\x24{esc(C.a)} &amp; \x24{esc(C.b)}</div>\x24{C.whatsapp?"
+            if needle not in s: raise SystemExit("Royal Events final-page insertion point not found")
+            s = s.replace(needle, "\x24{esc(C.a)} &amp; \x24{esc(C.b)}</div>\x24{hostsMarkup}\x24{C.whatsapp?", 1)
+            p.write_text(s, encoding="utf-8")
+
+          p = Path("public/templates/ivory-pearl.html")
+          if p.is_file():
+            s = p.read_text(encoding="utf-8")
+            needle = "const S=[];"
+            replacement = """const escHost=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+          const hostsMarkup=(Array.isArray(C.hosts)?C.hosts:[]).map(n=>{const[a,b]=String(n||"").split("|");const name=a.trim();return name?\x60<div style="font-size:clamp(17px,4.5vw,24px);line-height:1.2;margin:10px 0">\x24{escHost(name)}\x24{b&&b.trim()?\x60<div class="s it" style="font-size:clamp(12px,3vw,16px);margin-top:3px">\x24{escHost(b.trim())}</div>\x60:""}</div>\x60:""}).join("");
+          const hostsPage=hostsMarkup?\x60<div style="margin:22px auto 12px;max-width:90%"><div class="s it" style="font-size:clamp(15px,3.8vw,21px)">\x24{escHost(C.hostsTitle||"With best compliments")}</div><div class="s" style="color:#c99a46;margin:7px 0">✦ ✦ ✦</div>\x24{hostsMarkup}</div>\x60:"";
+          const S=[];"""
+            if needle not in s: raise SystemExit("Ivory Pearl insertion point not found")
+            s = s.replace(needle, replacement, 1)
+            needle = "\x24{C.groom} &amp; \x24{C.bride}</div><button class=\"btn x\" id=\"duab\">"
+            if needle not in s: raise SystemExit("Ivory Pearl final-page insertion point not found")
+            s = s.replace(needle, "\x24{C.groom} &amp; \x24{C.bride}</div>\x24{hostsPage}<button class=\"btn x\" id=\"duab\">", 1)
+            p.write_text(s, encoding="utf-8")
+          print("Active template hosts patches applied where source files exist.")
+          PY
+
+      - name: Remove retired duplicate designs using the existing release rule
+        run: |
+          python3 - <<'PY'
+          import json, re
+          from pathlib import Path
+          root = Path("public")
+          registry = root / "templates.json"
+          data = json.loads(registry.read_text(encoding="utf-8"))
+          retired = re.compile(r"(royal[-_ ]?navy|royal[-_ ]?blue|hamza|areeba|099|velvet[-_ ]?curtain|green[-_ ]?velvet)", re.I)
+          kept, removed = [], []
+          for item in data.get("templates", []):
+            identity = " ".join(str(item.get(k, "")) for k in ("id", "name", "file", "thumb", "tag"))
+            if item.get("id") not in ("royal-navy-blue-gold", "royal-navy-gold-video", "velvet-curtain") and retired.search(identity):
+              removed.append(item)
+            else: kept.append(item)
+          if not kept: raise SystemExit("Refusing to publish an empty gallery.")
+          data["templates"] = kept
+          for item in removed:
+            for key in ("file", "thumb"):
+              rel = item.get(key)
+              if rel:
+                target = (root / rel).resolve()
+                if root.resolve() in target.parents and target.is_file(): target.unlink()
+          registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          print("Active templates:", [x.get("id") for x in kept])
+          PY
+
+      - name: Validate generated site files
+        run: |
+          test -s public/index.html
+          test -s public/admin.html
+          test -s public/templates.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("public")
+          data=json.loads((root/"templates.json").read_text())
+          templates=data.get("templates",[])
+          if not templates: raise SystemExit("Gallery has no templates")
+          missing=[]
+          for item in templates:
+            for key in ("file","thumb"):
+              value=item.get(key,"")
+              if key=="file" and value and not (root/value).is_file(): missing.append(f"{item.get('id')}: {value}")
+          if missing: raise SystemExit("Missing template files: "+", ".join(missing))
+          print(f"Validated {len(templates)} gallery entries")
+          PY
+
+      - name: Upload built site for browser tests
+        uses: actions/upload-artifact@v4
+        with:
+          name: inviteora-cloudflare-preview-site
+          path: public/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --save-dev @playwright/test
+          npx playwright install --with-deps chromium
+
+      - name: Serve the built artifact locally
+        run: |
+          python3 -m http.server 4173 --directory public > /tmp/inviteora-server.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:4173/templates.json >/dev/null
+
+      - name: Run existing template and order-flow browser tests
+        run: |
+          npx playwright test tests/royal-navy-blue-gold.spec.js tests/invitation-video-previews.spec.js tests/order-flow.spec.js tests/template-contract.spec.js tests/normal-wedding-emerald.spec.js tests/grand-entrance.spec.js tests/vip-royal-wedding.spec.js tests/royal-mughal-palace-vip.spec.js tests/blush-garden.spec.js tests/burgundy-pearl-mehndi.spec.js --reporter=list
+        env:
+          BASE_URL: http://127.0.0.1:4173
+
+      - name: Deploy preview to Cloudflare Pages
+        if: success()
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::Cloudflare secrets are not configured yet; build and browser tests completed, deployment skipped."
+            exit 0
+          fi
+          npx wrangler@4 pages deploy public --project-name=inviteora-preview --branch=cloudflare-preview-vip
