@@ -1,6 +1,14 @@
 name: Deploy Inviteora Cloudflare Preview
 
 on:
+  push:
+    branches: [cloudflare-preview]
+    paths:
+      - 'retailhub-invitations.zip'
+      - 'site/**'
+      - 'tests/**'
+      - 'supabase/**'
+      - '.github/workflows/cloudflare-preview.yml'
   workflow_dispatch:
 
 permissions:
@@ -248,7 +256,12 @@ jobs:
 
       - name: Deploy preview to Cloudflare Pages
         if: success()
-        run: npx wrangler@4 pages deploy public --project-name=inviteora-preview --branch=cloudflare-preview
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::Cloudflare secrets are not configured yet; build and browser tests completed, deployment skipped."
+            exit 0
+          fi
+          npx wrangler@4 pages deploy public --project-name=inviteora-preview --branch=cloudflare-preview
