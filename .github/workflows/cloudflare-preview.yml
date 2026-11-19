@@ -118,6 +118,21 @@ jobs:
             print("Built templates:", [x.get("id") for x in items])
           PY
 
+      - name: Replace VIP soundtrack with approved instrumental audio
+        run: |
+          set -euo pipefail
+          MEDIA_DIR="public/templates/vip-royal-mughal-palace/media"
+          mkdir -p "$MEDIA_DIR"
+          test -f "$MEDIA_DIR/Royal-Soundtrack.m4a"
+          cp "$MEDIA_DIR/Royal-Soundtrack.m4a" "$MEDIA_DIR/Royal-Soundtrack-original-backup.m4a"
+          curl -fL --retry 3 --retry-delay 2 \
+            "https://d8j0ntlcm91z4.cloudfront.net/user_3JGTE9UijBvZggzr4wTdvNHGkmX/hf_20261119_155458_ac98da46-0dd9-4766-977f-7830d5371b9f.mp3" \
+            -o /tmp/inviteora-approved-soundtrack.mp3
+          ffmpeg -y -i /tmp/inviteora-approved-soundtrack.mp3 -vn -c:a aac -b:a 192k -movflags +faststart "$MEDIA_DIR/Royal-Soundtrack.m4a"
+          test -s "$MEDIA_DIR/Royal-Soundtrack.m4a"
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$MEDIA_DIR/Royal-Soundtrack.m4a"
+          echo "Approved soundtrack installed; original audio backup retained."
+
       - name: Register Velvet Curtain in the editor catalog
         run: |
           python3 - <<'PY'
