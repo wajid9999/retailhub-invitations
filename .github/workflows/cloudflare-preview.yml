@@ -45,7 +45,7 @@ jobs:
       - name: Load the four-scene VIP package from its published release asset
         run: |
           set -e
-          ASSET_URL="https://github.com/wajid9999/retailhub-invitations/releases/download/inviteora-vip-royal-mughal-v1/Inviteora-Royal-Mughal-Palace-VIP-Cloudflare-Assets.zip"
+          ASSET_URL="https://github.com/wajid9999/retailhub-invitations/releases/download/inviteora-vip-royal-mughal-v1/Inviteora-Royal-Mughal-Palace-VIP-Cloudflare-Assets_2.zip"
           if curl --fail --location --silent --show-error --retry 2 "$ASSET_URL" -o /tmp/inviteora-vip-assets.zip; then
             mkdir -p /tmp/inviteora-vip-assets site/new-templates/vip-royal-mughal-palace
             unzip -q -o /tmp/inviteora-vip-assets.zip -d /tmp/inviteora-vip-assets
