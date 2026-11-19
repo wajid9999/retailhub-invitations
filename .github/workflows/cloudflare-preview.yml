@@ -42,6 +42,25 @@ jobs:
             cp site/templates/velvet-curtain/index.html public/templates/velvet-curtain/index.html
           fi
 
+      - name: Load the four-scene VIP package from its published release asset
+        run: |
+          set -e
+          ASSET_URL="https://github.com/wajid9999/retailhub-invitations/releases/download/inviteora-vip-royal-mughal-v1/Inviteora-Royal-Mughal-Palace-VIP-Cloudflare-Assets.zip"
+          if curl --fail --location --silent --show-error --retry 2 "$ASSET_URL" -o /tmp/inviteora-vip-assets.zip; then
+            mkdir -p /tmp/inviteora-vip-assets site/new-templates/vip-royal-mughal-palace
+            unzip -q -o /tmp/inviteora-vip-assets.zip -d /tmp/inviteora-vip-assets
+            cp -R /tmp/inviteora-vip-assets/Inviteora-Royal-Mughal-Palace-VIP-Cloudflare-Assets/. site/new-templates/vip-royal-mughal-palace/
+            test -f site/new-templates/vip-royal-mughal-palace/template.html
+            test -f site/new-templates/vip-royal-mughal-palace/template.json
+            test -f site/new-templates/vip-royal-mughal-palace/media/Royal-Palace-Opening.mp4
+            test -f site/new-templates/vip-royal-mughal-palace/media/Royal-Mehndi.mp4
+            test -f site/new-templates/vip-royal-mughal-palace/media/Royal-Baraat-Arrival.mp4
+            test -f site/new-templates/vip-royal-mughal-palace/media/Royal-Walima.mp4
+            echo "Four-scene VIP template package loaded."
+          else
+            echo "VIP release asset is not published yet; keeping the incomplete package out of the gallery."
+          fi
+
       - name: Build gallery template packages and extract media
         run: |
           python3 - <<'PY'
