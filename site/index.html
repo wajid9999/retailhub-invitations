@@ -131,7 +131,7 @@ async function route(){
  $('#gal').classList.toggle('h',!!cur);$('#stu').classList.toggle('h',!cur);
  if(cur){S=cur.form==='event'?SE:{...SW,hostsTitle:'With best compliments',hosts:[]};$('#tt').textContent=cur.name;tab(1);form();$('#ord').disabled=false;$('#edit').classList.remove('h');$('#own').classList.toggle('h',!/owner/.test(location.search))}else $('#ifr').src='about:blank'
 }
-addEventListener('hashchange',route);$('#back').onclick=()=>{location.hash='';};
+addEventListener('hashchange',route);$('#back').onclick=()=>location.href='https://retailhub-store.myshopify.com/collections/all';
 async function loadOrderSettings(){
  try{
   const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'public-settings'})});
