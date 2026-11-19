@@ -270,21 +270,35 @@ jobs:
         env:
           BASE_URL: http://127.0.0.1:4173
 
-      - name: Create the isolated Pages project if it does not exist
+      - name: Create the isolated Pages project only when absent
         if: success()
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          set -euo pipefail
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "::notice::Cloudflare credentials are not configured; project creation skipped."
+            echo "::notice::Cloudflare credentials are not configured; deployment skipped."
             exit 0
           fi
-          PROJECTS="$(npx wrangler@4 pages project list --json)"
-          if printf '%s' "$PROJECTS" | node -e 'const fs=require("fs");const x=JSON.parse(fs.readFileSync(0,"utf8"));const a=Array.isArray(x)?x:(x.result||x.projects||[]);process.exit(a.some(p=>p.name==="inviteora-preview")?0:1)'; then
-            echo "Pages project inviteora-preview already exists."
-          else
+
+          API_URL="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/inviteora-preview"
+          RESPONSE="$(curl --silent --show-error --request GET \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            --header "Content-Type: application/json" \
+            --write-out $'\\n%{http_code}' "$API_URL")"
+          HTTP_STATUS="${RESPONSE##*$'\\n'}"
+          BODY="${RESPONSE%$'\\n'*}"
+
+          if [ "$HTTP_STATUS" = "200" ] && printf '%s' "$BODY" | jq -e '.success == true and .result.name == "inviteora-preview"' >/dev/null; then
+            echo "Existing Pages project inviteora-preview verified; keeping it."
+          elif [ "$HTTP_STATUS" = "404" ]; then
+            echo "Pages project not found; creating the isolated preview project."
             npx wrangler@4 pages project create inviteora-preview --production-branch=main
+          else
+            echo "Cloudflare project lookup failed (HTTP $HTTP_STATUS); refusing to create or deploy blindly."
+            printf '%s\\n' "$BODY"
+            exit 1
           fi
 
       - name: Deploy preview to Cloudflare Pages
