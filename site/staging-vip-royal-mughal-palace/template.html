@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050d22">
+  <meta name="robots" content="noindex">
+  <meta name="inviteora-template" content="vip-royal-mughal-palace">
+  <title>Wedding Invitation | Inviteora</title>
+  <meta name="description" content="Inviteora VIP Royal Mughal wedding invitation.">
+  <link rel="preload" as="font" type="font/woff2" href="templates/vip-royal-mughal-palace/media/assets/fonts/cormorant-garamond-latin-600-normal.woff2" crossorigin>
+  <link rel="preload" as="image" href="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Palace-Opening.jpg">
+  <link rel="stylesheet" href="templates/vip-royal-mughal-palace/media/css/style.css">
+</head>
+<body>
+
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6.5-5.8 6.5-11A6.5 6.5 0 0 0 5.5 10c0 5.200 6.500 11 6.500 11z"/><circle cx="12" cy="10" r="2.400"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 9.500h3.500L12 6v12l-4.500-3.500H4z"/><path d="M15.500 9a4 4 0 0 1 0 6M18 6.500a7.500 7.500 0 0 1 0 11"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.500h3.500L12 6v12l-4.500-3.500H4z"/><path d="M16 9.500l5 5M21 9.500l-5 5"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.500 6v12M15.500 6v12"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.500v13l11-6.500z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.300"/><circle cx="17.500" cy="6" r="2.300"/><circle cx="17.500" cy="18" r="2.300"/><path d="M8 11l7.500-3.800M8 13l7.500 3.800"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4 20l1.200-4.200A8 8 0 1 1 8.200 18.800z"/><path d="M9 8.500c0 3.500 3 6.500 6.500 6.500l1-1.500-2-1-1 .8c-1-.4-2-1.400-2.400-2.400l.8-1-1-2z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></symbol>
+  </defs>
+</svg>
+
+<noscript>
+  <p style="padding:2rem;font-family:Georgia,serif;color:#f3e3c0;background:#050d22">This invitation needs JavaScript. Please turn it on and reload the page.</p>
+</noscript>
+
+<main class="stage" id="stage" aria-live="off">
+
+  <!-- ================= Persistent layers ================= -->
+  <canvas class="motes" id="motes" aria-hidden="true"></canvas>
+  <div class="frame" aria-hidden="true"></div>
+  <div class="watermark" aria-hidden="true"></div>
+  <div class="sweep" id="sweep" aria-hidden="true"></div>
+
+  <div class="topbar" id="topbar">
+    <button class="chip chip--lang" type="button" data-action="lang" id="langBtn"></button>
+    <span class="sample-pill" aria-hidden="true" data-t="sample"></span>
+    <div class="topbar__tools">
+      <button class="round" type="button" data-action="pause" id="pauseBtn" aria-pressed="false">
+        <svg class="ico"><use href="#i-pause"/></svg>
+      </button>
+      <button class="round" type="button" data-action="sound" id="soundBtn" aria-pressed="false">
+        <svg class="ico"><use href="#i-mute"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <nav class="dots" id="dots" aria-label="Invitation pages"></nav>
+
+  <!-- ================= 0 · COVER (tap to open) ================= -->
+  <section class="scene scene--cover is-active" data-scene="cover" aria-label="Invitation cover">
+    <div class="door door--l"></div>
+    <div class="door door--r"></div>
+    <div class="cover__arch">
+      <p class="cover__bismillah" data-t="bismillah"></p>
+      <p class="cover__kicker" data-t="weddingOf"></p>
+      <h1 class="cover__names">
+        <span data-f="couple.bride"></span>
+        <i class="amp" aria-hidden="true">&amp;</i>
+        <span data-f="couple.groom"></span>
+      </h1>
+      <p class="cover__dates" id="coverDates"></p>
+      <div class="cover__actions">
+        <button class="btn btn--gold btn--lg" type="button" data-action="open-sound"><svg class="ico"><use href="#i-sound"/></svg><span data-t="openSound"></span></button>
+        <button class="link" type="button" data-action="open-silent" data-t="openSilent"></button>
+      </div>
+    </div>
+    <p class="cover__hint" data-t="openHint"></p>
+  </section>
+
+  <!-- ================= 1 · PALACE OPENING ================= -->
+  <section class="scene scene--video" data-scene="palace" aria-label="Palace opening">
+    <div class="bg">
+      <img class="bg__poster" src="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Palace-Opening.jpg" alt="" decoding="async">
+      <video muted loop playsinline preload="none" disablepictureinpicture
+             data-parts='["templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/000.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/001.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/002.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/003.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/004.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/005.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/006.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/007.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/008.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/009.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/010.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/011.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/012.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Palace-Opening/013.part"]'
+             poster="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Palace-Opening.jpg"
+             aria-label="The palace gates open onto a courtyard of chandeliers"></video>
+    </div>
+    <div class="scrim"></div>
+    <div class="card card--intro is-compact">
+      <span class="crest" aria-hidden="true"></span>
+      <p class="kicker" data-t="together"></p>
+      <h2 class="names names--sm">
+        <span data-f="couple.bride"></span>
+        <i class="amp" aria-hidden="true">&amp;</i>
+        <span data-f="couple.groom"></span>
+      </h2>
+      <div class="fold"><div class="fold__in">
+        <p class="message" data-f="message"></p>
+        <div class="parents">
+          <div><small data-t="daughterOf"></small><b data-f="couple.brideParents"></b></div>
+          <div><small data-t="sonOf"></small><b data-f="couple.groomParents"></b></div>
+        </div>
+      </div></div>
+      <button class="more" type="button" data-action="toggle" aria-expanded="false" data-closed-t="readInvitation" data-open-t="hideDetails"><span></span><svg class="ico"><use href="#i-chev"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ================= 2 · MEHNDI ================= -->
+  <section class="scene scene--video" data-scene="mehndi" data-event="mehndi" aria-label="Mehndi">
+    <div class="bg">
+      <img class="bg__poster" src="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Mehndi.jpg" alt="" decoding="async">
+      <video muted loop playsinline preload="none" disablepictureinpicture
+             data-parts='["templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/000.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/001.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/002.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/003.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/004.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/005.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/006.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/007.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/008.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/009.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/010.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/011.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/012.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/013.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/014.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/015.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/016.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/017.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Mehndi/018.part"]'
+             poster="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Mehndi.jpg"
+             aria-label="A marigold stage with lanterns and a rose petal pool"></video>
+    </div>
+    <div class="scrim"></div>
+    <div class="card card--event is-compact">
+      <span class="crest" aria-hidden="true"></span>
+      <h2 class="ev-title" data-ev="title"></h2>
+      <div class="fold"><div class="fold__in"><p class="ev-tagline" data-ev="tagline"></p></div></div>
+      <ul class="ev-info">
+        <li><svg class="ico"><use href="#i-cal"/></svg><span data-ev="date"></span></li>
+        <li><svg class="ico"><use href="#i-clock"/></svg><span data-ev="time"></span></li>
+        <li><svg class="ico"><use href="#i-clock"/></svg><span data-t="dressCode"></span>: <span data-ev="dressCode"></span></li>
+      </ul>
+      <div class="fold"><div class="fold__in">
+        <ul class="ev-info ev-info--venue">
+          <li><svg class="ico"><use href="#i-pin"/></svg><span><b data-ev="venue"></b><em data-ev="address"></em></span></li>
+        </ul>
+        <div class="ev-actions">
+          <button class="btn" type="button" data-action="cal" data-key="mehndi"><svg class="ico"><use href="#i-cal"/></svg><span data-t="addToCalendar"></span></button>
+          <a class="btn" data-action="map" data-key="mehndi" target="_blank" rel="noopener"><svg class="ico"><use href="#i-pin"/></svg><span data-t="openMap"></span></a>
+        </div>
+      </div></div>
+      <button class="more" type="button" data-action="toggle" aria-expanded="false" data-closed-t="details" data-open-t="hideDetails"><span></span><svg class="ico"><use href="#i-chev"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ================= 3 · BARAAT ================= -->
+  <section class="scene scene--video" data-scene="baraat" data-event="baraat" aria-label="Baraat">
+    <div class="bg">
+      <img class="bg__poster" src="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Baraat-Arrival.jpg" alt="" decoding="async">
+      <video muted loop playsinline preload="none" disablepictureinpicture
+             data-parts='["templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/000.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/001.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/002.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/003.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/004.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/005.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/006.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/007.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/008.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/009.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Baraat-Arrival/010.part"]'
+             poster="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Baraat-Arrival.jpg"
+             aria-label="White horses draw a royal carriage through a lantern-lit hall"></video>
+    </div>
+    <div class="scrim"></div>
+    <div class="card card--event is-compact">
+      <span class="crest" aria-hidden="true"></span>
+      <h2 class="ev-title" data-ev="title"></h2>
+      <div class="fold"><div class="fold__in"><p class="ev-tagline" data-ev="tagline"></p></div></div>
+      <ul class="ev-info">
+        <li><svg class="ico"><use href="#i-cal"/></svg><span data-ev="date"></span></li>
+        <li><svg class="ico"><use href="#i-clock"/></svg><span data-ev="time"></span></li>
+        <li><svg class="ico"><use href="#i-clock"/></svg><span data-t="dressCode"></span>: <span data-ev="dressCode"></span></li>
+      </ul>
+      <div class="fold"><div class="fold__in">
+        <ul class="ev-info ev-info--venue">
+          <li><svg class="ico"><use href="#i-pin"/></svg><span><b data-ev="venue"></b><em data-ev="address"></em></span></li>
+        </ul>
+        <div class="ev-actions">
+          <button class="btn" type="button" data-action="cal" data-key="baraat"><svg class="ico"><use href="#i-cal"/></svg><span data-t="addToCalendar"></span></button>
+          <a class="btn" data-action="map" data-key="baraat" target="_blank" rel="noopener"><svg class="ico"><use href="#i-pin"/></svg><span data-t="openMap"></span></a>
+        </div>
+      </div></div>
+      <button class="more" type="button" data-action="toggle" aria-expanded="false" data-closed-t="details" data-open-t="hideDetails"><span></span><svg class="ico"><use href="#i-chev"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ================= 4 · WALIMA ================= -->
+  <section class="scene scene--video" data-scene="walima" data-event="walima" aria-label="Walima">
+    <div class="bg">
+      <img class="bg__poster" src="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Walima.jpg" alt="" decoding="async">
+      <video muted loop playsinline preload="none" disablepictureinpicture
+             data-parts='["templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/000.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/001.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/002.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/003.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/004.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/005.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/006.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/007.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/008.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/009.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/010.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/011.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/012.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/013.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/014.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/015.part","templates/vip-royal-mughal-palace/media/chunks/Royal-Walima/016.part"]'
+             poster="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Walima.jpg"
+             aria-label="A grand reception hall under crystal chandeliers"></video>
+    </div>
+    <div class="scrim"></div>
+    <div class="card card--event is-compact">
+      <span class="crest" aria-hidden="true"></span>
+      <h2 class="ev-title" data-ev="title"></h2>
+      <div class="fold"><div class="fold__in"><p class="ev-tagline" data-ev="tagline"></p></div></div>
+      <ul class="ev-info">
+        <li><svg class="ico"><use href="#i-cal"/></svg><span data-ev="date"></span></li>
+        <li><svg class="ico"><use href="#i-clock"/></svg><span data-ev="time"></span></li>
+        <li><svg class="ico"><use href="#i-clock"/></svg><span data-t="dressCode"></span>: <span data-ev="dressCode"></span></li>
+      </ul>
+      <div class="fold"><div class="fold__in">
+        <ul class="ev-info ev-info--venue">
+          <li><svg class="ico"><use href="#i-pin"/></svg><span><b data-ev="venue"></b><em data-ev="address"></em></span></li>
+        </ul>
+        <div class="ev-actions">
+          <button class="btn" type="button" data-action="cal" data-key="walima"><svg class="ico"><use href="#i-cal"/></svg><span data-t="addToCalendar"></span></button>
+          <a class="btn" data-action="map" data-key="walima" target="_blank" rel="noopener"><svg class="ico"><use href="#i-pin"/></svg><span data-t="openMap"></span></a>
+        </div>
+      </div></div>
+      <button class="more" type="button" data-action="toggle" aria-expanded="false" data-closed-t="details" data-open-t="hideDetails"><span></span><svg class="ico"><use href="#i-chev"/></svg></button>
+    </div>
+  </section>
+
+  <!-- ================= 5 · RSVP / FINALE ================= -->
+  <section class="scene scene--finale" data-scene="finale" aria-label="RSVP">
+    <div class="bg bg--still">
+      <img class="bg__poster" src="templates/vip-royal-mughal-palace/media/assets/posters/Royal-Palace-Opening.jpg" alt="" decoding="async">
+    </div>
+    <div class="finale__veil"></div>
+    <div class="finale__inner" id="finaleInner">
+      <h2 class="names names--sm">
+        <span data-f="couple.bride"></span>
+        <i class="amp" aria-hidden="true">&amp;</i>
+        <span data-f="couple.groom"></span>
+      </h2>
+      <p class="closing" data-f="closing"></p>
+      <span class="divider" aria-hidden="true"></span>
+
+      <p class="section-label" data-t="celebrations"></p>
+      <div class="gallery">
+        <button type="button" class="thumb" data-action="goto" data-index="1" data-t-aria-scene="0"><img src="templates/vip-royal-mughal-palace/media/thumbnails/Royal-Palace-Opening.jpg" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" class="thumb" data-action="goto" data-index="2" data-t-aria-scene="1"><img src="templates/vip-royal-mughal-palace/media/thumbnails/Royal-Mehndi.jpg" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" class="thumb" data-action="goto" data-index="3" data-t-aria-scene="2"><img src="templates/vip-royal-mughal-palace/media/thumbnails/Royal-Baraat-Arrival.jpg" alt="" loading="lazy" decoding="async"></button>
+        <button type="button" class="thumb" data-action="goto" data-index="4" data-t-aria-scene="3"><img src="templates/vip-royal-mughal-palace/media/thumbnails/Royal-Walima.jpg" alt="" loading="lazy" decoding="async"></button>
+      </div>
+
+      <dl class="facts">
+        <div><dt data-t="hostedBy"></dt><dd data-f="hosts"></dd></div>
+        <div><dt data-t="dressCode"></dt><dd data-f="dressCode"></dd></div>
+      </dl>
+
+      <div class="finale__actions">
+        <a class="btn btn--gold btn--lg" id="rsvpBtn" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg><span data-t="rsvp"></span></a>
+        <div class="finale__row">
+          <button class="btn" type="button" data-action="share"><svg class="ico"><use href="#i-share"/></svg><span data-t="share"></span></button>
+          <button class="btn" type="button" data-action="cal-all"><svg class="ico"><use href="#i-cal"/></svg><span data-t="addAllToCalendar"></span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Calendar chooser ================= -->
+  <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet__panel">
+      <h3 id="sheetTitle" data-t="addToCalendar"></h3>
+      <a class="btn" id="gcalLink" target="_blank" rel="noopener"><svg class="ico"><use href="#i-cal"/></svg><span data-t="googleCal"></span></a>
+      <button class="btn" type="button" id="icsBtn"><svg class="ico"><use href="#i-cal"/></svg><span data-t="icsCal"></span></button>
+      <button class="link" type="button" data-action="close-sheet" data-t="close"></button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+
+<script src="templates/vip-royal-mughal-palace/media/js/config.js"></script>
+<script src="templates/vip-royal-mughal-palace/media/js/payload.js"></script>
+<script src="templates/vip-royal-mughal-palace/media/js/i18n.js"></script>
+<script src="templates/vip-royal-mughal-palace/media/js/particles.js"></script>
+<script src="templates/vip-royal-mughal-palace/media/js/app.js"></script>
+</body>
+</html>
