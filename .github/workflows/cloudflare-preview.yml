@@ -140,6 +140,25 @@ jobs:
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
 
+      - name: Fix VIP cinematic template relative asset paths
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("public/templates/vip-royal-mughal-palace.html")
+          if not p.is_file():
+            raise SystemExit("VIP cinematic template is missing.")
+          s = p.read_text(encoding="utf-8")
+          # The gallery serves the HTML at /templates/<id>.html while package media
+          # is stored at /templates/<id>/media. Resolve the package's relative URLs.
+          s = s.replace('src="js/', 'src="vip-royal-mughal-palace/media/js/')
+          s = s.replace('href="css/', 'href="vip-royal-mughal-palace/media/css/')
+          s = s.replace('src="media/', 'src="vip-royal-mughal-palace/media/')
+          s = s.replace('poster="media/', 'poster="vip-royal-mughal-palace/media/')
+          s = s.replace('url(media/', 'url(vip-royal-mughal-palace/media/')
+          p.write_text(s, encoding="utf-8")
+          print("VIP cinematic media, poster and script paths now resolve from the gallery route.")
+          PY
+
       - name: Fix VIP invitation URL payload decoding for browser-safe base64url
         run: |
           python3 - <<'PY'
