@@ -1,0 +1,16 @@
+{
+  "id": "vip-royal-mughal-palace",
+  "name": "Royal Mughal Palace — VIP Cinematic Wedding",
+  "tag": "Four cinematic palace films, three wedding functions and a bilingual royal invitation",
+  "tier": "high",
+  "occasion": "wedding",
+  "ad": "vipRoyalPalace",
+  "fam": true,
+  "preview_only": true,
+  "media_manifest": {
+    "opening": "media/Royal-Palace-Opening.mp4",
+    "mehndi": "media/Royal-Mehndi.mp4",
+    "baraat": "media/Royal-Baraat-Arrival.mp4",
+    "walima": "media/Royal-Walima.mp4"
+  }
+}
