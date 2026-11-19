@@ -154,6 +154,10 @@ jobs:
           s = s.replace('href="css/', 'href="vip-royal-mughal-palace/media/css/')
           s = s.replace('src="media/', 'src="vip-royal-mughal-palace/media/')
           s = s.replace('poster="media/', 'poster="vip-royal-mughal-palace/media/')
+          # Poster artwork is stored under media/assets/posters, not beside the HTML.
+          s = s.replace('src="assets/', 'src="vip-royal-mughal-palace/media/assets/')
+          s = s.replace('href="assets/', 'href="vip-royal-mughal-palace/media/assets/')
+          s = s.replace('poster="assets/', 'poster="vip-royal-mughal-palace/media/assets/')
           s = s.replace('url(media/', 'url(vip-royal-mughal-palace/media/')
           p.write_text(s, encoding="utf-8")
           print("VIP cinematic media, poster and script paths now resolve from the gallery route.")
