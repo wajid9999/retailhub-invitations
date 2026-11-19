@@ -84,6 +84,11 @@ jobs:
                 raise SystemExit(f"Missing or duplicate template id: {template_id}")
               thumb_src = next((folder / ("thumbnail" + ext) for ext in (".svg", ".png", ".jpg", ".webp") if (folder / ("thumbnail" + ext)).is_file()), None)
               if thumb_src is None:
+                # VIP cinematic package stores its poster frames under media/thumbnails.
+                candidate = folder / "media" / "thumbnails" / "Royal-Palace-Opening.jpg"
+                if candidate.is_file():
+                  thumb_src = candidate
+              if thumb_src is None:
                 raise SystemExit(f"Missing thumbnail in {folder}")
               html_rel, thumb_rel = f"templates/{template_id}.html", f"thumbs/{template_id}{thumb_src.suffix.lower()}"
               (public / "templates").mkdir(parents=True, exist_ok=True)
