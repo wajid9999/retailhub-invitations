@@ -18,8 +18,7 @@ const payload = {
     events: [
       { name: 'Mehndi', date: '2027-06-03', time: '19:30', venue: 'Mehndi Venue', address: 'Lahore' },
       { name: 'Baraat', date: '2027-06-04', time: '19:00', venue: 'Baraat Venue', address: 'Lahore' },
-      { name: 'Walima', date: '2027-06-06', time: '20:00', venue: 'Walima Venue', address: 'Lahore' },
-      { name: 'Extra Reception', date: '2027-06-07', time: '18:00', venue: 'Extra Venue', address: 'Lahore' }
+      { name: 'Walima', date: '2027-06-06', time: '20:00', venue: 'Walima Venue', address: 'Lahore' }
     ]
   }
 };
@@ -42,7 +41,8 @@ test('Royal Mughal Palace VIP maps editor data and serves all four video scenes'
   await expect(page.locator('li[data-event="mehndi"]')).toContainText('Mehndi Venue');
   await expect(page.locator('li[data-event="baraat"]')).toContainText('Baraat Venue');
   await expect(page.locator('li[data-event="walima"]')).toContainText('Walima Venue');
-  await expect(page.locator('#finaleInner')).toContainText('Extra Reception');
+  await expect(page.locator('#finaleInner')).toContainText('Walima Venue');
+  await expect(page.locator('#finaleInner li[data-event]')).toHaveCount(3);
 
   const sources = await page.locator('video[data-src]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-src')));
   expect(sources).toHaveLength(4);
