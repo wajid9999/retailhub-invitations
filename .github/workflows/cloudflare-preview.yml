@@ -1,3 +1,4 @@
+# Re-run preview deployment after Cloudflare repository secrets are configured.
 name: Deploy Inviteora Cloudflare Preview
 
 on:
