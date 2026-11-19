@@ -39,9 +39,9 @@ test('Royal Mughal Palace VIP maps editor data and serves all four video scenes'
   await expect(page.locator('html')).toHaveAttribute('data-inviteora-payload', 'loaded');
   await expect(page.locator('.sample-pill')).toContainText('Sample');
   await expect(page.locator('.film .layer')).toHaveCount(4);
-  await expect(page.locator('[data-event="mehndi"]')).toContainText('Mehndi Venue');
-  await expect(page.locator('[data-event="baraat"]')).toContainText('Baraat Venue');
-  await expect(page.locator('[data-event="walima"]')).toContainText('Walima Venue');
+  await expect(page.locator('li[data-event="mehndi"]')).toContainText('Mehndi Venue');
+  await expect(page.locator('li[data-event="baraat"]')).toContainText('Baraat Venue');
+  await expect(page.locator('li[data-event="walima"]')).toContainText('Walima Venue');
   await expect(page.locator('#finaleInner')).toContainText('Extra Reception');
 
   const sources = await page.locator('video[data-src]').evaluateAll(nodes => nodes.map(node => node.getAttribute('data-src')));
