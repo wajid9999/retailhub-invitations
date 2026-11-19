@@ -140,6 +140,28 @@ jobs:
           p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
           PY
 
+      - name: Fix VIP invitation URL payload decoding for browser-safe base64url
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("public/templates/vip-royal-mughal-palace.html")
+          if not p.is_file():
+            raise SystemExit("VIP Royal Mughal template was not generated.")
+          s = p.read_text(encoding="utf-8")
+          old = "function decodePayload(){try{var h=location.hash.slice(1);if(!h)return null;return JSON.parse(decodeURIComponent(escape(atob(h))));}catch(e){return null;}}"
+          new = "function decodePayload(){try{var h=location.hash.slice(1);if(!h)return null;h=h.replace(/-/g,'+').replace(/_/g,'/');while(h.length%4)h+='=';var b=atob(h),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return JSON.parse(new TextDecoder('utf-8').decode(a));}catch(e){return null;}}"
+          if old not in s:
+            raise SystemExit("VIP payload decoder did not match the expected source; refusing a blind patch.")
+          s = s.replace(old, new, 1)
+          marker = "var payload=decodePayload(), C=payload&&payload.C;\n  if(!C)return;"
+          replacement = marker + "\n  document.documentElement.setAttribute('data-inviteora-payload','loaded');"
+          if marker not in s:
+            raise SystemExit("VIP payload initialization marker not found.")
+          s = s.replace(marker, replacement, 1)
+          p.write_text(s, encoding="utf-8")
+          print("VIP base64url payload decoding fixed and successful payloads marked.")
+          PY
+
       - name: Apply preview-only URL fixes
         run: |
           python3 - <<'PY'
