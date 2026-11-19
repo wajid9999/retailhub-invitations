@@ -261,6 +261,23 @@ jobs:
           print("Active templates:", [x.get("id") for x in kept])
           PY
 
+      - name: Fix Royal Mughal Palace page navigation during smooth scrolling
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          p = Path("public/templates/royal-mughal-palace-vip.html")
+          if not p.is_file():
+            raise SystemExit("Royal Mughal Palace source template is missing.")
+          s = p.read_text(encoding="utf-8")
+          pattern = r"pages\\.addEventListener\\('scroll',\\(\\)=>\\{const n=Math\\.round\\(pages\\.scrollLeft/Math\\.max\\(1,pages\\.clientWidth\\)\\);if\\(n!==idx\\)\\{idx=n;\\$\\('count'\\)\\.textContent=String\\(idx\\+1\\)\\.padStart\\(2,'0'\\)\\+' / '\\+String\\(pages\\.children\\.length\\)\\.padStart\\(2,'0'\\)\\}\\},\\{passive:true\\}\\);"
+          s2, count = re.subn(pattern, "", s, count=1)
+          if count != 1:
+            raise SystemExit("Expected legacy scroll listener not found exactly once; refusing an unverified patch.")
+          p.write_text(s2, encoding="utf-8")
+          print("Removed conflicting scroll listener; button and swipe navigation now own page index updates.")
+          PY
+
       - name: Validate generated site files
         run: |
           test -s public/index.html
