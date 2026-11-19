@@ -283,21 +283,20 @@ jobs:
           fi
 
           API_URL="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/inviteora-preview"
-          RESPONSE="$(curl --silent --show-error --request GET \
+          HTTP_STATUS="$(curl --silent --show-error --request GET \
             --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             --header "Content-Type: application/json" \
-            --write-out $'\\n%{http_code}' "$API_URL")"
-          HTTP_STATUS="${RESPONSE##*$'\\n'}"
-          BODY="${RESPONSE%$'\\n'*}"
+            --output /tmp/cloudflare-project.json \
+            --write-out "%{http_code}" "$API_URL")"
 
-          if [ "$HTTP_STATUS" = "200" ] && printf '%s' "$BODY" | jq -e '.success == true and .result.name == "inviteora-preview"' >/dev/null; then
+          if [ "$HTTP_STATUS" = "200" ] && jq -e '.success == true and .result.name == "inviteora-preview"' /tmp/cloudflare-project.json >/dev/null; then
             echo "Existing Pages project inviteora-preview verified; keeping it."
           elif [ "$HTTP_STATUS" = "404" ]; then
             echo "Pages project not found; creating the isolated preview project."
             npx wrangler@4 pages project create inviteora-preview --production-branch=main
           else
             echo "Cloudflare project lookup failed (HTTP $HTTP_STATUS); refusing to create or deploy blindly."
-            printf '%s\\n' "$BODY"
+            cat /tmp/cloudflare-project.json
             exit 1
           fi
 
