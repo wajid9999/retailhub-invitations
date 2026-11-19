@@ -54,3 +54,20 @@ test('Royal Mughal Palace VIP maps editor data and serves all four video scenes'
   }
   expect(errors).toEqual([]);
 });
+
+test('VIP editor exposes couple, family, RSVP and event-specific fields', async ({ page }) => {
+  await page.goto(base, { waitUntil: 'domcontentloaded' });
+  await page.locator('[data-t="vip-royal-mughal-palace"]').click();
+  await expect(page.locator('[data-s="groom"]')).toBeVisible();
+  await expect(page.locator('[data-s="bride"]')).toBeVisible();
+  await expect(page.locator('[data-s="gf"]')).toBeVisible();
+  await expect(page.locator('[data-s="bf"]')).toBeVisible();
+  await expect(page.locator('[data-s="message"]')).toBeVisible();
+  await expect(page.locator('[data-s="dressCode"]')).toBeVisible();
+  await expect(page.locator('[data-s="whatsapp"]')).toBeVisible();
+  await expect(page.locator('[data-s="rsvpMessage"]')).toBeVisible();
+  await expect(page.locator('[data-e="tagline"]').first()).toBeVisible();
+  await expect(page.locator('[data-e="endTime"]').first()).toBeVisible();
+  await expect(page.locator('[data-e="dress"]').first()).toBeVisible();
+  await expect(page.locator('[data-e="map"]').first()).toBeVisible();
+});
