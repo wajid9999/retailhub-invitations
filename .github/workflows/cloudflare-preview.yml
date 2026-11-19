@@ -123,9 +123,10 @@ jobs:
           s = p.read_text(encoding="utf-8")
           old_base = "const SITE_BASE='https://inviteora-preview.vercel.app/';"
           new_base = "const SITE_BASE=location.origin+'/';"
-          if old_base not in s:
-            raise SystemExit("Expected Vercel preview base was not found; refusing an unsafe patch.")
-          s = s.replace(old_base, new_base, 1)
+          if old_base in s:
+            s = s.replace(old_base, new_base, 1)
+          elif new_base not in s:
+            raise SystemExit("Template base URL is neither the known Vercel URL nor same-origin; refusing an unsafe patch.")
           old_back = "$('#back').onclick=()=>location.href='https://retailhub-store.myshopify.com/collections/all';"
           new_back = "$('#back').onclick=()=>{location.hash='';route()};"
           if old_back not in s:
