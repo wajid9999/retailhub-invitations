@@ -422,7 +422,7 @@ jobs:
           """
           if "</style>" not in s:
             raise SystemExit("Expected style closing tag not found; refusing a blind patch.")
-          s = s.replace("</style>", css + "\\n</style>", 1)
+          s = s.replace("</style>", css + "\n</style>", 1)
           p.write_text(s, encoding="utf-8")
           print("Royal Mughal Palace English copy refined and lifted slightly; Urdu elements untouched.")
           PY
