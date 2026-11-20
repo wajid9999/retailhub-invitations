@@ -398,7 +398,7 @@ jobs:
           /* INVITEORA-MUGHAL-ENGLISH-TYPE-2026-01: preserve Urdu; refine and lift English copy only. */
           html:lang(en) .page > :not(.urdu):not(.frame){
             position:relative;
-            top:-1.5vh;
+            top:-3vh;
           }
           html:lang(en) .page .names{
             font-family:"Cormorant Garamond",Georgia,serif;
