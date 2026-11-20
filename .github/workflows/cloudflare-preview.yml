@@ -335,13 +335,13 @@ jobs:
           if not p.is_file():
             raise SystemExit("Royal Pakistani Wedding VIP 2026 output is missing; refusing to patch another template.")
           s = p.read_text()
-          if "INVITEORA-ENGLISH-TYPOGRAPHY-2026-01" in s:
+          if "INVITEORA-ENGLISH-TYPOGRAPHY-2026-02" in s:
             raise SystemExit("English VIP typography patch is already present; refusing to duplicate it.")
           css = r"""
-          /* INVITEORA-ENGLISH-TYPOGRAPHY-2026-01: English only; Urdu rules remain untouched. */
+          /* INVITEORA-ENGLISH-TYPOGRAPHY-2026-02: English only; lift scene captions slightly toward center. */
           html:not([lang="ur"]) .cap{
             padding-left:2em;padding-right:2em;
-            padding-bottom:calc(env(safe-area-inset-bottom,0px) + 5em);
+            padding-bottom:calc(env(safe-area-inset-bottom,0px) + 6.5em);
           }
           html:not([lang="ur"]) .cap .t-names{
             font-family:"Cormorant Garamond","Times New Roman",serif;
