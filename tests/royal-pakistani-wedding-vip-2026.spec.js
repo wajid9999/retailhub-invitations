@@ -1,0 +1,48 @@
+import { test, expect } from '@playwright/test';
+
+const id = 'royal-pakistani-wedding-vip-2026';
+const payload = {
+  final: false,
+  C: {
+    groom: 'Sample Groom 8472',
+    bride: 'Sample Bride 5931',
+    groomParents: 'Sample Groom Family',
+    brideParents: 'Sample Bride Family',
+    sample: true,
+    hostsTitle: 'With best compliments',
+    hosts: ['Sample Family'],
+    events: [
+      { name: 'Mehndi', hosts: 'Bride family', date: '2027-03-06', time: '19:30', venue: 'Sample Venue', address: 'Lahore, Pakistan', dress: 'Traditional', map: '' },
+      { name: 'Baraat', hosts: 'Both families', date: '2027-03-07', time: '18:00', venue: 'Sample Venue', address: 'Lahore, Pakistan', dress: 'Formal', map: '' },
+      { name: 'Nikah', hosts: 'Family', date: '2027-03-08', time: '16:00', venue: 'Sample Masjid', address: 'Lahore, Pakistan', dress: 'Traditional', map: '' },
+      { name: 'Walima', hosts: 'Groom family', date: '2027-03-09', time: '19:30', venue: 'Sample Hall', address: 'Lahore, Pakistan', dress: 'Formal', map: '' }
+    ]
+  }
+};
+
+test('Royal Pakistani Wedding VIP is registered in the central editor and renders all four scenes', async ({ page, request }) => {
+  const base = process.env.BASE_URL;
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+
+  await page.goto(`${base}/#studio=${id}`, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#tt')).toContainText('Royal Pakistani Wedding VIP');
+  await expect(page.locator('#f')).toContainText('Groom');
+  await expect(page.locator('#f')).toContainText('Bride');
+  await expect(page.locator('#f')).toContainText('Mehndi');
+
+  const encoded = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
+  await page.goto(`${base}/templates/${id}.html#${encoded}`, { waitUntil: 'domcontentloaded' });
+  await expect.poll(() => page.locator('html').getAttribute('data-inviteora-payload')).toBe('loaded');
+  const rendered = await page.locator('body').innerText();
+  for (const value of ['Sample Groom 8472', 'Sample Bride 5931', 'Mehndi', 'Baraat', 'Nikah', 'Walima']) {
+    expect(rendered).toContain(value);
+  }
+
+  for (const file of ['VIP-Mehndi.mp4', 'VIP-Baraat.mp4', 'VIP-Nikah.mp4', 'VIP-Walima.mp4']) {
+    const response = await request.get(`${base}/templates/${id}/media/media/${file}`);
+    expect(response.ok(), file).toBeTruthy();
+    expect(response.headers()['content-type']).toContain('video/mp4');
+  }
+  expect(errors).toEqual([]);
+});
