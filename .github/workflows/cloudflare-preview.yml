@@ -327,6 +327,62 @@ jobs:
           print("Removed conflicting scroll listener; button and swipe navigation now own page index updates.")
           PY
 
+      - name: Refine English VIP typography and caption position only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("public/templates/royal-pakistani-wedding-vip-2026.html")
+          if not p.is_file():
+            raise SystemExit("Royal Pakistani Wedding VIP 2026 output is missing; refusing to patch another template.")
+          s = p.read_text()
+          if "INVITEORA-ENGLISH-TYPOGRAPHY-2026-01" in s:
+            raise SystemExit("English VIP typography patch is already present; refusing to duplicate it.")
+          css = r"""
+          /* INVITEORA-ENGLISH-TYPOGRAPHY-2026-01: English only; Urdu rules remain untouched. */
+          html:not([lang="ur"]) .cap{
+            padding-left:2em;padding-right:2em;
+            padding-bottom:calc(env(safe-area-inset-bottom,0px) + 5em);
+          }
+          html:not([lang="ur"]) .cap .t-names{
+            font-family:"Cormorant Garamond","Times New Roman",serif;
+            font-size:2.85em;line-height:1.14;font-weight:600;letter-spacing:.005em;
+            text-wrap:balance;
+          }
+          html:not([lang="ur"]) .cap .t-title{
+            font-family:"Cormorant Garamond","Times New Roman",serif;
+            font-size:2.05em;line-height:1.16;letter-spacing:.09em;text-indent:.09em;
+          }
+          html:not([lang="ur"]) .cap .t-kicker,
+          html:not([lang="ur"]) .cap .t-meta,
+          html:not([lang="ur"]) .cap .t-venue{
+            font-family:"Jost","Helvetica Neue",Arial,sans-serif;
+            letter-spacing:.045em;text-indent:0;line-height:1.55;
+          }
+          html:not([lang="ur"]) .cap .t-meta{font-size:.9em;}
+          html:not([lang="ur"]) .cap .t-venue{font-size:.92em;}
+          html:not([lang="ur"]) .finale .finale__inner{
+            padding-top:calc(env(safe-area-inset-top,0px) + 3.7em);
+            padding-bottom:calc(env(safe-area-inset-bottom,0px) + 2.8em);
+          }
+          html:not([lang="ur"]) .finale .t-names{
+            font-family:"Cormorant Garamond","Times New Roman",serif;
+            font-size:2.55em;line-height:1.15;letter-spacing:.005em;
+          }
+          html:not([lang="ur"]) .finale .f-message,
+          html:not([lang="ur"]) .finale .f-parents b,
+          html:not([lang="ur"]) .finale .f-events,
+          html:not([lang="ur"]) .finale .facts{
+            font-family:"Jost","Helvetica Neue",Arial,sans-serif;
+            line-height:1.6;letter-spacing:.01em;
+          }
+          """
+          if "</style>" not in s:
+            raise SystemExit("Expected style closing tag not found; refusing a blind patch.")
+          s = s.replace("</style>", css + "\\n</style>", 1)
+          p.write_text(s)
+          print("English typography refined and event captions shifted slightly toward screen center; Urdu CSS untouched.")
+          PY
+
       - name: Validate generated site files
         run: |
           test -s public/index.html
