@@ -374,7 +374,7 @@ jobs:
 
       - name: Run existing template and order-flow browser tests
         run: |
-          npx playwright test tests/royal-pakistani-wedding-vip-2026.spec.js npx playwright test tests/royal-navy-blue-gold.spec.js tests/invitation-video-previews.spec.js tests/order-flow.spec.js tests/template-contract.spec.js tests/normal-wedding-emerald.spec.js tests/grand-entrance.spec.js tests/vip-royal-wedding.spec.js tests/royal-mughal-palace-vip.spec.js tests/vip-royal-mughal-palace-four-video.spec.js tests/blush-garden.spec.js tests/burgundy-pearl-mehndi.spec.js --reporter=list
+          npx playwright test tests/royal-pakistani-wedding-vip-2026.spec.js tests/royal-navy-blue-gold.spec.js tests/invitation-video-previews.spec.js tests/order-flow.spec.js tests/template-contract.spec.js tests/normal-wedding-emerald.spec.js tests/grand-entrance.spec.js tests/vip-royal-wedding.spec.js tests/royal-mughal-palace-vip.spec.js tests/vip-royal-mughal-palace-four-video.spec.js tests/blush-garden.spec.js tests/burgundy-pearl-mehndi.spec.js --reporter=list
         env:
           BASE_URL: http://127.0.0.1:4173
 
