@@ -419,3 +419,5 @@ jobs:
             exit 0
           fi
           npx wrangler@4 pages deploy public --project-name=inviteora-preview --branch=cloudflare-preview-vip
+
+# Rebuild after the Royal Pakistani Wedding VIP 2026 release asset was uploaded.
