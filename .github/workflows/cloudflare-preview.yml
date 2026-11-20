@@ -383,6 +383,50 @@ jobs:
           print("English typography refined and event captions shifted slightly toward screen center; Urdu CSS untouched.")
           PY
 
+      - name: Refine English typography and caption position for Royal Mughal Palace VIP only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("public/templates/royal-mughal-palace-vip.html")
+          if not p.is_file():
+            raise SystemExit("Royal Mughal Palace VIP output is missing; refusing to patch another template.")
+          s = p.read_text(encoding="utf-8")
+          marker = "INVITEORA-MUGHAL-ENGLISH-TYPE-2026-01"
+          if marker in s:
+            raise SystemExit("Royal Mughal English typography patch already exists; refusing to duplicate it.")
+          css = r"""
+          /* INVITEORA-MUGHAL-ENGLISH-TYPE-2026-01: preserve Urdu; refine and lift English copy only. */
+          html:lang(en) .page > :not(.urdu):not(.frame){
+            position:relative;
+            top:-1.5vh;
+          }
+          html:lang(en) .page .names{
+            font-family:"Cormorant Garamond",Georgia,serif;
+            font-weight:600;
+            line-height:1.16;
+            letter-spacing:.01em;
+            text-wrap:balance;
+          }
+          html:lang(en) .page .kicker,
+          html:lang(en) .page .event-no,
+          html:lang(en) .page .event-name{
+            text-rendering:optimizeLegibility;
+            -webkit-font-smoothing:antialiased;
+          }
+          html:lang(en) .page .sub,
+          html:lang(en) .page .event-date,
+          html:lang(en) .page .detail{
+            line-height:1.5;
+            letter-spacing:.015em;
+          }
+          """
+          if "</style>" not in s:
+            raise SystemExit("Expected style closing tag not found; refusing a blind patch.")
+          s = s.replace("</style>", css + "\\n</style>", 1)
+          p.write_text(s, encoding="utf-8")
+          print("Royal Mughal Palace English copy refined and lifted slightly; Urdu elements untouched.")
+          PY
+
       - name: Validate generated site files
         run: |
           test -s public/index.html
