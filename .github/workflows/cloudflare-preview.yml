@@ -378,7 +378,7 @@ jobs:
           """
           if "</style>" not in s:
             raise SystemExit("Expected style closing tag not found; refusing a blind patch.")
-          s = s.replace("</style>", css + "\\n</style>", 1)
+          s = s.replace("</style>", css + "\n</style>", 1)
           p.write_text(s)
           print("English typography refined and event captions shifted slightly toward screen center; Urdu CSS untouched.")
           PY
