@@ -39,10 +39,17 @@ test('Royal Pakistani Wedding VIP is registered in the central editor and render
     expect(rendered).toContain(value);
   }
 
+  const templateResponse = await request.get(`${base}/templates/${id}.html`);
+  expect(templateResponse.ok()).toBeTruthy();
+  expect(await templateResponse.text()).toContain('VIP-Soundtrack.mp3');
+
   for (const file of ['VIP-Mehndi.mp4', 'VIP-Baraat.mp4', 'VIP-Nikah.mp4', 'VIP-Walima.mp4']) {
     const response = await request.get(`${base}/templates/${id}/media/media/${file}`);
     expect(response.ok(), file).toBeTruthy();
     expect(response.headers()['content-type']).toContain('video/mp4');
   }
+  const soundtrack = await request.get(`${base}/templates/${id}/media/media/VIP-Soundtrack.mp3`);
+  expect(soundtrack.ok(), 'Pakistani wedding soundtrack').toBeTruthy();
+  expect(soundtrack.headers()['content-type']).toContain('audio/mpeg');
   expect(errors).toEqual([]);
 });
