@@ -56,7 +56,8 @@ if(action==="submit-order"){
  const eventCount=Math.max(1,Math.min(30,eventList.length));
  const simple=Math.max(0,Number(settings.simple_price)||0),premium=Math.max(0,Number(settings.premium_price)||0),high=Math.max(0,Number(settings.high_price)||0);
  const price=tier==="high"?3000+1000*(eventCount-1):tier==="premium"?premium*eventCount:simple*eventCount;
- const requestOrigin=req.headers.get("origin")||"";let site_origin="https://wajid9999.github.io";try{const parsedOrigin=new URL(requestOrigin);if(["https:","http:"].includes(parsedOrigin.protocol))site_origin=parsedOrigin.origin;}catch{}\n const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,site_origin,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
+ const requestOrigin=req.headers.get("origin")||"";let site_origin="https://wajid9999.github.io";try{const parsedOrigin=new URL(requestOrigin);if(["https:","http:"].includes(parsedOrigin.protocol))site_origin=parsedOrigin.origin;}catch{}
+ const {data,error}=await db.from("invitation_orders").insert({customer_name,customer_phone,template_id,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount,preview_payload:payload,site_origin,status:"pending_payment"}).select("id,order_number,amount_pkr,status,created_at").single();if(error)throw error;
  const ownerRecipient=(Deno.env.get("INVITEORA_OWNER_WHATSAPP")||"").replace(/\D/g,"")||null;
  const notice={order_number:data.order_number,customer_name,customer_phone,template_name,package_tier:tier,amount_pkr:price,event_count:eventCount};
  await db.from("invitation_notification_outbox").upsert([
@@ -138,7 +139,8 @@ if(["admin-list","admin-approve","admin-settings-save","admin-save-push-subscrip
   const endDate=eventEndDate(existing.preview_payload);if(!endDate)return json({error:"Order has no valid event date"},400);
   const expiresAt=new Date(endDate+"T18:59:59.999Z").toISOString();if(new Date(expiresAt).getTime()<=Date.now())return json({error:"Event date has already passed"},400);
   const token=crypto.randomUUID()+crypto.randomUUID(),tokenHash=await sha256(token);
-  const siteOrigin=String(existing.site_origin||"https://wajid9999.github.io").replace(/\/$/,"");const originalUrl=siteOrigin+"/?original="+encodeURIComponent(token);\n  const {data,error}=await db.from("invitation_orders").update({status:"approved",original_token_hash:tokenHash,original_url:originalUrl,approved_at:new Date().toISOString(),expires_at:expiresAt}).eq("id",orderId).in("status",["pending_payment","pending_approval"]).select("id,order_number,customer_phone,template_name,expires_at").maybeSingle();if(error)throw error;if(!data)return json({error:"Order not found or already approved"},409);
+  const siteOrigin=String(existing.site_origin||"https://wajid9999.github.io").replace(/\/$/,"");const originalUrl=siteOrigin+"/?original="+encodeURIComponent(token);
+  const {data,error}=await db.from("invitation_orders").update({status:"approved",original_token_hash:tokenHash,original_url:originalUrl,approved_at:new Date().toISOString(),expires_at:expiresAt}).eq("id",orderId).in("status",["pending_payment","pending_approval"]).select("id,order_number,customer_phone,template_name,expires_at").maybeSingle();if(error)throw error;if(!data)return json({error:"Order not found or already approved"},409);
   const notice={order_number:data.order_number,customer_phone:data.customer_phone,template_name:data.template_name,original_url:originalUrl,expires_at:data.expires_at};
   await db.from("invitation_notification_outbox").upsert([
    {order_id:data.id,event_type:"order_approved",channel:"web_push",payload:notice}
