@@ -61,6 +61,28 @@ jobs:
             echo "VIP release asset is not published yet; keeping the incomplete package out of the gallery."
           fi
 
+      - name: Load Royal Pakistani Wedding VIP 2026 as a separate template
+        run: |
+          set -euo pipefail
+          ASSET_URL="https://github.com/wajid9999/retailhub-invitations/releases/download/inviteora-vip-royal-mughal-v1/Inviteora-Royal-Pakistani-Wedding-VIP-2026.zip"
+          if curl --fail --location --silent --show-error --retry 2 "$ASSET_URL" -o /tmp/royal-pakistani-wedding-vip-2026.zip; then
+            mkdir -p /tmp/royal-pakistani-wedding-vip-2026 site/new-templates/royal-pakistani-wedding-vip-2026
+            unzip -q -o /tmp/royal-pakistani-wedding-vip-2026.zip -d /tmp/royal-pakistani-wedding-vip-2026
+            PACKAGE_DIR="/tmp/royal-pakistani-wedding-vip-2026/royal-pakistani-wedding-vip-2026"
+            test -f "$PACKAGE_DIR/template.html"
+            test -f "$PACKAGE_DIR/template.json"
+            test -f "$PACKAGE_DIR/thumbnail.jpg"
+            test -f "$PACKAGE_DIR/media/media/VIP-Mehndi.mp4"
+            test -f "$PACKAGE_DIR/media/media/VIP-Baraat.mp4"
+            test -f "$PACKAGE_DIR/media/media/VIP-Nikah.mp4"
+            test -f "$PACKAGE_DIR/media/media/VIP-Walima.mp4"
+            test -f "$PACKAGE_DIR/media/media/VIP-Soundtrack.m4a"
+            cp -R "$PACKAGE_DIR/." site/new-templates/royal-pakistani-wedding-vip-2026/
+            echo "Royal Pakistani Wedding VIP 2026 package loaded as its own gallery template."
+          else
+            echo "Royal Pakistani Wedding VIP 2026 release asset is not uploaded yet; leaving this new template unpublished."
+          fi
+
       - name: Build gallery template packages and extract media
         run: |
           python3 - <<'PY'
