@@ -56,7 +56,7 @@ const SW={groom:'Mahad',bride:'Laiba',gf:'Mr. & Mrs. Qasim',bf:'Mr. & Mrs. Nasee
 {k:'Mehndi',hosts:'Hosted by the bride’s family',d:'2027-03-06',t:'19:30',v:'Rana Farm House',a:'Canal Road, Lahore'},
 {k:'Nikah',hosts:'Laiba & Mahad',d:'2027-03-07',t:'16:00',v:'Jamia Masjid',a:'Gulberg III, Lahore'},
 {k:'Walima',hosts:'Hosted by the groom’s family',d:'2027-03-09',t:'19:30',v:'Pearl Continental',a:'Mall Road, Lahore'}]};
-let cur=null,S=SW,previewInvitation=null,publicSettings=null,currentPreviewToken=null;
+let cur=null,S=SW,previewInvitation=null,publicSettings=null,currentPreviewToken=null,draftToken=null,draftSaveTimer=null;
 function cleanHosts(){return {hostsTitle:S.hostsTitle||"With best compliments",hosts:(Array.isArray(S.hosts)?S.hosts:[]).filter(x=>x&&String(x.name||"").trim()).map(x=>String(x.name).trim()+" | "+String(x.relation||"").trim())}}
 const tn=id=>(TR.find(x=>x.id===id)||{}).name||'';
 const f12=t=>{if(!t)return'';let[h,m]=t.split(':').map(Number);return(h%12||12)+':'+String(m).padStart(2,'0')+' '+(h>=12?'PM':'AM')};
@@ -127,7 +127,16 @@ async function route(){
   ad:'velvet'
  }:null));
  $('#gal').classList.toggle('h',!!cur);$('#stu').classList.toggle('h',!cur);
- if(cur){S=cur.form==='event'?SE:{...SW,hostsTitle:'With best compliments',hosts:[]};$('#tt').textContent=cur.name;tab(1);form();$('#ord').disabled=false;$('#edit').classList.remove('h');$('#own').classList.toggle('h',!/owner/.test(location.search))}else $('#ifr').src='about:blank'
+ if(cur){
+  S=cur.form==='event'?{...SE,ev:SE.ev.map(x=>({...x}))}:{...SW,ev:SW.ev.map(x=>({...x})),hostsTitle:'With best compliments',hosts:[]};
+  draftToken=null;
+  try{
+   const key='inviteora-draft-'+cur.id,stored=localStorage.getItem(key);
+   if(stored){const saved=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'load-draft',draft_token:stored})});const savedJson=await saved.json();if(savedJson.found){draftToken=stored;S=savedJson.draft.preview_payload||S;if(savedJson.draft.package_tier)$('#package-tier').value=savedJson.draft.package_tier;if(savedJson.draft.customer_name)$('#customer-name').value=savedJson.draft.customer_name;if(savedJson.draft.customer_phone)$('#customer-phone').value=savedJson.draft.customer_phone;}else localStorage.removeItem(key);}
+   if(!draftToken)draftToken=crypto.randomUUID()+crypto.randomUUID();
+  }catch(err){draftToken=crypto.randomUUID()+crypto.randomUUID();}
+  $('#tt').textContent=cur.name;tab(1);form();$('#ord').disabled=false;$('#edit').classList.remove('h');$('#own').classList.toggle('h',!/owner/.test(location.search));
+ }else $('#ifr').src='about:blank'
 }
 addEventListener('hashchange',route);$('#back').onclick=()=>location.href='https://retailhub-store.myshopify.com/collections/all';
 async function loadOrderSettings(){
@@ -168,6 +177,7 @@ $('#place-order').onclick=async()=>{
   const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'submit-order',customer_name:name,customer_phone:phone,template_id:cur.id,template_name:cur.name,package_tier:tier,preview_token:currentPreviewToken})});
   const j=await r.json();if(!r.ok)throw new Error(j.error||'Order could not be created');
   currentOrder={id:j.order.id,number:j.order.order_number,phone};
+  try{if(draftToken){await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'delete-draft',draft_token:draftToken})});localStorage.removeItem('inviteora-draft-'+cur.id);draftToken=null;}}catch(err){console.warn('Could not clear completed draft',err)}
   $('#proof-panel').classList.remove('h');
   $('#place-order').classList.add('h');
   $('#order-status').textContent='Order #'+j.order.order_number+' created. Please pay using the details above, then upload your payment screenshot here.';
@@ -199,7 +209,17 @@ const top=ev?`<h2>The event</h2>${L('Event title (e.g. Ali’s Birthday)','data-
 ;const hostsUi=`<fieldset><legend>Hosts (optional)</legend>${L("Heading",'data-s="hostsTitle"')}<div id="host-list">${(S.hosts||[]).map((h,i)=>`<div class="r" style="align-items:center"><label>Name<input data-host="name" data-i="${i}" value="${String(h.name||"").replace(/"/g,"&quot;")}"></label><label>Relation<input data-host="relation" data-i="${i}" value="${String(h.relation||"").replace(/"/g,"&quot;")}"></label><button type="button" class="o" data-host-rm="${i}">×</button></div>`).join("")}</div><button type="button" class="o" id="add-host">+ Add host</button><p class="s">Shown on the last page of the card</p></fieldset>`;
 $('#f').innerHTML=top+S.ev.map((e,i)=>`<fieldset><legend>${ev?'Programme':'Event'} ${i+1}</legend>${L(ev?'Name (Dinner, Cake cutting, Dawat…)':'Event name (Mayun, Mehndi, Nikah, Baraat, Walima…)',`data-e="k" data-i="${i}"`)}${ev?'':L('Hosted by',`data-e="hosts" data-i="${i}"`)}<div class="r">${L('Date',`data-e="d" data-i="${i}"`,'date')}${L('Time',`data-e="t" data-i="${i}"`,'time')}</div>${L('Venue',`data-e="v" data-i="${i}"`)}${L('Address',`data-e="a" data-i="${i}"`)}<button class="o" data-rm="${i}">Remove</button></fieldset>`).join('')+hostsUi;
 $('#f').querySelectorAll('input').forEach(x=>x.value=x.dataset.s?S[x.dataset.s]:x.dataset.host?((S.hosts||[])[x.dataset.i]||{})[x.dataset.host]||'':S.ev[x.dataset.i][x.dataset.e]||'')}
-$('#f').oninput=e=>{const x=e.target;if(x.dataset.s)S[x.dataset.s]=x.value;else if(x.dataset.host)(S.hosts||[])[x.dataset.i][x.dataset.host]=x.value;else S.ev[x.dataset.i][x.dataset.e]=x.value};
+function scheduleDraftSave(){
+ clearTimeout(draftSaveTimer);
+ draftSaveTimer=setTimeout(async()=>{
+  if(!cur||!draftToken)return;
+  try{
+   await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'save-draft',draft_token:draftToken,template_id:cur.id,draft_payload:S,package_tier:$('#package-tier').value,customer_name:$('#customer-name').value,customer_phone:$('#customer-phone').value})});
+   localStorage.setItem('inviteora-draft-'+cur.id,draftToken);
+  }catch(err){console.warn('Draft auto-save failed',err)}
+ },700);
+}
+$('#f').oninput=e=>{const x=e.target;if(x.dataset.s)S[x.dataset.s]=x.value;else if(x.dataset.host)(S.hosts||[])[x.dataset.i][x.dataset.host]=x.value;else S.ev[x.dataset.i][x.dataset.e]=x.value;scheduleDraftSave()};
 $('#f').onclick=e=>{if(e.target.id==='add-host'){S.hosts=S.hosts||[];S.hosts.push({name:'',relation:''});form();return}const hr=e.target.dataset.hostRm;if(hr!=null){S.hosts.splice(+hr,1);form();return}const r=e.target.dataset.rm;if(r!=null){if(S.ev.length<2)return;S.ev.splice(+r,1);form()}};
 $('#add').onclick=()=>{if(S.ev.length>=10)return;S.ev.push({k:'',hosts:'',d:'',t:'',v:'',a:''});form()};
 $('#show').onclick=show;$('#t1').onclick=()=>tab(1);$('#t2').onclick=show;$('#edit').onclick=()=>tab(1);
