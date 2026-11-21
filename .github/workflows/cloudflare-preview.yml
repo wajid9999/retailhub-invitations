@@ -43,6 +43,24 @@ jobs:
             cp site/templates/velvet-curtain/index.html public/templates/velvet-curtain/index.html
           fi
 
+      - name: Publish Modern Pakistani Wedding VIP standalone preview from release asset
+        run: |
+          set -euo pipefail
+          ASSET_URL="https://github.com/wajid9999/retailhub-invitations/releases/download/inviteora-vip-royal-mughal-v1/inviteora-modern-pakistani-wedding-vip.zip"
+          curl --fail --location --silent --show-error --retry 3 "$ASSET_URL" -o /tmp/inviteora-modern-pakistani-wedding-vip.zip
+          echo "673a436cdb736bca830c6465c806cbad8d6281feafd3c8cc712629aee47dd7fb  /tmp/inviteora-modern-pakistani-wedding-vip.zip" | sha256sum --check
+          mkdir -p /tmp/inviteora-modern-pakistani-wedding-vip public/modern-pakistani-wedding-vip
+          unzip -q -o /tmp/inviteora-modern-pakistani-wedding-vip.zip -d /tmp/inviteora-modern-pakistani-wedding-vip
+          PACKAGE_DIR="/tmp/inviteora-modern-pakistani-wedding-vip/inviteora-modern-pakistani-wedding-vip"
+          test -s "$PACKAGE_DIR/index.html"
+          test -s "$PACKAGE_DIR/css/invitation.css"
+          test -s "$PACKAGE_DIR/js/wedding-data.js"
+          test -s "$PACKAGE_DIR/js/invitation.js"
+          test -s "$PACKAGE_DIR/js/video-player.js"
+          for scene in Mehndi Baraat Nikah Walima; do test -s "$PACKAGE_DIR/assets/videos/VIP-$scene.mp4"; done
+          cp -R "$PACKAGE_DIR/." public/modern-pakistani-wedding-vip/
+          echo "Standalone preview staged with all four original videos and assets."
+
       - name: Load the four-scene VIP package from its published release asset
         run: |
           set -e
@@ -479,7 +497,7 @@ jobs:
 
       - name: Run existing template and order-flow browser tests
         run: |
-          npx playwright test tests/royal-pakistani-wedding-vip-2026.spec.js tests/royal-navy-blue-gold.spec.js tests/invitation-video-previews.spec.js tests/order-flow.spec.js tests/template-contract.spec.js tests/normal-wedding-emerald.spec.js tests/grand-entrance.spec.js tests/vip-royal-wedding.spec.js tests/royal-mughal-palace-vip.spec.js tests/vip-royal-mughal-palace-four-video.spec.js tests/blush-garden.spec.js tests/burgundy-pearl-mehndi.spec.js --reporter=list
+          npx playwright test tests/modern-pakistani-wedding-vip-preview.spec.js           npx playwright test tests/royal-pakistani-wedding-vip-2026.spec.js tests/royal-navy-blue-gold.spec.js tests/invitation-video-previews.spec.js tests/order-flow.spec.js tests/template-contract.spec.js tests/normal-wedding-emerald.spec.js tests/grand-entrance.spec.js tests/vip-royal-wedding.spec.js tests/royal-mughal-palace-vip.spec.js tests/vip-royal-mughal-palace-four-video.spec.js tests/blush-garden.spec.js tests/burgundy-pearl-mehndi.spec.js --reporter=list
         env:
           BASE_URL: http://127.0.0.1:4173
 
