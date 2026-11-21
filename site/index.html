@@ -16,6 +16,14 @@ button,.b{font:600 17px 'Cormorant Garamond',Georgia,serif;border:1px solid var(
 .b.o,button.o{background:transparent;color:var(--gold)}
 .tabs{display:flex;gap:8px;margin:12px 0}.tabs button{flex:1}.tabs button.on{background:var(--gold);color:#241808}.tabs button:not(.on){background:transparent;color:var(--gold)}
 label{display:block;font-size:15px;color:var(--mut);margin:10px 0}
+.lang-switch{display:flex;gap:8px;justify-content:flex-end;margin:0 0 10px}
+.lang-switch button{min-width:92px;padding:8px 16px}
+.lang-switch button.active{background:var(--gold);color:#241808}
+#f[dir="rtl"]{direction:rtl;text-align:right}
+#f[dir="rtl"] label{text-align:right}
+#f[dir="rtl"] input{direction:auto;text-align:start;font-family:system-ui,'Noto Nastaliq Urdu',sans-serif}
+#f[dir="rtl"] legend{text-align:right}
+
 input,select{display:block;width:100%;margin-top:4px;padding:11px;border-radius:9px;border:1px solid #75664d;background:#261f18;color:#fff;font:16px system-ui}
 fieldset{border:1px solid var(--line);border-radius:12px;margin:14px 0;padding:6px 12px 12px}legend{color:var(--gold);padding:0 6px}
 .r{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
@@ -35,7 +43,7 @@ body.original-mode .original-site-link{display:block;position:fixed;z-index:1002
 .c .bd{display:inline-block;font-size:14px;border:1px solid var(--gold);color:var(--gold);border-radius:20px;padding:1px 9px;margin:0 0 6px}.em{grid-column:1/-1;text-align:center;color:var(--mut);padding:26px 8px}
 </style></head><body><a class="original-site-link" href="./" target="_blank" rel="noopener">Made with Inviteora · Visit Website</a><div class="w">
 <div id="gal"><h1>Inviteora</h1><p class="s">Pick a design, add your names and events, see your live card, then order on WhatsApp.</p><div class="chips" id="occ"></div><div class="chips" id="tier"></div><div class="g" id="grid"></div></div>
-<div id="stu" class="h"><button class="o" id="back">← All designs</button><h1 id="tt"></h1>
+<div id="stu" class="h"><div class="lang-switch"><button type="button" id="lang-en" class="active">English</button><button type="button" id="lang-ur">اردو</button></div><button class="o" id="back">← All designs</button><h1 id="tt"></h1>
 <div class="tabs"><button id="t1" class="on">1. Details</button><button id="t2">2. Preview</button></div>
 <div id="pd"><div id="f"></div><div class="act"><button id="add" class="o">+ Add event</button><button id="show">Show my card</button></div></div>
 <div id="pp" class="h"><div class="fr"><iframe id="ifr" title="Card preview" allow="autoplay; fullscreen"></iframe></div><div class="act"><button id="ord">Order on WhatsApp</button><button class="o" id="edit">Edit details</button><button class="o h" id="own">Copy final link</button></div><p class="s" id="preview-note" style="text-align:center">The SAMPLE mark is removed from your final card after payment.</p>
@@ -206,11 +214,44 @@ async function show(){
   const u=new URL(location.href);u.hash='';u.searchParams.set('preview',out.preview_token);history.replaceState(null,'',u.toString());await route();
  }catch(err){alert(err.message||'Preview could not be created. Please try again.')}
 }
-function form(){const L=(l,a,ty='text')=>`<label>${l}<input type="${ty}" ${a}></label>`,ev=cur.form==='event';
+const EDITOR_UR={
+"The couple":"دولہا اور دلہن","The event":"تقریب کی تفصیلات","The event":"تقریب کی تفصیلات",
+"Groom":"دولہا","Bride":"دلہن","Groom’s parents":"دولہا کے والدین","Bride’s parents":"دلہن کے والدین",
+"Groom’s family":"دولہے کا خاندان","Bride’s family":"دلہن کا خاندان","Invitation message":"دعوت کا پیغام",
+"Closing message":"اختتامی پیغام","Dress code":"لباس کی ہدایات","RSVP contact name":"رابطہ کرنے والے کا نام",
+"WhatsApp RSVP number":"واٹس ایپ نمبر","RSVP deadline (optional)":"جواب دینے کی آخری تاریخ (اختیاری)",
+"WhatsApp button text":"واٹس ایپ بٹن کا متن","RSVP message":"جواب کے لیے پیغام",
+"Event title (e.g. Ali’s Birthday)":"تقریب کا عنوان (مثلاً علی کی سالگرہ)","Hosted by":"میزبان",
+"Message to guests":"مہمانوں کے لیے پیغام","Hosts (optional)":"میزبان (اختیاری)","Heading":"سرخی",
+"Name":"نام","Relation":"رشتہ"," + Add host":"+ میزبان شامل کریں","+ Add host":"+ میزبان شامل کریں",
+"Shown on the last page of the card":"کارڈ کے آخری صفحے پر دکھایا جائے گا",
+"Programme":"پروگرام","Event":"تقریب","Name (Dinner, Cake cutting, Dawat…)":"نام (ڈنر، کیک کٹنگ، دعوت وغیرہ)",
+"Event name (Mayun, Mehndi, Nikah, Baraat, Walima…)":"تقریب کا نام (مایوں، مہندی، نکاح، بارات، ولیمہ وغیرہ)",
+"Date":"تاریخ","Time":"وقت","Venue":"مقام","Address":"پتہ","Scene tagline":"منظر کا عنوان",
+"End time":"اختتامی وقت","Event dress code":"تقریب کا لباس","Map link or location":"نقشے کا لنک یا مقام",
+"Remove":"حذف کریں","All designs":"تمام ڈیزائن","1. Details":"1۔ تفصیلات","2. Preview":"2۔ پیش منظر",
+"+ Add event":"+ تقریب شامل کریں","Show my card":"میرا کارڈ دکھائیں","Edit details":"تفصیلات میں ترمیم",
+"Copy final link":"حتمی لنک کاپی کریں"
+};
+let editorLang='en';
+function editorText(s){return editorLang==='ur'?(EDITOR_UR[s]||s):s}
+function applyEditorLanguage(){
+ const root=$('#f');root.dir=editorLang==='ur'?'rtl':'ltr';
+ root.querySelectorAll('label').forEach(el=>{const n=[...el.childNodes].find(x=>x.nodeType===3&&x.textContent.trim());if(n)n.textContent=editorText(n.textContent.trim())+' ';});
+ root.querySelectorAll('h2,legend,button,p').forEach(el=>{const t=el.textContent.trim();if(EDITOR_UR[t])el.textContent=editorText(t);else if(/^(Event|Programme) \\d+$/.test(t)){const n=t.match(/\\d+/)[0];el.textContent=(editorLang==='ur'?(t.startsWith('Programme')?'پروگرام ':'تقریب '):(t.startsWith('Programme')?'Programme ':'Event '))+n;}});
+ ['back','t1','t2','add','show','edit','own'].forEach(id=>{const el=$('#'+id);if(el){const raw=el.dataset.en||(el.dataset.en=el.textContent.trim());el.textContent=editorText(raw)}});
+ $('#lang-en').classList.toggle('active',editorLang==='en');$('#lang-ur').classList.toggle('active',editorLang==='ur');
+}
+$('#lang-en').onclick=()=>{editorLang='en';form()};
+$('#lang-ur').onclick=()=>{editorLang='ur';form()};
+function form(){const L=(l,a,ty='text')=>`<label>${l}<input type="${ty}" dir="auto" ${a}></label>`,ev=cur.form==='event';
 const top=cur.ad==='vipRoyalPalace'?(`<h2>The couple</h2><div class="r">${L('Groom','data-s="groom"')}${L('Bride','data-s="bride"')}</div><div class="r">${L('Groom’s parents','data-s="gf"')}${L('Bride’s parents','data-s="bf"')}</div>${L('Invitation message','data-s="message"')}${L('Closing message','data-s="close"')}${L('Dress code','data-s="dressCode"')}${L('RSVP contact name','data-s="rsvpName"')}${L('WhatsApp RSVP number','data-s="whatsapp"','tel')}${L('RSVP deadline (optional)','data-s="rsvpDeadline"')}${L('WhatsApp button text','data-s="rsvpButton"')}${L('RSVP message','data-s="rsvpMessage"')}`):ev?`<h2>The event</h2>${L('Event title (e.g. Ali’s Birthday)','data-s="title"')}${L('Hosted by','data-s="host"')}${L('Message to guests','data-s="close"')}`:`<h2>The couple</h2><div class="r">${L('Groom','data-s="groom"')}${L('Bride','data-s="bride"')}</div>`+(cur.fam?`<div class="r">${L(cur.ad==='inviteoraNormal'?'Groom’s parents':'Groom’s family','data-s="gf"')}${L(cur.ad==='inviteoraNormal'?'Bride’s parents':'Bride’s family','data-s="bf"')}</div>${L('Closing message','data-s="close"')}`:'');
-;const hostsUi=`<fieldset><legend>Hosts (optional)</legend>${L("Heading",'data-s="hostsTitle"')}<div id="host-list">${(S.hosts||[]).map((h,i)=>`<div class="r" style="align-items:center"><label>Name<input data-host="name" data-i="${i}" value="${String(h.name||"").replace(/"/g,"&quot;")}"></label><label>Relation<input data-host="relation" data-i="${i}" value="${String(h.relation||"").replace(/"/g,"&quot;")}"></label><button type="button" class="o" data-host-rm="${i}">×</button></div>`).join("")}</div><button type="button" class="o" id="add-host">+ Add host</button><p class="s">Shown on the last page of the card</p></fieldset>`;
+const hostsUi=`<fieldset><legend>Hosts (optional)</legend>${L("Heading",'data-s="hostsTitle"')}<div id="host-list">${(S.hosts||[]).map((v,i)=>`<div class="r" style="align-items:center"><label>Name<input data-host="name" data-i="${i}" dir="auto" value="${String(v.name||"").replace(/"/g,"&quot;")}"></label><label>Relation<input data-host="relation" data-i="${i}" dir="auto" value="${String(v.relation||"").replace(/"/g,"&quot;")}"></label><button type="button" class="o" data-host-rm="${i}">×</button></div>`).join("")}</div><button type="button" class="o" id="add-host">+ Add host</button><p class="s">Shown on the last page of the card</p></fieldset>`;
 $('#f').innerHTML=top+S.ev.map((e,i)=>`<fieldset><legend>${ev?'Programme':'Event'} ${i+1}</legend>${L(ev?'Name (Dinner, Cake cutting, Dawat…)':'Event name (Mayun, Mehndi, Nikah, Baraat, Walima…)',`data-e="k" data-i="${i}"`)}${ev?'':L('Hosted by',`data-e="hosts" data-i="${i}"`)}<div class="r">${L('Date',`data-e="d" data-i="${i}"`,'date')}${L('Time',`data-e="t" data-i="${i}"`,'time')}</div>${L('Venue',`data-e="v" data-i="${i}"`)}${L('Address',`data-e="a" data-i="${i}"`)}${cur.ad==='vipRoyalPalace'?L('Scene tagline',`data-e="tagline" data-i="${i}"`)+L('End time',`data-e="endTime" data-i="${i}"`,'time')+L('Event dress code',`data-e="dress" data-i="${i}"`)+L('Map link or location',`data-e="map" data-i="${i}"`):''}<button class="o" data-rm="${i}">Remove</button></fieldset>`).join('')+hostsUi;
-$('#f').querySelectorAll('input').forEach(x=>x.value=x.dataset.s?S[x.dataset.s]:x.dataset.host?((S.hosts||[])[x.dataset.i]||{})[x.dataset.host]||'':S.ev[x.dataset.i][x.dataset.e]||'')}
+$('#f').querySelectorAll('input').forEach(x=>x.value=x.dataset.s?(S[x.dataset.s]||''):x.dataset.host?((S.hosts||[])[x.dataset.i]||{})[x.dataset.host]||'':(S.ev[x.dataset.i]||{})[x.dataset.e]||'');
+applyEditorLanguage();
+}
+
 $('#f').oninput=e=>{const x=e.target;if(x.dataset.s)S[x.dataset.s]=x.value;else if(x.dataset.host)(S.hosts||[])[x.dataset.i][x.dataset.host]=x.value;else S.ev[x.dataset.i][x.dataset.e]=x.value};
 $('#f').onclick=e=>{if(e.target.id==='add-host'){S.hosts=S.hosts||[];S.hosts.push({name:'',relation:''});form();return}const hr=e.target.dataset.hostRm;if(hr!=null){S.hosts.splice(+hr,1);form();return}const r=e.target.dataset.rm;if(r!=null){if(S.ev.length<2)return;S.ev.splice(+r,1);form()}};
 $('#add').onclick=()=>{if(S.ev.length>=10)return;S.ev.push({k:'',hosts:'',d:'',t:'',v:'',a:''});form()};
