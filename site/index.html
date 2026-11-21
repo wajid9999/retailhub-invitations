@@ -219,9 +219,10 @@ function scheduleDraftSave(){
   }catch(err){console.warn('Draft auto-save failed',err)}
  },700);
 }
+$('#order-panel').oninput=e=>{if(e.target.id==='customer-name'||e.target.id==='customer-phone')scheduleDraftSave()};$('#package-tier').onchange=()=>{updatePackagePrice();scheduleDraftSave()};
 $('#f').oninput=e=>{const x=e.target;if(x.dataset.s)S[x.dataset.s]=x.value;else if(x.dataset.host)(S.hosts||[])[x.dataset.i][x.dataset.host]=x.value;else S.ev[x.dataset.i][x.dataset.e]=x.value;scheduleDraftSave()};
 $('#f').onclick=e=>{if(e.target.id==='add-host'){S.hosts=S.hosts||[];S.hosts.push({name:'',relation:''});form();scheduleDraftSave();return}const hr=e.target.dataset.hostRm;if(hr!=null){S.hosts.splice(+hr,1);form();scheduleDraftSave();return}const r=e.target.dataset.rm;if(r!=null){if(S.ev.length<2)return;S.ev.splice(+r,1);form();scheduleDraftSave()}};
-$('#add').onclick=()=>{if(S.ev.length>=10)return;S.ev.push({k:'',hosts:'',d:'',t:'',v:'',a:''});form()};
+$('#add').onclick=()=>{if(S.ev.length>=10)return;S.ev.push({k:'',hosts:'',d:'',t:'',v:'',a:''});form();scheduleDraftSave()};
 $('#show').onclick=show;$('#t1').onclick=()=>tab(1);$('#t2').onclick=show;$('#edit').onclick=()=>tab(1);
 $('#ord').onclick=()=>{const ev=cur.form==='event',w=ev?`Event: ${S.title}\nHost: ${S.host}\n`:`Groom: ${S.groom}\nBride: ${S.bride}\n`+(cur.fam?`Families: ${S.gf} / ${S.bf}\n`:'');const m=`Assalamualaikum! I would like to order this invitation card.\nDesign: ${cur.name} (${tn(cur.tier)})\n${w}Programme:\n`+S.ev.map(e=>`- ${e.k}: ${fd(e.d)} ${f12(e.t)}, ${e.v}, ${e.a}`).join('\n')+`\nPreview: ${link(false)}`;open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank')};
 $('#own').onclick=()=>{const u=link(true);(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(()=>alert('Final link copied'),()=>prompt('Final link',u))};
