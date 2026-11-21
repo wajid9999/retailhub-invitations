@@ -59,7 +59,14 @@ jobs:
           test -s "$PACKAGE_DIR/js/video-player.js"
           for scene in Mehndi Baraat Nikah Walima; do test -s "$PACKAGE_DIR/assets/videos/VIP-$scene.mp4"; done
           cp -R "$PACKAGE_DIR/." public/modern-pakistani-wedding-vip/
-          echo "Standalone preview staged with all four original videos and assets."
+          # Install the user-approved, trimmed 60-second soundtrack for this preview only.
+          curl --fail --location --silent --show-error --retry 3 \
+            "https://d2ol7oe51mr4n9.cloudfront.net/user_3JGTE9UijBvZggzr4wTdvNHGkmX/0e92411a-3597-4b07-a300-ed921e19a367.mp3" \
+            -o public/modern-pakistani-wedding-vip/assets/audio/wedding-soundtrack.mp3
+          test -s public/modern-pakistani-wedding-vip/assets/audio/wedding-soundtrack.mp3
+          # Prefer the new MP3 on mobile and desktop; do not let the old M4A play first.
+          sed -i '/assets\/audio\/wedding-soundtrack\.m4a/d' public/modern-pakistani-wedding-vip/js/wedding-data.js
+          echo "Standalone preview staged with all four original videos and the approved 60-second soundtrack."
 
       - name: Load the four-scene VIP package from its published release asset
         run: |
