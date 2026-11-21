@@ -24,11 +24,11 @@ test('Modern Pakistani Wedding VIP standalone preview loads all four scenes', as
   ]);
 
   for (const source of videoSources) {
-    const response = await page.request.get(`${process.env.BASE_URL}/modern-pakistani-wedding-vip/${source}`);
+    const response = await page.request.head(`${process.env.BASE_URL}/modern-pakistani-wedding-vip/${source}`);
     expect(response.ok(), `Expected media to load: ${source}`).toBeTruthy();
   }
 
-  await page.getByRole('button', { name: /اردو|Urdu/i }).click().catch(() => {});
+  await page.locator('#langBtn').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ur');
   expect(errors).toEqual([]);
 });
