@@ -40,6 +40,9 @@ test('Royal Pakistani Wedding VIP is registered in the central editor and render
   const encoded = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
   await page.goto(`${base}/templates/${id}.html#${encoded}`, { waitUntil: 'domcontentloaded' });
   await expect.poll(() => page.locator('html').getAttribute('data-inviteora-payload')).toBe('loaded');
+  // The RSVP finale is intentionally hidden until the four-scene film ends.
+  // Reveal that state in this rendering test instead of waiting through the film.
+  await page.locator('#stage').evaluate(el => el.classList.add('is-finale'));
   const rendered = await page.locator('body').innerText();
   await expect(page.locator('[data-f="rsvp.contact"]')).toContainText('Test RSVP Contact');
   await expect(page.locator('[data-f="rsvp.phoneText"]')).toContainText('03000000000');
