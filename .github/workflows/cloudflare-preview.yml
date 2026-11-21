@@ -478,7 +478,7 @@ jobs:
           if old_config not in s: raise SystemExit("RSVP configuration mapping did not match.")
           s = s.replace(old_config, new_config, 1)
           old_render = "$('#rsvpBtn').href = 'https://wa.me/' + wa + '?text=' + encodeURIComponent(tx(CFG.rsvp && CFG.rsvp.message) + ' — ' + names());"
-          new_render = old_render + "\n    $('#rsvpBtn').hidden = !wa;\n    var rsvpLabel = $('#rsvpBtn [data-rsvp-button]'); if(rsvpLabel) rsvpLabel.textContent = CFG.rsvp.button || ui('rsvp');\n    var deadlineRow = $('#rsvpDeadlineRow'); if(deadlineRow) deadlineRow.hidden = !tx(CFG.rsvp && CFG.rsvp.deadline);"
+          new_render = old_render + "\n    $('#rsvpBtn').hidden = !wa;\n    var rsvpLabel = $('#rsvpBtn [data-rsvp-button]'); if(rsvpLabel) rsvpLabel.textContent = CFG.rsvp.button || ui('rsvp');\n    var deadlineRow = $('#rsvpDeadlineRow'); var deadlineText = CFG.rsvp && CFG.rsvp.deadline; if(deadlineRow){ var deadlineValue = typeof deadlineText === 'string' ? deadlineText : (deadlineText && (deadlineText.en || deadlineText.ur)) || ''; var deadlineCell = deadlineRow.querySelector('[data-f=\\\"rsvp.deadline\\\"]'); if(deadlineCell) deadlineCell.textContent = deadlineValue; deadlineRow.hidden = !deadlineValue.trim(); }"
           if old_render not in s: raise SystemExit("RSVP render action did not match.")
           s = s.replace(old_render, new_render, 1)
           p.write_text(s, encoding="utf-8")
