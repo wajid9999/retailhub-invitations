@@ -24,7 +24,22 @@ fieldset{border:1px solid var(--line);border-radius:12px;margin:14px 0;padding:6
 .h{display:none}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}.chips button{white-space:nowrap;padding:7px 14px;font-size:16px}.chips button:not(.on){background:transparent;color:var(--gold)}
 .c .bd{display:inline-block;font-size:14px;border:1px solid var(--gold);color:var(--gold);border-radius:20px;padding:1px 9px;margin:0 0 6px}.em{grid-column:1/-1;text-align:center;color:var(--mut);padding:26px 8px}
+.cancel-page{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:28px 12px}
+.cancel-card{width:min(100%,560px);padding:36px 24px;border:1px solid var(--gold);border-radius:20px;background:linear-gradient(145deg,#2b2118,#17110d);box-shadow:0 18px 60px #0008}
+.cancel-brand{font:600 18px system-ui;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.cancel-card h1{font-size:clamp(30px,7vw,42px);font-style:normal;margin:22px 0 12px}
+.cancel-card p{color:var(--mut);font-size:20px;line-height:1.5;margin:10px 0}
+.cancel-card .b{display:inline-block;text-decoration:none;margin-top:20px;padding:13px 26px}
+.cancel-note{font:13px system-ui;letter-spacing:.04em;color:#9f8a69!important;margin-top:24px!important}
 </style></head><body><div class="w">
+<div id="cancelled-page" class="h cancel-page"><div class="cancel-card">
+<div class="cancel-brand">Inviteora</div>
+<h1>یہ دعوت نامہ اب دستیاب نہیں ہے</h1>
+<p>This invitation is no longer available.</p>
+<p>یہ ڈیجیٹل دعوت نامہ Inviteora کے ذریعے تیار کیا گیا تھا۔ اپنی شادی یا تقریب کے لیے خوبصورت ڈیجیٹل دعوت نامہ بنوانے کے لیے ہماری ویب سائٹ وزٹ کریں۔</p>
+<a class="b" href="/">Explore Inviteora · اپنا دعوت نامہ بنوائیں</a>
+<p class="cancel-note">Digital invitations by Inviteora</p>
+</div></div>
 <div id="gal"><h1>Inviteora</h1><p class="s">Pick a design, add your names and events, see your live card, then order on WhatsApp.</p><div class="chips" id="occ"></div><div class="chips" id="tier"></div><div class="g" id="grid"></div></div>
 <div id="stu" class="h"><button class="o" id="back">← All designs</button><h1 id="tt"></h1>
 <div class="tabs"><button id="t1" class="on">1. Details</button><button id="t2">2. Preview</button></div>
@@ -94,7 +109,13 @@ async function route(){
   $('#tt').textContent='Your original invitation';$('#ifr').src='about:blank';
   try{
    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':API_KEY},body:JSON.stringify({action:'verify-original',token:originalToken})});
-   const j=await r.json();if(!r.ok||!j.valid)throw new Error('This original invitation link is invalid or has expired.');
+   const j=await r.json();
+   if(j.reason==='cancelled'){
+    $('#gal').classList.add('h');$('#stu').classList.add('h');$('#cancelled-page').classList.remove('h');
+    document.title='Invitation unavailable — Inviteora';
+    return;
+   }
+   if(!r.ok||!j.valid)throw new Error('This original invitation link is invalid or has expired.');
    const t=T.find(x=>x.id===j.template_id);if(!t)throw new Error('Invitation design is unavailable.');
    cur=t;$('#tt').textContent=t.name+' — Original invitation';$('#ifr').src=templateUrl(t.file)+'#'+b64(j.invitation);
    $('#preview-note').textContent='Original invitation · valid through the event date.';
