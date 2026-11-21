@@ -167,6 +167,12 @@ jobs:
               items.append(record)
               known.add(template_id)
             registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            # Ensure the Royal Pakistani VIP uses the advanced editor adapter (including RSVP fields).
+            for record in items:
+              if record.get("id") == "royal-pakistani-wedding-vip-2026":
+                record["ad"] = "vipRoyalPalace"
+                record["fam"] = True
+            registry.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             print("Built templates:", [x.get("id") for x in items])
           PY
 
