@@ -166,7 +166,7 @@ function updatePackagePrice(){
  const methods=[['JazzCash',publicSettings.jazzcash_details],['Easypaisa',publicSettings.easypaisa_details],['Bank transfer',publicSettings.bank_details],['Raast',publicSettings.raast_details]].filter(x=>x[1]&&String(x[1]).trim());
  $('#payment-instructions').textContent=methods.length?methods.map(x=>x[0]+':\n'+x[1]).join('\n\n'):'Payment details will be shared after order creation.';
 }
-$('#package-tier').onchange=updatePackagePrice;
+$('#package-tier').onchange=()=>{updatePackagePrice();scheduleDraftSave()};
 let currentOrder=null;
 $('#place-order').onclick=async()=>{
  const name=$('#customer-name').value.trim(),phone=$('#customer-phone').value.trim(),tier=$('#package-tier').value;
@@ -220,7 +220,7 @@ function scheduleDraftSave(){
  },700);
 }
 $('#f').oninput=e=>{const x=e.target;if(x.dataset.s)S[x.dataset.s]=x.value;else if(x.dataset.host)(S.hosts||[])[x.dataset.i][x.dataset.host]=x.value;else S.ev[x.dataset.i][x.dataset.e]=x.value;scheduleDraftSave()};
-$('#f').onclick=e=>{if(e.target.id==='add-host'){S.hosts=S.hosts||[];S.hosts.push({name:'',relation:''});form();return}const hr=e.target.dataset.hostRm;if(hr!=null){S.hosts.splice(+hr,1);form();return}const r=e.target.dataset.rm;if(r!=null){if(S.ev.length<2)return;S.ev.splice(+r,1);form()}};
+$('#f').onclick=e=>{if(e.target.id==='add-host'){S.hosts=S.hosts||[];S.hosts.push({name:'',relation:''});form();scheduleDraftSave();return}const hr=e.target.dataset.hostRm;if(hr!=null){S.hosts.splice(+hr,1);form();scheduleDraftSave();return}const r=e.target.dataset.rm;if(r!=null){if(S.ev.length<2)return;S.ev.splice(+r,1);form();scheduleDraftSave()}};
 $('#add').onclick=()=>{if(S.ev.length>=10)return;S.ev.push({k:'',hosts:'',d:'',t:'',v:'',a:''});form()};
 $('#show').onclick=show;$('#t1').onclick=()=>tab(1);$('#t2').onclick=show;$('#edit').onclick=()=>tab(1);
 $('#ord').onclick=()=>{const ev=cur.form==='event',w=ev?`Event: ${S.title}\nHost: ${S.host}\n`:`Groom: ${S.groom}\nBride: ${S.bride}\n`+(cur.fam?`Families: ${S.gf} / ${S.bf}\n`:'');const m=`Assalamualaikum! I would like to order this invitation card.\nDesign: ${cur.name} (${tn(cur.tier)})\n${w}Programme:\n`+S.ev.map(e=>`- ${e.k}: ${fd(e.d)} ${f12(e.t)}, ${e.v}, ${e.a}`).join('\n')+`\nPreview: ${link(false)}`;open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank')};
