@@ -30,6 +30,11 @@ test('Royal Pakistani Wedding VIP is registered in the central editor and render
   await expect(page.locator('#f')).toContainText('Groom');
   await expect(page.locator('#f')).toContainText('Bride');
   await expect(page.locator('#f')).toContainText('Mehndi');
+  for (const label of ['Invitation message', 'Dress code', 'RSVP contact name', 'WhatsApp RSVP number', 'RSVP deadline (optional)', 'WhatsApp button text', 'RSVP message']) {
+    await expect(page.locator('#f')).toContainText(label);
+  }
+  await expect(page.locator('#f input[data-s="whatsapp"]')).toBeVisible();
+  await expect(page.locator('#f input[data-s="rsvpName"]')).toBeVisible();
 
   const encoded = Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
   await page.goto(`${base}/templates/${id}.html#${encoded}`, { waitUntil: 'domcontentloaded' });
