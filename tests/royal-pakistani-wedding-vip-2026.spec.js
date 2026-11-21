@@ -48,7 +48,7 @@ test('Royal Pakistani Wedding VIP is registered in the central editor and render
   await expect(page.locator('#rsvpBtn')).toBeVisible();
   await expect(page.locator('#rsvpBtn')).toHaveAttribute('target', '_blank');
   await expect(page.locator('#rsvpBtn [data-rsvp-button]')).toHaveText('Confirm attendance');
-  await expect(page.locator('#rsvpBtn')).toHaveAttribute('href', /wa\\.me\\/03000000000/);
+  await expect(page.locator('#rsvpBtn')).toHaveAttribute('href', /wa\.me\/03000000000/);
   await expect(page.locator('#rsvpBtn')).toHaveAttribute('href', /Test%20RSVP%20message/);
 
   for (const value of ['Sample Groom 8472', 'Sample Bride 5931', 'Mehndi', 'Baraat', 'Nikah', 'Walima']) {
