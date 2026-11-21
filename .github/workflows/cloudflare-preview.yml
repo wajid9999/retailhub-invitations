@@ -459,6 +459,32 @@ jobs:
           print("Royal Mughal Palace English copy refined and lifted slightly; Urdu elements untouched.")
           PY
 
+      - name: Connect Royal Pakistani VIP RSVP fields to the rendered invitation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("public/templates/royal-pakistani-wedding-vip-2026.html")
+          if not p.is_file():
+            raise SystemExit("Royal Pakistani Wedding VIP template is missing.")
+          s = p.read_text(encoding="utf-8")
+          old_html = '<div><dt data-t="rsvpLine"></dt><dd><span data-f="rsvp.contact"></span><br><bdi dir="ltr" data-f="rsvp.phoneText"></bdi></dd></div>'
+          new_html = old_html + '<div id="rsvpDeadlineRow" hidden><dt>RSVP deadline</dt><dd data-f="rsvp.deadline"></dd></div>'
+          if old_html not in s: raise SystemExit("RSVP details markup did not match.")
+          s = s.replace(old_html, new_html, 1)
+          if '<span data-t="rsvp"></span>' not in s: raise SystemExit("RSVP button label did not match.")
+          s = s.replace('<span data-t="rsvp"></span>', '<span data-rsvp-button></span>', 1)
+          old_config = "rsvp:{contact:{en:'',ur:''},phoneText:'',whatsapp:'',message:{en:'',ur:''}},"
+          new_config = "rsvp:{contact:{en:(C.rsvp&&C.rsvp.name)||'',ur:(C.rsvp&&C.rsvp.name)||''},phoneText:(C.rsvp&&C.rsvp.phone)||'',whatsapp:(C.rsvp&&C.rsvp.phone)||'',deadline:{en:(C.rsvp&&C.rsvp.deadline)||'',ur:(C.rsvp&&C.rsvp.deadline)||''},button:(C.rsvp&&C.rsvp.button)||'RSVP on WhatsApp',message:{en:(C.rsvp&&C.rsvp.message)||'',ur:(C.rsvp&&C.rsvp.message)||''}},"
+          if old_config not in s: raise SystemExit("RSVP configuration mapping did not match.")
+          s = s.replace(old_config, new_config, 1)
+          old_render = "$('#rsvpBtn').href = 'https://wa.me/' + wa + '?text=' + encodeURIComponent(tx(CFG.rsvp && CFG.rsvp.message) + ' — ' + names());"
+          new_render = old_render + "\n    $('#rsvpBtn').hidden = !wa;\n    var rsvpLabel = $('#rsvpBtn [data-rsvp-button]'); if(rsvpLabel) rsvpLabel.textContent = CFG.rsvp.button || ui('rsvp');\n    var deadlineRow = $('#rsvpDeadlineRow'); if(deadlineRow) deadlineRow.hidden = !tx(CFG.rsvp && CFG.rsvp.deadline);"
+          if old_render not in s: raise SystemExit("RSVP render action did not match.")
+          s = s.replace(old_render, new_render, 1)
+          p.write_text(s, encoding="utf-8")
+          print("Royal Pakistani VIP editable RSVP fields are connected.")
+          PY
+
       - name: Validate generated site files
         run: |
           test -s public/index.html
