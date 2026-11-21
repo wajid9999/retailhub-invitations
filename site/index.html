@@ -31,7 +31,26 @@ fieldset{border:1px solid var(--line);border-radius:12px;margin:14px 0;padding:6
 .cancel-card p{color:var(--mut);font-size:20px;line-height:1.5;margin:10px 0}
 .cancel-card .b{display:inline-block;text-decoration:none;margin-top:20px;padding:13px 26px}
 .cancel-note{font:13px system-ui;letter-spacing:.04em;color:#9f8a69!important;margin-top:24px!important}
-</style></head><body><div class="w">
+/* Original customer invitation: immersive full-screen view */
+body.original-mode{padding:0;background:#000;overflow:hidden}
+body.original-mode .w{width:100%;max-width:none;height:100dvh;margin:0;padding:0}
+body.original-mode #stu{display:block!important;height:100dvh}
+body.original-mode #back,
+body.original-mode #tt,
+body.original-mode .tabs,
+body.original-mode #pd,
+body.original-mode #order-panel,
+body.original-mode #ord,
+body.original-mode #edit,
+body.original-mode #own,
+body.original-mode #preview-note{display:none!important}
+body.original-mode #pp{display:block!important;height:100dvh}
+body.original-mode .fr{position:fixed;inset:0;width:100%;height:100dvh;max-width:none;aspect-ratio:auto;margin:0;border:0;border-radius:0;background:#000;z-index:1000}
+body.original-mode .fr iframe{display:block;width:100%;height:100%;border:0}
+.original-site-link{display:none}
+body.original-mode .original-site-link{display:block;position:fixed;z-index:1002;left:50%;bottom:calc(9px + env(safe-area-inset-bottom));transform:translateX(-50%);white-space:nowrap;padding:7px 13px;border:1px solid #d2ad66;border-radius:22px;background:rgba(23,17,13,.72);backdrop-filter:blur(8px);color:#e6c47d;text-decoration:none;font:500 12px/1.2 system-ui;letter-spacing:.02em;box-shadow:0 2px 14px #0007}
+
+</style></head><body><a class="original-site-link" href="./" target="_blank" rel="noopener">Made with Inviteora · Visit Website</a><div class="w">
 <div id="cancelled-page" class="h cancel-page"><div class="cancel-card">
 <div class="cancel-brand">Inviteora</div>
 <h1>یہ دعوت نامہ اب دستیاب نہیں ہے</h1>
@@ -104,6 +123,7 @@ $('#grid').onclick=e=>{const b=e.target.closest('[data-t]');if(b)location.hash='
 async function route(){
  const originalToken=new URLSearchParams(location.search).get('original');
  if(originalToken){
+  document.body.classList.add('original-mode');
   $('#gal').classList.add('h');$('#stu').classList.remove('h');$('#pd').classList.add('h');$('#pp').classList.remove('h');
   $('#order-panel').classList.add('h');$('#ord').classList.add('h');$('#edit').classList.add('h');$('#own').classList.add('h');
   $('#tt').textContent='Your original invitation';$('#ifr').src='about:blank';
