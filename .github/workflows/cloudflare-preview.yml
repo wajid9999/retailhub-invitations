@@ -6,6 +6,7 @@ on:
     branches: [cloudflare-preview-vip]
     paths:
       - 'retailhub-invitations.zip'
+      - 'inviteora-modern-pakistani-wedding-vip.zip'
       - 'site/**'
       - 'tests/**'
       - 'supabase/**'
@@ -42,6 +43,21 @@ jobs:
             mkdir -p public/templates/velvet-curtain
             cp site/templates/velvet-curtain/index.html public/templates/velvet-curtain/index.html
           fi
+
+      - name: Add Modern Pakistani Wedding VIP standalone preview
+        if: hashFiles('inviteora-modern-pakistani-wedding-vip.zip') != ''
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/modern-pakistani-vip public/modern-pakistani-wedding-vip
+          unzip -q -o inviteora-modern-pakistani-wedding-vip.zip -d /tmp/modern-pakistani-vip
+          PACKAGE_DIR="/tmp/modern-pakistani-vip/inviteora-modern-pakistani-wedding-vip"
+          test -f "$PACKAGE_DIR/index.html"
+          test -f "$PACKAGE_DIR/css/invitation.css"
+          test -f "$PACKAGE_DIR/js/wedding-data.js"
+          test -f "$PACKAGE_DIR/js/video-player.js"
+          for scene in Mehndi Baraat Nikah Walima; do test -s "$PACKAGE_DIR/assets/videos/VIP-$scene.mp4"; done
+          cp -R "$PACKAGE_DIR/." public/modern-pakistani-wedding-vip/
+          echo "Modern Pakistani Wedding VIP preview assets copied."
 
       - name: Load the four-scene VIP package from its published release asset
         run: |
