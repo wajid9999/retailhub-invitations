@@ -11,6 +11,7 @@ const payload = {
     sample: true,
     hostsTitle: 'With best compliments',
     hosts: ['Sample Family'],
+    rsvp: { name: 'Test RSVP Contact', phone: '03000000000', deadline: '10 March 2027', button: 'Confirm attendance', message: 'Test RSVP message' },
     events: [
       { name: 'Mehndi', hosts: 'Bride family', date: '2027-03-06', time: '19:30', venue: 'Sample Venue', address: 'Lahore, Pakistan', dress: 'Traditional', map: '' },
       { name: 'Baraat', hosts: 'Both families', date: '2027-03-07', time: '18:00', venue: 'Sample Venue', address: 'Lahore, Pakistan', dress: 'Formal', map: '' },
@@ -40,6 +41,15 @@ test('Royal Pakistani Wedding VIP is registered in the central editor and render
   await page.goto(`${base}/templates/${id}.html#${encoded}`, { waitUntil: 'domcontentloaded' });
   await expect.poll(() => page.locator('html').getAttribute('data-inviteora-payload')).toBe('loaded');
   const rendered = await page.locator('body').innerText();
+  await expect(page.locator('[data-f="rsvp.contact"]')).toContainText('Test RSVP Contact');
+  await expect(page.locator('[data-f="rsvp.phoneText"]')).toContainText('03000000000');
+  await expect(page.locator('#rsvpDeadlineRow')).toBeVisible();
+  await expect(page.locator('[data-f="rsvp.deadline"]')).toContainText('10 March 2027');
+  await expect(page.locator('#rsvpBtn')).toBeVisible();
+  await expect(page.locator('#rsvpBtn [data-rsvp-button]')).toHaveText('Confirm attendance');
+  await expect(page.locator('#rsvpBtn')).toHaveAttribute('href', /wa\\.me\\/03000000000/);
+  await expect(page.locator('#rsvpBtn')).toHaveAttribute('href', /Test%20RSVP%20message/);
+
   for (const value of ['Sample Groom 8472', 'Sample Bride 5931', 'Mehndi', 'Baraat', 'Nikah', 'Walima']) {
     expect(rendered).toContain(value);
   }
