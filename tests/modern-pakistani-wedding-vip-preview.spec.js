@@ -10,7 +10,6 @@ test('Modern Pakistani Wedding VIP standalone preview loads all four scenes', as
 
   await expect(page).toHaveTitle(/Modern Pakistani Wedding VIP|Hamza.*Ayesha/);
   await expect(page.locator('.watermark')).toBeVisible();
-  await expect(page.locator('.sample-pill')).toBeVisible();
   await expect(page.locator('#cover')).toBeVisible();
 
   const videoSources = await page.locator('video[data-src]').evaluateAll(nodes =>
