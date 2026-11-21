@@ -238,7 +238,7 @@ function editorText(s){return editorLang==='ur'?(EDITOR_UR[s]||s):s}
 function applyEditorLanguage(){
  const root=$('#f');root.dir=editorLang==='ur'?'rtl':'ltr';
  root.querySelectorAll('label').forEach(el=>{const n=[...el.childNodes].find(x=>x.nodeType===3&&x.textContent.trim());if(n)n.textContent=editorText(n.textContent.trim())+' ';});
- root.querySelectorAll('h2,legend,button,p').forEach(el=>{const t=el.textContent.trim();if(EDITOR_UR[t])el.textContent=editorText(t);else if(/^(Event|Programme) \\d+$/.test(t)){const n=t.match(/\\d+/)[0];el.textContent=(editorLang==='ur'?(t.startsWith('Programme')?'پروگرام ':'تقریب '):(t.startsWith('Programme')?'Programme ':'Event '))+n;}});
+ root.querySelectorAll('h2,legend,button,p').forEach(el=>{const t=el.textContent.trim();if(EDITOR_UR[t])el.textContent=editorText(t);else if(/^(Event|Programme) [0-9]+$/.test(t)){const n=t.match(/[0-9]+/)[0];el.textContent=(editorLang==='ur'?(t.startsWith('Programme')?'پروگرام ':'تقریب '):(t.startsWith('Programme')?'Programme ':'Event '))+n;}});
  ['back','t1','t2','add','show','edit','own'].forEach(id=>{const el=$('#'+id);if(el){const raw=el.dataset.en||(el.dataset.en=el.textContent.trim());el.textContent=editorText(raw)}});
  $('#lang-en').classList.toggle('active',editorLang==='en');$('#lang-ur').classList.toggle('active',editorLang==='ur');
 }
